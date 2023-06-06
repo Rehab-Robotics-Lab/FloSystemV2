@@ -1,2 +1,2 @@
 # Flo-System-2
-Contains the code repository for the second iteration of the Flo system.
+This is the master code repository for the second iteration of the Flo system. 
