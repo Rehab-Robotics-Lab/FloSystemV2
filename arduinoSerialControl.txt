@@ -1,8 +1,0 @@
-angle=10
-device=ACM0
-#in terminal
-roscore
-#new terminal
-rosrun rosserial_python serial_node.py /dev/$device
-#in a new terminal window
-rostopic pub servo std_msgs/UInt16  $angle
