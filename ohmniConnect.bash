@@ -10,3 +10,4 @@ if [ $cusPath = "yes" ]; then
 fi    
 echo "ssh into root@$robotIP using private key at $pKeyPath"
 ssh -i $pKeyPath "root@$robotIP"
+afsahgfo
