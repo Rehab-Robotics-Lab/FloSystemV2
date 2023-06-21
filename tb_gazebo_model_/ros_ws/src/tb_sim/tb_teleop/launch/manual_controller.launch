@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="use_external_controller" default="true"/>
+  <arg name="use_joystick" default="false"/>
+
+  <group if="$(arg use_external_controller)">
+    <group if="$(arg use_joystick)">
+      <!-- TODO: define joystick control -->
+    </group>
+
+    <group unless="$(arg use_joystick)">
+      <!--use keyboard: require install http://wiki.ros.org/teleop_twist_keyboard-->
+      <node name="teleop_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py"
+       output="screen">
+        <remap from="/cmd_vel" to="/tb_sim/cmd_vel"/>
+      </node>
+    </group>
+  </group>
+
+  <group unless="$(arg use_external_controller)">
+    <!-- Add topic name in GUI to control the robot: /tb_sim/cmd_vel -->
+    <node name="robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
+    </node>
+  </group>
+
+</launch>

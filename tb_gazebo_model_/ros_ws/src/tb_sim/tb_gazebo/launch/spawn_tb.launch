@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- TODO solving robot namespace to add multiple robot -->
+  <arg name="robot_ns" default="tb_sim1"/>
+  <arg name="verbose" value="true" />
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.3"/>
+  <arg name="yaw" default="0.0"/>
+  <arg name="enable_rviz" default="true"/>
+
+  <!-- <node
+    name="tf_footprint_base"
+    pkg="tf"
+    type="static_transform_publisher"
+    args="0 0 0 0 0 0 base_link base_footprint 40" /> -->
+    <!-- static_transform_publisher x y z yaw pitch roll frame_id child_frame_id period_in_ms -->
+  <param
+    name="robot_description"
+    command="$(find xacro)/xacro '$(find tb_description)/urdf/tb_sim.urdf.xacro' --inorder" />
+  <node
+    name="spawn_model"
+    pkg="gazebo_ros"
+    type="spawn_model"
+    output="screen"
+    args="-urdf
+          -param robot_description
+          -model tb_sim
+          -x $(arg x)
+          -y $(arg y)
+          -z $(arg z)
+          -Y $(arg yaw)"/>
+  <node
+    name="joint_state_publisher"
+    pkg="joint_state_publisher"
+    type="joint_state_publisher" />
+  <node
+    name="robot_state_publisher"
+    pkg="robot_state_publisher"
+    type="robot_state_publisher" />
+
+  <group if="$(arg enable_rviz)">
+    <node
+      name="rviz"
+      pkg="rviz"
+      type="rviz"
+      args="-d $(find tb_gazebo)/rviz/gazebo.rviz" />
+   </group>
+</launch>
