@@ -1,0 +1,16 @@
+int64 pid_id
+bool enable_set_p
+bool enable_set_i
+bool enable_set_d
+bool enable_set_setpoint
+
+float64 p_value
+float64 i_value
+float64 d_value
+float64 setpoint
+---
+int64 pid_id
+float64 p_value
+float64 i_value
+float64 d_value
+float64 setpoint

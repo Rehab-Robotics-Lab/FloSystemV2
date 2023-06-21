@@ -1,0 +1,12 @@
+uint8   sid
+bool use_rad
+uint16  pos_raw
+float64 pos_rad
+#torque control mode:
+#kBreak = 0,
+#kOn = 1,
+#kFree = 2
+uint8    torque
+uint8   playtime
+---
+uint8 sid

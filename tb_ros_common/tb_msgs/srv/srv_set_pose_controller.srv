@@ -1,0 +1,16 @@
+#goal request definition
+bool enable_kyaw #0.0 -> 5.0
+bool enable_kd #
+bool enable_linear #0.0 -> 0.5
+bool enable_angular #0.0 -> 1.5
+
+float64 k_d
+float64 k_yaw_small_angle
+float64 max_linear_vel
+float64 max_angular_vel
+---
+#response
+float64 k_d
+float64 k_yaw_small_angle
+float64 max_linear_vel
+float64 max_angular_vel

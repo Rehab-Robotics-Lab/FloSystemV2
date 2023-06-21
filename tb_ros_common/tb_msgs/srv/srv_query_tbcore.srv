@@ -1,0 +1,5 @@
+#goal request definition
+bool enable_query_tbcore
+---
+#response
+bool success

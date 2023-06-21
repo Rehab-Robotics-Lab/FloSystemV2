@@ -1,0 +1,4 @@
+#goal request definition
+bool enable_autodock
+---
+#response

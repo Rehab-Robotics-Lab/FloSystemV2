@@ -1,0 +1,15 @@
+#goal request definition
+---
+#response
+uint16 voltage_cell_1
+uint16 voltage_cell_2
+uint16 voltage_cell_3
+uint16 voltage_cell_4
+uint16 voltage_cell_5
+int16 charging_current
+uint8 docked_status
+uint8 fet_status
+uint8 status_1
+uint8 status_2
+uint8 status_3
+uint8 status_4

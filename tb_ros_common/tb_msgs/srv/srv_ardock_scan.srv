@@ -1,0 +1,6 @@
+#goal request definition
+bool enable_ardock_scan
+bool is_scan_exposures
+---
+#response
+bool success
