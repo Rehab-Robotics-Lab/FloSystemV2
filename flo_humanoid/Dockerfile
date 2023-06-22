@@ -15,11 +15,14 @@ RUN git clone https://github.com/Rehab-Robotics-Lab/Flo-System-2
 RUN git pull https://github.com/Rehab-Robotics-Lab/Flo-System-2
 RUN mkdir -p catkin_ws
 WORKDIR /home/ohmnidev/catkin_ws
+RUN git clone https://github.com/Slamtec/rplidar_ros.git
+RUN catkin_make -j1 -l1
 ARG ROS_DISTRO=melodic
 ENV ROS_DISTRO="${ROS_DISTRO}"
 RUN apt-get update
 RUN apt-get install ros-${ROS_DISTRO}--rosserial-arduino
 RUN apt-get install ros-${ROS_DISTRO}--rosserial
+
 
 #add as neccessary.
 
