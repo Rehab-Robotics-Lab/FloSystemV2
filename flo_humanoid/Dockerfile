@@ -4,7 +4,8 @@ RUN cd /home/ohmnidev
 RUN git clone https://github.com/Rehab-Robotics-Lab/Flo-System-2
 RUN mkdir catkin_ws
 WORKDIR /home/ohmnidev/catkin_ws
-ARG 
+ARG ROS_DISTRO[=melodic]
+ENV ROS_DISTRO="${ROS_DISTRO}"
 RUN sudo apt-get install ros-${ROS_DISTRO}--rosserial-arduino
 RUN sudo apt-get install ros-${ROS_DISTRO}--rosserial
 
