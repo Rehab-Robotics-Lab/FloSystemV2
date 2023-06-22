@@ -1,6 +1,12 @@
+#base image from ohmnilabsvn/ohmni_ros:ohmni_ros_tbcontrol_0.0.13, preinstalled with ros-melodic + tb control ros packages
 FROM ohmnilabsvn/ohmni_ros:ohmni_ros_tbcontrol_0.0.13
-RUN sudo apt-get update -y && sudo apt-get install -y neovim
-RUN cd /home/ohmnidev
+#install essential tools
+RUN sudo apt-get update -y && sudo apt-get -y install\
+neovim\
+tmux
+# clear cache
+RUN apt-get clean 
+WORKDIR /home/ohmnidev
 RUN git clone https://github.com/Rehab-Robotics-Lab/Flo-System-2
 RUN mkdir catkin_ws
 WORKDIR /home/ohmnidev/catkin_ws
