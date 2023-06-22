@@ -1,0 +1,275 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="tb_sim">
+  <!-- Define robot physical and appearance model-->
+  <!-- Using dummy/roundly estimated number for inertia, friction model-->
+
+  <!-- IMPROVE
+  * More simplify robot mesh files to run faster
+  * Add material and calculate precise inertia tensor
+  * Modify the friction model to get nature physical interaction-->
+
+  <!-- Define robot parameters -->
+  <xacro:property name="robotname" value="tb_sim" />
+  <xacro:property name="wheel_separation" value="0.33"/>
+  <xacro:property name="wheel_diameter" value="0.152"/>
+  <xacro:property name="M_PI" value="3.14159"/>
+  <!-- Define friction model  -->
+  <xacro:property name="wheel_mu1" value="1.0"/>
+  <xacro:property name="wheel_mu2" value="1.0"/>
+  <xacro:property name="wheel_kp" value="10000000.0"/>
+  <xacro:property name="wheel_kd" value="1.0"/>
+  <xacro:property name="wheel_torque" value="10.0"/>
+
+  <!-- Importing external urdf/xacros. -->
+  <xacro:include filename="$(find tb_gazebo)/plugins/tele_camera.urdf.xacro"/>
+  <xacro:include filename="$(find tb_gazebo)/plugins/nav_camera.urdf.xacro"/>
+  <xacro:include filename="$(find tb_gazebo)/plugins/depth_camera.urdf.xacro"/>
+  <xacro:include filename="$(find tb_gazebo)/plugins/imu.urdf.xacro"/>
+  <xacro:include filename="$(find tb_gazebo)/plugins/differential_drive.urdf.xacro"/>
+  <xacro:include filename="$(find tb_gazebo)/plugins/servo.urdf.xacro"/>
+  <xacro:include filename="$(find tb_gazebo)/plugins/laser_range.urdf.xacro"/>
+  <!-- Define macros -->
+  <xacro:macro name="wheel" params="prefix">
+    <link name="wheel_${prefix}_link">
+      <inertial>
+        <mass value="0.2"/>
+        <inertia ixx="0.00039792" ixy="0" ixz="0" iyy="0.00078467" iyz="0" izz="0.00039792"/>
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="package://tb_description/meshes/wheel_link.STL"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="package://tb_description/meshes/wheel_link.STL"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="wheel_${prefix}_joint" type="continuous">
+      <xacro:if value="${prefix== 'left'}">
+        <origin xyz="0 ${wheel_separation/2} 0" rpy="0 0 0"/>
+      </xacro:if>
+      <xacro:if value="${prefix == 'right'}">
+        <origin xyz="0 ${-wheel_separation/2} 0" rpy="0 0 0"/>
+      </xacro:if>
+      <parent link="base_link"/>
+      <child link="wheel_${prefix}_link"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+
+    <gazebo reference="wheel_${prefix}_link">
+      <material>Gazebo/FlatBlack</material>
+      <mu1>${wheel_mu1}</mu1>
+      <mu2>${wheel_mu2}</mu2>
+      <kp>${wheel_kp}</kp>
+      <kd>${wheel_kd}</kd>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- Define robot links and joints -->
+  <link name="footprint" />
+  <joint name="footprint_joint" type="fixed">
+    <origin xyz="0.0 0.0 ${-wheel_diameter/2}" rpy="0 0.0 0" />
+    <parent link="base_link" />
+    <child link="footprint" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+  <link name="base_link">
+    <inertial>
+      <origin xyz="-0.15 0.0 0.01" rpy="0.0 0.0 0.0" />
+        <mass value="5.5" />
+        <inertia ixx="0.03158" ixy="0" ixz="0" iyy="0.04418" iyz="0" izz="0.069898" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tb_description/meshes/base_link.STL" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tb_description/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+    <gazebo reference="base_link">
+      <material>Gazebo/Blue</material>
+    </gazebo>
+  </link>
+  <!-- Building from macros. -->
+  <xacro:wheel prefix="left"/>
+  <xacro:wheel prefix="right"/>
+
+  <link name="caster_link">
+    <inertial>
+      <origin xyz="-0.016859 0 -0.039" rpy="0 0 0" />
+      <mass value="0.12725" />
+      <inertia ixx="0.00013389" ixy="-3.291E-08" ixz="-5.4328E-05" iyy="0.00016302" iyz="-4.433E-08" izz="9.9804E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tb_description/meshes/caster_link.STL" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tb_description/meshes/caster_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="caster_joint" type="continuous">
+    <origin xyz="-0.32849 0 0.036" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="caster_link" />
+    <axis xyz="0 0 1" />
+    <safety_controller k_velocity="0" />
+  </joint>
+
+  <link name="caster_wheel_link">
+    <inertial>
+      <origin xyz="0 7.5E-05 0" rpy="0 0 0" />
+      <mass value="0.055271" />
+      <inertia ixx="2.6207E-05" ixy="0" ixz="0" iyy="4.8328E-05" iyz="0" izz="2.6207E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tb_description/meshes/caster_wheel_link.STL" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tb_description/meshes/caster_wheel_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="caster_wheel_joint" type="continuous">
+    <origin xyz="-0.039059 0 -0.075" rpy="0 0 0" />
+    <parent link="caster_link" />
+    <child link="caster_wheel_link" />
+    <axis xyz="0 1 0" />
+    <safety_controller k_velocity="0" />
+  </joint>
+
+  <link name="tube_link">
+    <inertial>
+      <origin xyz="0.02 0 0.6" rpy="0 0 0" />
+      <mass value="2" />
+      <inertia ixx="0.2083333333" ixy="0.0" ixz="0.0" iyy="0.2083333333" iyz="0.0" izz="0.000905" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tb_description/meshes/tube_link.STL" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tb_description/meshes/tube_link.STL" />
+      </geometry>
+    </collision>
+    <gazebo reference="tube_link">
+      <material>Gazebo/Orange</material>
+    </gazebo>
+  </link>
+
+  <joint name="tube_joint" type="fixed">
+    <origin xyz="-0.026814 0 0.083753" rpy="0 -0.18326 0" />
+    <parent link="base_link" />
+    <child link="tube_link" />
+    <axis xyz="0 0 0" />
+    <safety_controller k_velocity="0" />
+  </joint>
+
+  <link name="display_link">
+    <inertial>
+      <origin xyz="0.02866 0.0042627 0.019125" rpy="0 0 0" />
+      <mass value="0.3" />
+      <inertia ixx="0.0015625" ixy="0" ixz="0" iyy="0.000625" iyz="0" izz="0.0010625" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tb_description/meshes/display_link.STL" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://tb_description/meshes/display_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="neck_joint" type="continuous">
+    <origin xyz="0.14191 0 1.1557" rpy="0 0 0" />
+    <parent link="tube_link" />
+    <child link="display_link" />
+    <axis xyz="0.0 1 0.0" />
+    <safety_controller k_velocity="0" />
+  </joint>
+
+  <!-- Define sensor from xacro -->
+
+  <!-- telepresense camera, tilt offset angles: roll/ex, pitch/ey (degrees) in the parent link -->
+  <xacro:macro name="tele_camera_origin" params="roll_degrees:=0 pitch_degrees:=0 parent_link:=display_link">
+    <origin xyz="0.05 0 0.11" rpy="${roll_degrees/180*M_PI} ${pitch_degrees/180*M_PI} 0"/>
+    <parent link="${parent_link}"/>
+  </xacro:macro>
+  <xacro:tele_camera prefix="tele">
+    <xacro:tele_camera_origin/>
+  </xacro:tele_camera>
+
+  <!-- navigation camera, tilt offset angles: roll/ex, pitch/ey (degrees) in the parent link -->
+  <xacro:macro name="nav_camera_origin" params="roll_degrees:=0 pitch_degrees:=80 parent_link:=tube_link">
+    <origin xyz="0.05 0 1.1" rpy="${roll_degrees/180*M_PI} ${pitch_degrees/180*M_PI} 0"/>
+    <parent link="${parent_link}"/>
+  </xacro:macro>
+  <xacro:nav_camera prefix="nav">
+    <xacro:nav_camera_origin/>
+  </xacro:nav_camera>
+
+  <!-- depth camera, tilt offset angles: roll/ex, pitch/ey (degrees) in the parent link -->
+  <xacro:macro name="depth_camera_origin" params="roll_degrees:=0 pitch_degrees:=50 parent_link:=tube_link">
+    <origin xyz="0.05 0 0.9" rpy="${roll_degrees/180*M_PI} ${pitch_degrees/180*M_PI} 0"/>
+    <parent link="${parent_link}"/>
+  </xacro:macro>
+  <xacro:depth_camera prefix="depthcam">
+    <xacro:depth_camera_origin/>
+  </xacro:depth_camera>
+
+  <!-- IMU attached to base_link -->
+  <xacro:macro name="imu_base_origin" params="roll_degrees:=0 pitch_degrees:=0">
+    <origin xyz="0 0 0" rpy="${roll_degrees/180*M_PI} ${pitch_degrees/180*M_PI} 0"/>
+  </xacro:macro>
+  <xacro:imu_sensor prefix="imu_base" parent_link="base_link">
+    <xacro:imu_base_origin/>
+  </xacro:imu_sensor>
+
+  <!--  Laser range sensor -->
+  <xacro:macro name="laser_range_origin" params="roll_degrees:=0 pitch_degrees:=0">
+    <origin xyz="-0.3 0 0.2" rpy="${roll_degrees/180*M_PI} ${pitch_degrees/180*M_PI} 0"/>
+  </xacro:macro>
+  <xacro:laser_range_sensor prefix="laser_range" parent_link="base_link">
+    <xacro:laser_range_origin/>
+  </xacro:laser_range_sensor>
+
+  <!-- Define control from xacro -->
+  <xacro:differential_drive wheelSeparation="${wheel_separation}" wheelDiameter="${wheel_diameter}">
+  </xacro:differential_drive>
+
+  <!-- Define servo position control from xacro -->
+  <xacro:servo_position_drive prefix="servo" joint_name="neck_join">
+  </xacro:servo_position_drive>
+
+
+</robot>

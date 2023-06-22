@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="debug" default="false"/>
+  <arg name="scenario" default="empty"/>
+  <arg name="extra_gazebo_args" default=""/>
+  <arg name="robot_ns" default="tb_sim"/>
+  <arg name="use_external_controller" default="false"/>
+  <arg name="use_joystick" default="false"/>
+  <arg name="enable_teleop" default="true"/>
+  <arg name="enable_rviz" default="true"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="$(arg headless)"/>
+    <arg name="debug" value="$(arg debug)"/>
+    <arg name="extra_gazebo_args" value="$(arg extra_gazebo_args) --verbose"/>
+  </include>
+
+  <include file="$(find tb_gazebo)/launch/spawn_tb.launch">
+    <arg name="x" value="0.0"/>
+    <arg name="y" value="0.0"/>
+    <arg name="z" value="0.1"/>
+    <arg name="robot_ns" value="$(arg robot_ns)"/>
+    <arg name="enable_rviz" value="$(arg enable_rviz)"/>
+  </include>
+
+  <group if="$(arg enable_teleop)">
+    <include file="$(find tb_teleop)/launch/manual_controller.launch">
+      <arg name="use_external_controller" value="$(arg use_external_controller)"/>
+      <arg name="use_joystick" value="$(arg use_joystick)"/>
+    </include>
+  </group>
+
+<!--  fake map frame for development-->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="fake_map"
+    args="0.0 0.0  0.0 0 0 0 map odom" />
+
+
+</launch>

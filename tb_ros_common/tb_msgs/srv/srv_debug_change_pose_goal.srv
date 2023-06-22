@@ -1,0 +1,12 @@
+#goal request definition
+string frame_id
+float64 x
+float64 y
+float64 yaw
+float64 dx
+float64 dy
+float64 dyaw
+---
+#response
+bool success
+int32 state_code

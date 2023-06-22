@@ -1,0 +1,8 @@
+#goal request definition
+---
+#response
+int32 calib_state
+#kIdle = -1
+#kIsRunning =0
+#kFail = 1
+#kSuccess = 2

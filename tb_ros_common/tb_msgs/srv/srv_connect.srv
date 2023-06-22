@@ -1,0 +1,5 @@
+bool connect
+string port_name
+---
+bool is_connected
+string port_name

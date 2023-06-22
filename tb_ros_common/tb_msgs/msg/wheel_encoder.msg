@@ -1,0 +1,7 @@
+Header header
+float64 motor_left_vel
+float64 motor_right_vel
+int32 motor_left_accel
+int32 motor_right_accel
+int32 motor_left_pos
+int32 motor_right_pos

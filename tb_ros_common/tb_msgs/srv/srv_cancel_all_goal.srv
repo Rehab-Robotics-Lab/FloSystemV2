@@ -1,0 +1,5 @@
+#goal request definition
+bool enable_cancel_all_goal
+---
+#response
+bool success

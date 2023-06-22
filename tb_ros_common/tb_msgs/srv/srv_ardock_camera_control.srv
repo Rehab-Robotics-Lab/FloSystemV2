@@ -1,0 +1,6 @@
+#goal request definition
+bool enable_set_exposure
+int32 default_exposure
+---
+#response
+int32 default_exposure

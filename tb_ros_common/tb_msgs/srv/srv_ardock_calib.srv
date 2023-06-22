@@ -1,0 +1,9 @@
+#goal request definition
+bool enable_ardock_calib
+bool is_save_result
+float64 timeout #timeout in second
+int32 min_marker_detected #
+---
+#response
+bool success
+int32 state_code

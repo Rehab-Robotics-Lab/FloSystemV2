@@ -1,0 +1,313 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <world name="kolvn_office">
+    <!-- <scene>
+      <ambient>0.5 0.5 0.5 1</ambient>
+      <background>0.5 0.5 0.5 1</background>
+      <shadows>1</shadows>
+    </scene> -->
+
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://kolvn_office_base</uri>
+      <name>kolvn_office_base</name>
+    </include>
+
+    <!-- adding light sources -->
+    <light name="point_1" type="point">
+      <pose>16 4 3.7 0 0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.5 0.5 0.5 1</specular>
+      <attenuation>
+        <range>20</range>
+        <linear>0.01</linear>
+        <constant>0.5</constant>
+        <quadratic>0.01</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>1</inner_angle>
+        <outer_angle>2</outer_angle>
+        <falloff>0.6</falloff>
+      </spot>
+      <!--@NhatTan it is meaningless, shadow won't work with spot and point light sources -->
+      <!-- <cast_shadows>true</cast_shadows> -->
+    </light>
+
+    <light name="point_2" type="point">
+      <pose>10 3.2 3.7 0 0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.5 0.5 0.5 1</specular>
+      <attenuation>
+        <range>20</range>
+        <linear>0.01</linear>
+        <constant>0.5</constant>
+        <quadratic>0.01</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>1</inner_angle>
+        <outer_angle>2</outer_angle>
+        <falloff>0.6</falloff>
+      </spot>
+      <!--@NhatTan it is meaningless, shadow won't work with spot and point light sources -->
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+    <light name="point_3" type="point">
+      <pose>5 3.2 3.7 0 0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.5 0.5 0.5 1</specular>
+      <attenuation>
+        <range>20</range>
+        <linear>0.01</linear>
+        <constant>0.5</constant>
+        <quadratic>0.01</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>1</inner_angle>
+        <outer_angle>2</outer_angle>
+        <falloff>0.6</falloff>
+      </spot>
+      <!--@NhatTan it is meaningless, shadow won't work with spot and point light sources -->
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+    <light name="point_4" type="point">
+      <pose>7 -2 3.7 0 0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.5 0.5 0.5 1</specular>
+      <attenuation>
+        <range>20</range>
+        <linear>0.01</linear>
+        <constant>0.5</constant>
+        <quadratic>0.01</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>1</inner_angle>
+        <outer_angle>2</outer_angle>
+        <falloff>0.6</falloff>
+      </spot>
+      <!--@NhatTan it is meaningless, shadow won't work with spot and point light sources -->
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+    <light name="point_5" type="point">
+      <pose>-1 -1.2 3.7 0 0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.5 0.5 0.5 1</specular>
+      <attenuation>
+        <range>20</range>
+        <linear>0.01</linear>
+        <constant>0.5</constant>
+        <quadratic>0.01</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>1</inner_angle>
+        <outer_angle>2</outer_angle>
+        <falloff>0.6</falloff>
+      </spot>
+      <!--@NhatTan it is meaningless, shadow won't work with spot and point light sources -->
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+    <light name="point_6" type="point">
+      <pose>-6 -1.2 3.7 0 0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.5 0.5 0.5 1</specular>
+      <attenuation>
+        <range>20</range>
+        <linear>0.01</linear>
+        <constant>0.5</constant>
+        <quadratic>0.01</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>1</inner_angle>
+        <outer_angle>2</outer_angle>
+        <falloff>0.6</falloff>
+      </spot>
+      <!--@NhatTan it is meaningless, shadow won't work with spot and point light sources -->
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+    <light name="point_7" type="point">
+      <pose>-4.2 4.4 3.7 0 0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.5 0.5 0.5 1</specular>
+      <attenuation>
+        <range>20</range>
+        <linear>0.01</linear>
+        <constant>0.5</constant>
+        <quadratic>0.01</quadratic>
+      </attenuation>
+      <spot>
+        <inner_angle>1</inner_angle>
+        <outer_angle>2</outer_angle>
+        <falloff>0.6</falloff>
+      </spot>
+      <!--@NhatTan it is meaningless, shadow won't work with spot and point light sources -->
+      <cast_shadows>true</cast_shadows>
+    </light>
+
+
+    <!-- small movable objects -->
+    <!-- <population name="wood_cube_population1">
+      <model name="wood_cube1">
+        <include>
+          <static>false</static>
+          <uri>model://wood_cube_5cm</uri>
+        </include>
+      </model>
+      <pose>3 2 1 0 0 0</pose>
+      <box>
+        <size>5 5 0.1</size>
+      </box>
+      <model_count>10</model_count>
+      <distribution>
+        <type>random</type>
+      </distribution>
+    </population>
+
+    <population name="wood_cube_population2">
+      <model name="wood_cube2">
+        <include>
+          <static>false</static>
+          <uri>model://wood_cube_2_5cm</uri>
+        </include>
+      </model>
+      <pose>3 2 1 0 0 0</pose>
+      <box>
+        <size>5 5 0.1</size>
+      </box>
+      <model_count>10</model_count>
+      <distribution>
+        <type>random</type>
+      </distribution>
+    </population>
+
+    <population name="wood_cube_population3">
+      <model name="wood_cube3">
+        <include>
+          <static>false</static>
+          <uri>model://wooden_board</uri>
+        </include>
+      </model>
+      <pose>3 2 1 0 0 0</pose>
+      <box>
+        <size>5 5 0.1</size>
+      </box>
+      <model_count>10</model_count>
+      <distribution>
+        <type>random</type>
+      </distribution>
+    </population> -->
+
+    <!-- adding furniture -->
+
+    <!-- <include>
+      <uri>model://human_female_1</uri>
+      <name>ms_lien</name>
+      <pose>8.2 3.0 0.2 0 0 0</pose>
+    </include> -->
+
+    <include>
+      <uri>model://chair_1</uri>
+      <name>office_char</name>
+      <pose>-3.7 2.7 0.2 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://labtop_mac_1</uri>
+      <name>labtop_mac_1</name>
+      <pose>0.1 1.8 0.94 0 0 1.56</pose>
+    </include>
+
+    <include>
+      <uri>model://sofa_set_1</uri>
+      <name>sofa_set_1</name>
+      <pose>7.2 5.06 0.2 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://table_conference_2</uri>
+      <name>table_conference_2</name>
+      <pose>5.69 -3.4 0.2 0 0 0.76</pose>
+    </include>
+
+    <include>
+      <uri>model://kitchen_chair</uri>
+      <name>kitchen_chair</name>
+      <pose>11.85 0.75 0.25 0 0 0.76</pose>
+    </include>
+
+    <include>
+      <uri>model://recycle_bin_green</uri>
+      <name>recycle_bin_green</name>
+      <pose>14.31 2.59 0.18 0 0 0.76</pose>
+    </include>
+
+    <include>
+      <uri>model://desk_brown</uri>
+      <name>table_1_1</name>
+      <pose>0.1 2.5 0.2 0 0 1.57</pose>
+    </include>
+    <include>
+      <uri>model://desk_brown</uri>
+      <name>table_1_2</name>
+      <pose>0.1 0.7 0.2 0 0 1.57</pose>
+    </include>
+    <include>
+      <uri>model://desk_brown</uri>
+      <name>table_1_3</name>
+      <pose>0.1 -2.4 0.2 0 0 1.57</pose>
+    </include>
+    <include>
+      <uri>model://desk_brown</uri>
+      <name>table_1_4</name>
+      <pose>0.1 -4.25 0.2 0 0 1.57</pose>
+    </include>
+
+    <include>
+      <uri>model://desk_brown</uri>
+      <name>table_2_1</name>
+      <pose>-2.6 2.5 0.2 0 0 1.57</pose>
+    </include>
+    <include>
+      <uri>model://desk_brown</uri>
+      <name>table_2_2</name>
+      <pose>-2.6 0.7 0.2 0 0 1.57</pose>
+    </include>
+    <include>
+      <uri>model://desk_brown</uri>
+      <name>table_2_3</name>
+      <pose>-2.6 -2.4 0.2 0 0 1.57</pose>
+    </include>
+    <include>
+      <uri>model://desk_brown</uri>
+      <name>table_2_4</name>
+      <pose>-2.6 -4.25 0.2 0 0 1.57</pose>
+    </include>
+
+    <include>
+      <uri>model://desk_brown</uri>
+      <name>table_3_1</name>
+      <pose>-5.5 2.5 0.2 0 0 1.57</pose>
+    </include>
+    <include>
+      <uri>model://desk_brown</uri>
+      <name>table_3_2</name>
+      <pose>-5.5 0.7 0.2 0 0 1.57</pose>
+    </include>
+    <include>
+      <uri>model://desk_brown</uri>
+      <name>table_3_3</name>
+      <pose>-5.5 -2.4 0.2 0 0 1.57</pose>
+    </include>
+    <include>
+      <uri>model://desk_brown</uri>
+      <name>table_3_4</name>
+      <pose>-5.5 -4.25 0.2 0 0 1.57</pose>
+    </include>
+
+  </world>
+</sdf>
