@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>gazebo_environment</name>
+  <version>0.1.0</version>
+  <description>The gazebo_environment package</description>
+  <maintainer email="nhattan@todo.todo">nhattan</maintainer>
+  <license>Apache 2.0</license>
+  <author >nhattan</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>gazebo_ros</depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+    <gazebo_ros gazebo_model_path="${prefix}/models:${prefix}/models/furniture:${prefix}/models/obstacles"/>
+  </export>
+</package>

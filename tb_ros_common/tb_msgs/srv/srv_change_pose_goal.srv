@@ -1,0 +1,5 @@
+#goal request definition
+geometry_msgs/PoseWithCovarianceStamped goal_pose
+---
+#response
+bool success

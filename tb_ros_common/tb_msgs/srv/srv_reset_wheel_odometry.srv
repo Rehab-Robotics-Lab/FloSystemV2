@@ -1,0 +1,9 @@
+#wheel odometry is drift overtime, so we need to reset it to an external value
+bool reset_xM
+bool reset_yM
+bool reset_yaw
+#xM, yM: meter. yaw: rad
+float64 xM
+float64 yM
+float64 yaw
+---

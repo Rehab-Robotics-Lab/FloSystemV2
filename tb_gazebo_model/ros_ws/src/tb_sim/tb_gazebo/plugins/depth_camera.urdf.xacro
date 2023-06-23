@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="depth_camera">
+  <xacro:macro name="depth_camera" params="prefix:=camera  *origin *parent_link">
+    <xacro:property name="M_PI" value="3.14159"/>
+    <!-- urdf format -->
+    <link name="${prefix}_link">
+      <visual>
+        <geometry>
+          <!-- <mesh filename="package://tb_description/meshes/sensors/kinect.dae"/> -->
+          <box size="0.01 0.01 0.01"/>
+        </geometry>
+      </visual>
+      <collision>
+        <geometry>
+          <!-- <box size="0.07 0.3 0.09"/> -->
+          <box size="0.01 0.01 0.01"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.01"/>
+        <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}_mount_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <xacro:insert_block name="parent_link" />
+      <!--<parent link="base_link"/>-->
+      <child link="${prefix}_link"/>
+    </joint>
+
+    <link name="${prefix}_optical_frame"/>
+
+    <joint name="${prefix}_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${M_PI/2} ${M_PI} ${M_PI/2}"/>
+      <parent link="${prefix}_link"/>
+      <child link="${prefix}_optical_frame"/>
+    </joint>
+
+
+    <gazebo reference="${prefix}_link">
+      <sensor name="depth_camera" type="depth">
+        <update_rate>30</update_rate>
+        <camera>
+          <horizontal_fov>1.047198</horizontal_fov>
+          <image>
+<!--          <width>160</width>
+            <height>120</height>-->
+            <width>320</width>
+            <height>240</height>
+       <!--     <width>640</width>
+            <height>480</height>-->
+       <!--     <width>480</width>
+            <height>270</height>-->
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>15</far>
+          </clip>
+        </camera>
+
+        <plugin name="depth_camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+          <baseline>0.2</baseline>
+          <alwaysOn>true</alwaysOn>
+          <!-- Keep this zero, update_rate in the parent <sensor> tag will control the frame rate. -->
+          <updateRate>0</updateRate>
+          <cameraName>${prefix}</cameraName>
+          <imageTopicName>/${prefix}/rgb/image_raw</imageTopicName>
+          <cameraInfoTopicName>/${prefix}/rgb/camera_info</cameraInfoTopicName>
+          <depthImageTopicName>/${prefix}/depth/image_raw</depthImageTopicName>
+          <depthImageInfoTopicName>/${prefix}/depth/camera_info</depthImageInfoTopicName>
+          <pointCloudTopicName>/${prefix}/depth/points</pointCloudTopicName>
+          <frameName>${prefix}_optical_frame</frameName>
+          <pointCloudCutoff>0.03</pointCloudCutoff>
+          <pointCloudCutoffMax>5.0</pointCloudCutoffMax>
+          <!-- for 320x240 -->
+          <focalLength>277.127346</focalLength>
+          <!-- for 640x480 -->
+          <!-- <focalLength>554.25469</focalLength> -->
+          <distortionK1>0</distortionK1>
+          <distortionK2>0</distortionK2>
+          <distortionK3>0</distortionK3>
+          <distortionT1>0</distortionT1>
+          <distortionT2>0</distortionT2>
+          <CxPrime>0</CxPrime>
+          <!-- <Cx>320</Cx>
+          <Cy>240</Cy> -->
+          <!-- <Cx>160</Cx>
+          <Cy>120</Cy> -->
+          <hackBaseline>0</hackBaseline>
+        </plugin>
+
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

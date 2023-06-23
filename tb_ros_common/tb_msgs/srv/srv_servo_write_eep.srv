@@ -1,0 +1,7 @@
+uint8   sid
+uint8   address
+#the memory at this address could be 2 bytes or 1 byte
+bool    is_2bytes_address
+uint16  value
+---
+uint8 sid

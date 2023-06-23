@@ -1,0 +1,4 @@
+#yaw is drift overtime, so we need to reset it to an external value
+float64 yaw_reset_rad
+---
+float64 yaw_reset_rad

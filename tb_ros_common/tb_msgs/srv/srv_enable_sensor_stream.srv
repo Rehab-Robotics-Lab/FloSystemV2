@@ -1,0 +1,23 @@
+bool stream_enable #master switch: true - allow to config streams, fail: turn all stream off
+bool enable_set_tbcore
+bool tbcore
+
+bool enable_set_servo_neck
+bool servo_neck
+
+bool enable_set_wheel_encoder
+bool wheel_encoder
+
+bool enable_set_servo_ext1
+bool servo_ext1
+
+bool enable_set_servo_ext2
+bool servo_ext2
+---
+#return current status
+bool stream_enable
+bool tbcore
+bool servo_neck
+bool wheel_encoder
+bool servo_ext1
+bool servo_ext2
