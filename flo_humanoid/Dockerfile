@@ -3,25 +3,26 @@ FROM ohmnilabsvn/ohmni_ros:ohmni_ros_tbcontrol_0.0.13
 #make super user
 RUN su
 #install essential tools
-RUN apt-get update -y && sudo apt-get -y install\
-neovim\
-tmux\
+RUN apt-get update -y && sudo apt-get -y install \
+neovim \
+tmux \
 git
 # clear cache
 RUN apt-get clean
 #switch to ohmnidev directory, used for placing code. 
 WORKDIR /home/ohmnidev
-RUN git clone https://github.com/Rehab-Robotics-Lab/Flo-System-2
-RUN git pull https://github.com/Rehab-Robotics-Lab/Flo-System-2
+RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
+WORKDIR /home/ohmnidev/FloSystemV2
+RUN git pull
+WORKDIR /home/ohmnidev
 RUN mkdir -p catkin_ws
 WORKDIR /home/ohmnidev/catkin_ws
 RUN git clone https://github.com/Slamtec/rplidar_ros.git
 RUN catkin_make -j1 -l1
 ARG ROS_DISTRO=melodic
-ENV ROS_DISTRO="${ROS_DISTRO}"
-RUN apt-get update
-RUN apt-get install ros-${ROS_DISTRO}--rosserial-arduino
-RUN apt-get install ros-${ROS_DISTRO}--rosserial
+ENV ROS_DISTRO="$ROS_DISTRO"
+RUN apt-get update && apt-get install -y ros-$ROS_DISTRO-rosserial \
+ros-$ROS_DISTRO-rosserial-arduino
 
 
 #add as neccessary.
