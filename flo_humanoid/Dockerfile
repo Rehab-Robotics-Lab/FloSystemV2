@@ -6,8 +6,7 @@ RUN su
 RUN apt-get update -y && sudo apt-get -y install \
 neovim \
 tmux \
-git \
-
+git 
 # clear cache
 RUN apt-get clean
 #switch to ohmnidev directory, used for placing code. 
@@ -18,12 +17,13 @@ RUN git pull
 WORKDIR /home/ohmnidev
 RUN mkdir -p catkin_ws
 WORKDIR /home/ohmnidev/catkin_ws
-#RUN git clone https://github.com/Slamtec/rplidar_ros.git
-#RUN catkin_make -j1 -l1
 ARG ROS_DISTRO=melodic
 ENV ROS_DISTRO="$ROS_DISTRO"
-RUN apt-get update && apt-get install -y ros-$ROS_DISTRO-rosserial \
+RUN apt-get update && apt-get install -y ros-$ROS_DISTRO-catkin \
+ros-$ROS_DISTRO-rosserial \
 ros-$ROS_DISTRO-rosserial-arduino
+#RUN git clone https://github.com/Slamtec/rplidar_ros.git
+#RUN catkin_make -j1 -l1
 
 
 #add as neccessary.
