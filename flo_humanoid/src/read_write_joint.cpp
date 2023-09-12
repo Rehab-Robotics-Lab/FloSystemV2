@@ -34,6 +34,7 @@
  * Author: Zerom
 *******************************************************************************/
 
+// This code is based on the read_write_node.cpp from the dynamixel_sdk_examples package.
 #include <ros/ros.h>
 
 #include "std_msgs/String.h"
