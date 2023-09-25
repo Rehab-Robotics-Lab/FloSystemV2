@@ -1,4 +1,5 @@
 #fill this table with the joints you want to control in the humanoid robot and their configurations.
+(dynamixel motor address and joint name for each motor)
 address    name                             neutral    min    max   inversion
 #eg:
 # 1          left_shoulder_flexionextension   765        10     500   1
