@@ -30,7 +30,6 @@ RUN mkdir -p catkin_ws
 RUN cp -r /FloSystemV2/flo_humanoid /catkin_ws/src catkin_ws/flo_humanoid
 RUN cp -r /FloSystemV2/flo_humanoid_defs /catkin_ws/src catkin_ws/flo_humanoid_defs
 WORKDIR /home/git/catkin_ws
-
 RUN catkin_make -j1 -l1
 #add as neccessary.
 
