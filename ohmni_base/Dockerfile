@@ -19,16 +19,16 @@ RUN mkdir -p catkin_ws
 WORKDIR /home/ohmnidev/catkin_ws
 ARG ROS_DISTRO=melodic
 ENV ROS_DISTRO="$ROS_DISTRO"
-RUN apt-get update && apt-get install -y ros-$ROS_DISTRO-catkin \
+RUN apt-get update && apt-get install -y ros-$ROS_DISTRO-catkin 
 #install usb utilities to get info on connected devices - might not be as useful. comment next line if not needed.
 #usbutils\
 #The following 2 lines download libraries for control of arduino via ros
 #ros-$ROS_DISTRO-rosserial \
 #ros-$ROS_DISTRO-rosserial-arduino\
 #THE following line downloads the dynamixel sdk for ros. 
-ros-melodic-dynamixel-sdk\
+# ros-melodic-dynamixel-sdk\
 #The following line downloads the dynamixel sdk examples for ros.
-ros-melodic-dynamixel-sdk-examples
+# ros-melodic-dynamixel-sdk-examples
 
 
 #Lidar libraries
