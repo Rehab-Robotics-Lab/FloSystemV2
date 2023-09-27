@@ -2,8 +2,8 @@
 <package format="2">
   <name>tb_msgs</name>
   <version>0.0.1</version>
-  <description>The tb_msgs package</description>
-  <maintainer email="nhattan_pham@ohmnilabs.com">NhatTan</maintainer>
+  <description>action,message and service definitions for ohmni telepresent base, based on tb_msgs package from Ohmnilabs</description>
+  <maintainer email="anandaj@seas.upenn.edu">Ajay Anand</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>catkin</buildtool_depend>
