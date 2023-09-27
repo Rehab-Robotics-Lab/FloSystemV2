@@ -1,5 +1,6 @@
 #fill this table with the joints you want to control in the humanoid robot and their configurations.
+#address refers to the motor address set in the dynamixel wizard
 address    name                             neutral    min    max   inversion
 #eg:
-# 1          left_shoulder_flexionextension   765        10     500   1
+# 1        left_shoulder_flexionextension   765        10     500   1
 
