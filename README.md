@@ -19,10 +19,6 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-## File system format:
-
-Each of the subsystems has its own subdirectory, please name these folders in snake case.
-All the files in the subdirectories are to be named in camel case.
 ## Connecting to the Ohmni telepresence robot and running docker
 1. Clone this repository using git clone https://github.com/Rehab-Robotics-Lab/Flo-System-2.git 
 2. Download the private ssh key from penn box https://upenn.app.box.com/folder/206840565719; contact @anht-nguyen for access if necessary. 
