@@ -9,9 +9,9 @@ It contains repositories for the following components:
 4. Central systems to coordinate the above components 
 ## License:
 
-MIT License. Have fun!
+MIT License. 
 
-Copyright 2021 University of Pennsylvania, Rehabilitation Robotics Lab
+Copyright 2023 University of Pennsylvania, Rehabilitation Robotics Lab
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
