@@ -3,24 +3,24 @@
 FROM ros:melodic-robot-bionic
 #make super user
 RUN su
+ARG ROS_DISTRO=melodic
+ENV ROS_DISTRO="$ROS_DISTRO"
 #install essential tools
-RUN apt-get update -y && sudo apt-get -y install \
-# neovim \
-# tmux \
-git 
-RUN apt-get update && apt-get install -y ros-$ROS_DISTRO-catkin \
-#THE following line downloads the dynamixel sdk for ros. 
-ros-melodic-dynamixel-sdk\
-# The following line downloads the dynamixel sdk examples for ros.
-ros-melodic-dynamixel-sdk-examples
+RUN apt-get update -y && apt-get install -y \
+neovim \
+tmux \
+git \
+ros-$ROS_DISTRO-catkin \
+ros-$ROS_DISTRO-dynamixel-sdk\
+ros-$ROS_DISTRO-dynamixel-sdk-examples
+
 #Lidar libraries
 #RUN git clone https://github.com/Slamtec/rplidar_ros.git
 
 #Build the catkin_ws
 # clear cache
 RUN apt-get clean
-ARG ROS_DISTRO=melodic
-ENV ROS_DISTRO="$ROS_DISTRO"
+
 #switch to ohmnidev directory, used for placing code. 
 RUN mkdir -p home/git
 WORKDIR /home/git
