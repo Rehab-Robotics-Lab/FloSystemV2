@@ -2,7 +2,7 @@
 <package format="2">
   <name>flo_humanoid_defs</name>
   <version>0.0.0</version>
-  <description>The message and action definitions for the flo_humanoid package</description>
+  <description>Contains message and service definitions for the flo_humanoid package</description>
   <maintainer email="anandaj@seas.upenn.edu">Ajay Anand</maintainer>
   <license>proprietery</license>
   <buildtool_depend>catkin</buildtool_depend>
