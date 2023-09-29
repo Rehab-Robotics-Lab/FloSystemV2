@@ -1,5 +1,3 @@
-#base image from ohmnilabsvn/ohmni_ros:ohmni_ros_tbcontrol_0.0.13, preinstalled with ros-melodic + tb control ros packages
-# FROM ohmnilabsvn/ohmni_ros:ohmni_ros_tbcontrol_0.0.13
 FROM ros:melodic-robot-bionic
 #make super user
 RUN su
@@ -20,8 +18,7 @@ ros-$ROS_DISTRO-dynamixel-sdk-examples
 #Build the catkin_ws
 # clear cache
 RUN apt-get clean
-
-#switch to ohmnidev directory, used for placing code. 
+ 
 RUN mkdir -p home/git
 WORKDIR /home/git
 RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
@@ -31,6 +28,9 @@ RUN cp -r /FloSystemV2/flo_humanoid /catkin_ws/src catkin_ws/flo_humanoid
 RUN cp -r /FloSystemV2/flo_humanoid_defs /catkin_ws/src catkin_ws/flo_humanoid_defs
 WORKDIR /home/git/catkin_ws
 RUN catkin_make -j1 -l1
+
+ENTRYPOINT ["./ros_entrypoint.sh"]
+CMD ["bash"]
 
 
 
