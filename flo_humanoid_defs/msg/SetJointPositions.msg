@@ -1,34 +1,22 @@
-#Message definition for passing motor commands to all the joints of the humanoid robot
-#(10 joints, 2 at each shoulder, 2 at each elbow and 1 at the end effector)
+#Message definition to get the position of all the joints of 1 arm in the humanoid robot
+#(5 joints in each arm, 2 at the shoulder, 2 at the elbow and 1 at the end effector)
 uint8 id1
 uint8 id2
 uint8 id3
 uint8 id4
 uint8 id5
-uint8 id6
-uint8 id7
-uint8 id8
-uint8 id9
-uint8 id10
+
 string item1
 string item2
 string item3
 string item4
 string item5
-string item6
-string item7
-string item8
-string item9
-string item10
+
 int32 value1
 int32 value2
 int32 value3
 int32 value4
 int32 value5
-int32 value6
-int32 value7
-int32 value8
-int32 value9
-int32 value10
+
 
 

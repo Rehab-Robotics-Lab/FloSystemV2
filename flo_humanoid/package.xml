@@ -2,7 +2,7 @@
 <package format="2">
   <name>flo_humanoid_defs</name>
   <version>0.0.0</version>
-  <description>Contains message and service definitions for the flo v2 humanoid</description>
+  <description>Contains code to pass commands to and read position information from the dynamixel motors used in the flo v2 humanoid</description>
   <maintainer email="anandaj@seas.upenn.edu">Ajay Anand</maintainer>
   <license>proprietery</license>
   <buildtool_depend>catkin</buildtool_depend>
@@ -12,6 +12,7 @@
   <build_export_depend>std_msgs</build_export_depend>
   <build_export_depend>actionlib_msgs</build_export_depend>
   <exec_depend>message_runtime</exec_depend>
+  <exec_depend>flo_humanoid_defs</exec_depend>
   <export>
     <!-- Other tools can request additional information be placed here -->
   </export>
