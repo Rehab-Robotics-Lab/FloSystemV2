@@ -55,6 +55,7 @@ using namespace dynamixel;
 #define DXL1_ID               1               // DXL1 ID
 #define DXL2_ID               2               // DXL2 ID
 #define BAUDRATE              57600           // Default Baudrate of DYNAMIXEL X series
+//set up fixed mount point for the device, this is the same as the one set in the udev rules file.
 #define DEVICE_NAME           "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
 
 PortHandler * portHandler;
