@@ -38,7 +38,7 @@ GroupBulkRead groupBulkRead(portHandler, packetHandler);
 GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
 //This function was fully modified to work with the 5 motors of the robot arm.
 // based on dynamixelSDK issue #196, it not possible to set multiple parameters for the same motor in a single groupBulkWrite() command.
-bool bulkGetItemCallback(
+bool getJointPositionsCallback(
   flo_humanoid_defs::GetJointPositions::Request & req,
   flo_humanoid_defs::GetJointPositions::Response & res)
 {
@@ -159,73 +159,152 @@ bool bulkGetItemCallback(
   }
 }
 
-void bulkSetItemCallback(const dynamixel_sdk_examples::BulkSetItem::ConstPtr & msg)
+void setJointPositionsCallback(const flo_humanoid_defs::SetJointPositions::ConstPtr & msg)
 {
   uint8_t dxl_error = 0;
   int dxl_comm_result = COMM_TX_FAIL;
   int dxl_addparam_result = false;
-  uint8_t param_goal_position1[4];
-  uint8_t param_goal_position2[4];
-  uint8_t param_goal_led1[1];
-  uint8_t param_goal_led2[1];
-  uint8_t addr_goal_item[2];
-  uint8_t len_goal_item[2];
+  // uint8_t param_goal_position1[4];
+  // uint8_t param_goal_position2[4];
+  // uint8_t param_goal_led1[1];
+  // uint8_t param_goal_led2[1];
+  // uint8_t addr_goal_item[2];
+  // uint8_t len_goal_item[2];
+  uint8_t param_goal_position[5][4];
+  uint8_t param_goal_led[5][1];
+  uint8_t addr_goal_item[5];
+  uint8_t len_goal_item[5];
 
   // Position Value of X series is 4 byte data. For AX & MX(1.0) use 2 byte data(uint16_t) for the Position Value.
   if (msg->item1 == "position") {
     uint32_t position1 = (unsigned int)msg->value1; // Convert int32 -> uint32
-    param_goal_position1[0] = DXL_LOBYTE(DXL_LOWORD(position1));
-    param_goal_position1[1] = DXL_HIBYTE(DXL_LOWORD(position1));
-    param_goal_position1[2] = DXL_LOBYTE(DXL_HIWORD(position1));
-    param_goal_position1[3] = DXL_HIBYTE(DXL_HIWORD(position1));
+    param_goal_position[0][0] = DXL_LOBYTE(DXL_LOWORD(position1));
+    param_goal_position[0][1] = DXL_HIBYTE(DXL_LOWORD(position1));
+    param_goal_position[0][2] = DXL_LOBYTE(DXL_HIWORD(position1));
+    param_goal_position[0][3] = DXL_HIBYTE(DXL_HIWORD(position1));
     addr_goal_item[0] = ADDR_GOAL_POSITION;
     len_goal_item[0] = 4;
   } else if (msg->item1 == "LED") {
     uint32_t led1 = (unsigned int)msg->value1; // Convert int32 -> uint32
-    param_goal_led1[0] = led1;
+    param_goal_led[0][0] = led1;
     addr_goal_item[0] = ADDR_PRESENT_LED;
     len_goal_item[0] = 1;
   }
 
   if (msg->item2 == "position") {
     uint32_t position2 = (unsigned int)msg->value2; // Convert int32 -> uint32
-    param_goal_position2[0] = DXL_LOBYTE(DXL_LOWORD(position2));
-    param_goal_position2[1] = DXL_HIBYTE(DXL_LOWORD(position2));
-    param_goal_position2[2] = DXL_LOBYTE(DXL_HIWORD(position2));
-    param_goal_position2[3] = DXL_HIBYTE(DXL_HIWORD(position2));
+    param_goal_position[1][0] = DXL_LOBYTE(DXL_LOWORD(position2));
+    param_goal_position[1][1] = DXL_HIBYTE(DXL_LOWORD(position2));
+    param_goal_position[1][2] = DXL_LOBYTE(DXL_HIWORD(position2));
+    param_goal_position[1][3] = DXL_HIBYTE(DXL_HIWORD(position2));
     addr_goal_item[1] = ADDR_GOAL_POSITION;
     len_goal_item[1] = 4;
   } else if (msg->item2 == "LED") {
     uint32_t led2 = (unsigned int)msg->value2; // Convert int32 -> uint32
-    param_goal_led2[0] = led2;
+    param_goal_led[1][0] = led2;
     addr_goal_item[1] = ADDR_PRESENT_LED;
     len_goal_item[1] = 1;
+  }
+
+  if (msg->item3 == "position") {
+    uint32_t position3 = (unsigned int)msg->value3; // Convert int32 -> uint32
+    param_goal_position[2][0] = DXL_LOBYTE(DXL_LOWORD(position3));
+    param_goal_position[2][1] = DXL_HIBYTE(DXL_LOWORD(position3));
+    param_goal_position[2][2] = DXL_LOBYTE(DXL_HIWORD(position3));
+    param_goal_position[2][3] = DXL_HIBYTE(DXL_HIWORD(position3));
+    addr_goal_item[2] = ADDR_GOAL_POSITION;
+    len_goal_item[2] = 4;
+  } else if (msg->item3 == "LED") {
+    uint32_t led3 = (unsigned int)msg->value3; // Convert int32 -> uint32
+    param_goal_led[2][0] = led3;
+    addr_goal_item[2] = ADDR_PRESENT_LED;
+    len_goal_item[2] = 1;
+  }
+
+  if (msg->item4 == "position") {
+    uint32_t position4 = (unsigned int)msg->value4; // Convert int32 -> uint32
+    param_goal_position[3][0] = DXL_LOBYTE(DXL_LOWORD(position4));
+    param_goal_position[3][1] = DXL_HIBYTE(DXL_LOWORD(position4));
+    param_goal_position[3][2] = DXL_LOBYTE(DXL_HIWORD(position4));
+    param_goal_position[3][3] = DXL_HIBYTE(DXL_HIWORD(position4));
+    addr_goal_item[3] = ADDR_GOAL_POSITION;
+    len_goal_item[3] = 4;
+  } else if (msg->item4 == "LED") {
+    uint32_t led4 = (unsigned int)msg->value4; // Convert int32 -> uint32
+    param_goal_led[3][0] = led4;
+    addr_goal_item[3] = ADDR_PRESENT_LED;
+    len_goal_item[3] = 1;
+  }
+
+  if (msg->item5 == "position") {
+    uint32_t position5 = (unsigned int)msg->value5; // Convert int32 -> uint32
+    param_goal_position[4][0] = DXL_LOBYTE(DXL_LOWORD(position5));
+    param_goal_position[4][1] = DXL_HIBYTE(DXL_LOWORD(position5));
+    param_goal_position[4][2] = DXL_LOBYTE(DXL_HIWORD(position5));
+    param_goal_position[4][3] = DXL_HIBYTE(DXL_HIWORD(position5));
+    addr_goal_item[4] = ADDR_GOAL_POSITION;
+    len_goal_item[4] = 4;
+  } else if (msg->item5 == "LED") {
+    uint32_t led5 = (unsigned int)msg->value5; // Convert int32 -> uint32
+    param_goal_led[4][0] = led5;
+    addr_goal_item[4] = ADDR_PRESENT_LED;
+    len_goal_item[4] = 1;
   }
 
   // Write Goal Position (length : 4 bytes)
   // When writing 2 byte data to AX / MX(1.0), use write2ByteTxRx() instead.
   if (msg->item1 == "position") {
-    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id1, addr_goal_item[0], len_goal_item[0], param_goal_position1);
+    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id1, addr_goal_item[0], len_goal_item[0], param_goal_position[0]);
   } else if (msg->item1 == "LED") {
-    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id1, addr_goal_item[0], len_goal_item[0], param_goal_led1);
+    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id1, addr_goal_item[0], len_goal_item[0], param_goal_led[0]);
   }
   if (dxl_addparam_result != true) {
     ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id1);
   }
 
   if (msg->item2 == "position") {
-    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id2, addr_goal_item[1], len_goal_item[1], param_goal_position2);
+    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id2, addr_goal_item[1], len_goal_item[1], param_goal_position[1]);
   } else if (msg->item2 == "LED") {
-    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id2, addr_goal_item[1], len_goal_item[1], param_goal_led2);
+    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id2, addr_goal_item[1], len_goal_item[1], param_goal_led[1]);
   }
   if (dxl_addparam_result != true) {
     ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id2);
+  }
+
+  if (msg->item3 == "position") {
+    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id3, addr_goal_item[2], len_goal_item[2], param_goal_position[2]);
+  } else if (msg->item3 == "LED") {
+    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id3, addr_goal_item[2], len_goal_item[2], param_goal_led[2]);
+  }
+  if (dxl_addparam_result != true) {
+    ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id3);
+  }
+
+  if (msg->item4 == "position") {
+    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id4, addr_goal_item[3], len_goal_item[3], param_goal_position[3]);
+  } else if (msg->item4 == "LED") {
+    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id4, addr_goal_item[3], len_goal_item[3], param_goal_led[3]);
+  }
+  if (dxl_addparam_result != true) {
+    ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id4);
+  }
+
+  if (msg->item5 == "position") {
+    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id5, addr_goal_item[4], len_goal_item[4], param_goal_position[4]);
+  } else if (msg->item5 == "LED") {
+    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id5, addr_goal_item[4], len_goal_item[4], param_goal_led[4]);
+  }
+  if (dxl_addparam_result != true) {
+    ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id5);
   }
 
   dxl_comm_result = groupBulkWrite.txPacket();
   if (dxl_comm_result == COMM_SUCCESS) {
     ROS_INFO("setItem : [ID:%d] [%s:%d]", msg->id1, msg->item1.c_str(), msg->value1);
     ROS_INFO("setItem : [ID:%d] [%s:%d]", msg->id2, msg->item2.c_str(), msg->value2);
+    ROS_INFO("setItem : [ID:%d] [%s:%d]", msg->id3, msg->item3.c_str(), msg->value3);
+    ROS_INFO("setItem : [ID:%d] [%s:%d]", msg->id4, msg->item4.c_str(), msg->value4);
+    ROS_INFO("setItem : [ID:%d] [%s:%d]", msg->id5, msg->item5.c_str(), msg->value5);
   } else {
     ROS_INFO("Failed to set position! Result: %d", dxl_comm_result);
   }
@@ -262,10 +341,31 @@ int main(int argc, char ** argv)
     return -1;
   }
 
-  ros::init(argc, argv, "bulk_read_write_node");
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL3_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to enable torque for Dynamixel ID: %d", DXL3_ID);
+    return -1;
+  }
+
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL4_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to enable torque for Dynamixel ID: %d", DXL4_ID);
+    return -1;
+  }
+
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL5_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to enable torque for Dynamixel ID: %d", DXL5_ID);
+    return -1;
+  }
+
+  ros::init(argc, argv, "read_write_arm_node");
   ros::NodeHandle nh;
-  ros::ServiceServer bulk_get_item_srv = nh.advertiseService("/bulk_get_item", bulkGetItemCallback);
-  ros::Subscriber bulk_set_item_sub = nh.subscribe("/bulk_set_item", 10, bulkSetItemCallback);
+  ros::ServiceServer get_joint_positions_srv = nh.advertiseService("/get_joint_positions", getJointPositionsCallback);
+  ros::Subscriber set_joint_positions_sub = nh.subscribe("/set_joint_positions", 10, setJointPositionsCallback);
   ros::spin();
 
   portHandler->closePort();
