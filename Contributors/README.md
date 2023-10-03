@@ -1,7 +1,8 @@
 ## File system format:
 
-Each of the subsystems has its own subdirectory, please name these folders in snake case.
-All the files in the subdirectories are to be named in camel case.
+Each of the subsystems has its own subdirectory, please name these folders in snake_case.
+All the files in the subdirectories are to be named in lowerCamelCase.
+ROS message and service definitions are to be named in UpperCamelCase.
 
 
 ## Contributing:
