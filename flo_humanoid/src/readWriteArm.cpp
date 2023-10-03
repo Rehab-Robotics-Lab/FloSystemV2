@@ -36,7 +36,8 @@ PacketHandler * packetHandler = PacketHandler::getPacketHandler(PROTOCOL_VERSION
 
 GroupBulkRead groupBulkRead(portHandler, packetHandler);
 GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
-
+//This function was fully modified to work with the 5 motors of the robot arm.
+// based on dynamixelSDK issue #196, it not possible to set multiple parameters for the same motor in a single groupBulkWrite() command.
 bool bulkGetItemCallback(
   flo_humanoid_defs::GetJointPositions::Request & req,
   flo_humanoid_defs::GetJointPositions::Response & res)
@@ -104,7 +105,11 @@ bool bulkGetItemCallback(
   uint32_t value1 = 0;
   uint32_t value2 = 0;
   dxl_comm_result = groupBulkRead.txRxPacket();
+
+
+
   if (dxl_comm_result == COMM_SUCCESS) {
+    //having some issues understanding why the if statements below are necessary, test without the if statements to check if they are necessary.
     if (req.item1 == "position") {
       value1 = groupBulkRead.getData((uint8_t)req.id1, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
@@ -134,7 +139,6 @@ bool bulkGetItemCallback(
     } else if (req.item2 == "LED") {
       value2 = groupBulkRead.getData((uint8_t)req.id5, ADDR_PRESENT_POSITION, 4);
     }
-
 
     ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id1, req.item1.c_str(), value1);
     ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id2, req.item2.c_str(), value2);
@@ -143,6 +147,9 @@ bool bulkGetItemCallback(
     ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id5, req.item5.c_str(), value5);
     res.value1 = value1;
     res.value2 = value2;
+    res.value3 = value3;
+    res.value4 = value4;
+    res.value5 = value5;
     groupBulkRead.clearParam();
     return true;
   } else {
