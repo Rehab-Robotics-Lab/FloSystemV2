@@ -56,7 +56,6 @@ using namespace dynamixel;
 #define PROTOCOL_VERSION      2.0             // Default Protocol version of DYNAMIXEL X series.
 
 // Default setting
-<<<<<<< HEAD:flo_humanoid/src/read_write_humanoid.cpp
 // Modify the values below to fit the motor Id's assigned in the dynamixel wizard.
 #define DXL1_ID              10               // DXL1 ID
 #define DXL2_ID              11               // DXL2 ID
@@ -64,14 +63,9 @@ using namespace dynamixel;
 #define DXL4_ID              13               // DXL4 ID
 #define DXL5_ID              14               // DXL5 ID
 #define BAUDRATE             57600            // Default Baudrate of DYNAMIXEL X series
-#define DEVICE_NAME          "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
-=======
-#define DXL1_ID               1               // DXL1 ID
-#define DXL2_ID               2               // DXL2 ID
-#define BAUDRATE              57600           // Default Baudrate of DYNAMIXEL X series
 //set up fixed mount point for the device, this is the same as the one set in the udev rules file.
-#define DEVICE_NAME           "/dev/ttyUSB0"  // [L-inux] To find assigned port, use "$ ls /dev/ttyUSB*" command
->>>>>>> f50ffeb533cc6cf3cb75f08d159a19635c90b69d:flo_humanoid/src/readWriteArm.cpp
+#define DEVICE_NAME          "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
+
 
 PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
 PacketHandler * packetHandler = PacketHandler::getPacketHandler(PROTOCOL_VERSION);
