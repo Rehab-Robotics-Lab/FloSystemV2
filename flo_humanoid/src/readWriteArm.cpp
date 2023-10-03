@@ -1,5 +1,16 @@
-
-// This code is based on the bulk_read_write_node.cpp from the dynamixel_sdk_examples package.
+// Copyright 2021 ROBOTIS CO., LTD.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 /*******************************************************************************
  * This example is written for DYNAMIXEL X(excluding XL-320) and MX(2.0) series with U2D2.
@@ -19,9 +30,13 @@
  *
  * Author: Jaehyun Shim
 *******************************************************************************/
+<<<<<<< HEAD:flo_humanoid/src/read_write_humanoid.cpp
 
 // system() call can be used to run shell commands from within a C++ program.
 
+=======
+// This code is based on the bulk_read_write_node.cpp from the dynamixel_sdk_examples package.
+>>>>>>> f50ffeb533cc6cf3cb75f08d159a19635c90b69d:flo_humanoid/src/readWriteArm.cpp
 #include <ros/ros.h>
 
 #include "std_msgs/String.h"
@@ -41,6 +56,7 @@ using namespace dynamixel;
 #define PROTOCOL_VERSION      2.0             // Default Protocol version of DYNAMIXEL X series.
 
 // Default setting
+<<<<<<< HEAD:flo_humanoid/src/read_write_humanoid.cpp
 // Modify the values below to fit the motor Id's assigned in the dynamixel wizard.
 #define DXL1_ID              10               // DXL1 ID
 #define DXL2_ID              11               // DXL2 ID
@@ -49,6 +65,13 @@ using namespace dynamixel;
 #define DXL5_ID              14               // DXL5 ID
 #define BAUDRATE             57600            // Default Baudrate of DYNAMIXEL X series
 #define DEVICE_NAME          "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
+=======
+#define DXL1_ID               1               // DXL1 ID
+#define DXL2_ID               2               // DXL2 ID
+#define BAUDRATE              57600           // Default Baudrate of DYNAMIXEL X series
+//set up fixed mount point for the device, this is the same as the one set in the udev rules file.
+#define DEVICE_NAME           "/dev/ttyUSB0"  // [L-inux] To find assigned port, use "$ ls /dev/ttyUSB*" command
+>>>>>>> f50ffeb533cc6cf3cb75f08d159a19635c90b69d:flo_humanoid/src/readWriteArm.cpp
 
 PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
 PacketHandler * packetHandler = PacketHandler::getPacketHandler(PROTOCOL_VERSION);
