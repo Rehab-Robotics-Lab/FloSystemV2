@@ -19,6 +19,9 @@
  *
  * Author: Jaehyun Shim
 *******************************************************************************/
+
+// system() call can be used to run shell commands from within a C++ program.
+
 #include <ros/ros.h>
 
 #include "std_msgs/String.h"
@@ -38,10 +41,14 @@ using namespace dynamixel;
 #define PROTOCOL_VERSION      2.0             // Default Protocol version of DYNAMIXEL X series.
 
 // Default setting
-#define DXL1_ID               1               // DXL1 ID
-#define DXL2_ID               2               // DXL2 ID
-#define BAUDRATE              57600           // Default Baudrate of DYNAMIXEL X series
-// #define DEVICE_NAME           "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
+// Modify the values below to fit the motor Id's assigned in the dynamixel wizard.
+#define DXL1_ID              10               // DXL1 ID
+#define DXL2_ID              11               // DXL2 ID
+#define DXL3_ID              12               // DXL3 ID
+#define DXL4_ID              13               // DXL4 ID
+#define DXL5_ID              14               // DXL5 ID
+#define BAUDRATE             57600            // Default Baudrate of DYNAMIXEL X series
+#define DEVICE_NAME          "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
 
 PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
 PacketHandler * packetHandler = PacketHandler::getPacketHandler(PROTOCOL_VERSION);
@@ -224,3 +231,4 @@ int main(int argc, char ** argv)
   portHandler->closePort();
   return 0;
 }
+
