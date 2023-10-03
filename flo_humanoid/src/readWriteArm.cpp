@@ -80,8 +80,8 @@ GroupBulkRead groupBulkRead(portHandler, packetHandler);
 GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
 
 bool bulkGetItemCallback(
-  dynamixel_sdk_examples::BulkGetItem::Request & req,
-  dynamixel_sdk_examples::BulkGetItem::Response & res)
+  flo_humanoid_defs::GetJointPositions::Request & req,
+  flo_humanoid_defs::GetJointPositions::Response & res)
 {
   uint8_t dxl_error = 0;
   int dxl_comm_result = COMM_TX_FAIL;
@@ -110,6 +110,36 @@ bool bulkGetItemCallback(
   }
   if (dxl_addparam_result != true) {
     ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id2);
+    return 0;
+  }
+
+  if (req.item3 == "position") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id3, ADDR_PRESENT_POSITION, 4);
+  } else if (req.item3 == "LED") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id3, ADDR_PRESENT_LED, 1);
+  }
+  if (dxl_addparam_result != true) {
+    ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id3);
+    return 0;
+  }
+
+  if (req.item4 == "position") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
+  } else if (req.item4 == "LED") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id4, ADDR_PRESENT_LED, 1);
+  }
+  if (dxl_addparam_result != true) {
+    ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id4);
+    return 0;
+  }
+
+  if (req.item5 == "position") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id5, ADDR_PRESENT_POSITION, 4);
+  } else if (req.item5 == "LED") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id5, ADDR_PRESENT_LED, 1);
+  }
+  if (dxl_addparam_result != true) {
+    ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id5);
     return 0;
   }
 
