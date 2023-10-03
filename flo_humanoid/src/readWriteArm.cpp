@@ -1,42 +1,6 @@
-// Copyright 2021 ROBOTIS CO., LTD.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-/*******************************************************************************
- * This example is written for DYNAMIXEL X(excluding XL-320) and MX(2.0) series with U2D2.
- * For other series, please refer to the product eManual and modify the Control Table addresses and other definitions.
- * To test this example, please follow the commands below.
- *
- * Open terminal #1
- * $ roscore
- *
- * Open terminal #2
- * $ rosrun dynamixel_sdk_examples bulk_read_write_node
- *
- * Open terminal #3 (run one of below commands at a time)
- * $ rostopic pub -1 /bulk_set_item dynamixel_sdk_examples/BulkSetItem "{id1: 1, id2: 2, item1: 'position', item2: 'LED', value1: 1000, value2: 1}"
- * $ rostopic pub -1 /bulk_set_item dynamixel_sdk_examples/BulkSetItem "{id1: 1, id2: 2, item1: 'LED', item2: 'position', value1: 1, value2: 1000}"
- * $ rosservice call /bulk_get_item "{id1: 1, id2: 2, item1: 'position', item2: 'LED'}"
- *
- * Author: Jaehyun Shim
-*******************************************************************************/
-<<<<<<< HEAD:flo_humanoid/src/read_write_humanoid.cpp
-
+// This code is based on the bulk_read_write_node.cpp from the dynamixel_sdk_examples package; it has been expanded to control the 5 motors of a robot arm present in the FLO v2 humanoid robot.
 // system() call can be used to run shell commands from within a C++ program.
 
-=======
-// This code is based on the bulk_read_write_node.cpp from the dynamixel_sdk_examples package.
->>>>>>> f50ffeb533cc6cf3cb75f08d159a19635c90b69d:flo_humanoid/src/readWriteArm.cpp
 #include <ros/ros.h>
 
 #include "std_msgs/String.h"
@@ -153,8 +117,30 @@ bool bulkGetItemCallback(
       value2 = groupBulkRead.getData((uint8_t)req.id2, ADDR_PRESENT_POSITION, 4);
     }
 
+    if (req.item1 == "position") {
+      value2 = groupBulkRead.getData((uint8_t)req.id3, ADDR_PRESENT_POSITION, 4);
+    } else if (req.item2 == "LED") {
+      value2 = groupBulkRead.getData((uint8_t)req.id3, ADDR_PRESENT_POSITION, 4);
+    }
+
+    if (req.item1 == "position") {
+      value2 = groupBulkRead.getData((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
+    } else if (req.item2 == "LED") {
+      value2 = groupBulkRead.getData((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
+    }
+
+    if (req.item1 == "position") {
+      value2 = groupBulkRead.getData((uint8_t)req.id5, ADDR_PRESENT_POSITION, 4);
+    } else if (req.item2 == "LED") {
+      value2 = groupBulkRead.getData((uint8_t)req.id5, ADDR_PRESENT_POSITION, 4);
+    }
+
+
     ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id1, req.item1.c_str(), value1);
     ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id2, req.item2.c_str(), value2);
+    ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id3, req.item3.c_str(), value3);
+    ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id4, req.item4.c_str(), value4);
+    ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id5, req.item5.c_str(), value5);
     res.value1 = value1;
     res.value2 = value2;
     groupBulkRead.clearParam();
