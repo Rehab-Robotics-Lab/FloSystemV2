@@ -1,0 +1,3 @@
+[submodule "depthai-ros"]
+	path = depthai-ros
+	url = git@github.com:luxonis/depthai-ros.git
