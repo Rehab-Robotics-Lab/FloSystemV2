@@ -22,20 +22,20 @@ find_package(catkin REQUIRED
 # Declare ROS messages, services and actions
 ################################################################################
 ## Generate messages in the 'msg' folder
-add_message_files(
-  FILES
-    SetPosition.msg
-    SyncSetPosition.msg
-    BulkSetItem.msg
-)
+# add_message_files(
+#   FILES
+#     SetPosition.msg
+#     SyncSetPosition.msg
+#     BulkSetItem.msg
+# )
 
 ## Generate services in the 'srv' folder
-add_service_files(
-  FILES
-    GetPosition.srv
-    SyncGetPosition.srv
-    BulkGetItem.srv
-)
+# add_service_files(
+#   FILES
+#     GetPosition.srv
+#     SyncGetPosition.srv
+#     BulkGetItem.srv
+# )
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
@@ -63,27 +63,19 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(read_write_node src/read_write_node.cpp)
-add_dependencies(read_write_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(read_write_node ${catkin_LIBRARIES})
+add_executable(readWriteArm src/readWriteArm.cpp)
+add_dependencies(readWriteArm ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(readWriteArm ${catkin_LIBRARIES})
 
-add_executable(sync_read_write_node src/sync_read_write_node.cpp)
-add_dependencies(sync_read_write_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(sync_read_write_node ${catkin_LIBRARIES})
-
-add_executable(bulk_read_write_node src/bulk_read_write_node.cpp)
-add_dependencies(bulk_read_write_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(bulk_read_write_node ${catkin_LIBRARIES})
-
-add_executable(indirect_address_node src/indirect_address_node.cpp)
-add_dependencies(indirect_address_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(indirect_address_node ${catkin_LIBRARIES})
+add_executable(readWriteJoint src/readWriteJoint.cpp)
+add_dependencies(readWriteJoint ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(readWriteJoint ${catkin_LIBRARIES})
 
 ################################################################################
 # Install
 ################################################################################
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-install(TARGETS read_write_node sync_read_write_node bulk_read_write_node indirect_address_node
+install(TARGETS readWriteArm readWriteJoint
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

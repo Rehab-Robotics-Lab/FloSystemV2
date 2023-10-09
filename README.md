@@ -1,12 +1,6 @@
 # Flo-System-2
 This is the master code repository for the second iteration of the Flo system. 
-It contains code used for the control of the humanoid robot, the control of the mobile telepresence platform and the autonomous navigation stack.
 
-It contains repositories for the following components:
-1. Control of the joints of second version of the flo humanoid
-2. Control of the ohmni telepresence base
-3. Camera and sensor data collection
-4. Central systems to coordinate the above components 
 ## License:
 
 MIT License. 
@@ -18,6 +12,22 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Overview:
+
+This repository contains the following components:
+
+1. Control system of the humanoid robot (Dynamixel motors: 2 XL430-W250-T, 1 XC430-W240-T, 1 XM430-W350-T and 1 RX-64 motor per arm)
+2. Control system of the mobile telepresence platform (Ohmni telepresence platform)
+3. RGB-D cameras (2 Luxonis Oak-D cameras)
+4. 2 dimensional lidar sensor (rp lidar a1)
+5. object localization system (April tag 3)
+6. Centeral user interface (web interface?)
+
+The system is designed to be modular and each component can be run independently, ROS is used as the communication framework between the components.
+
+Each component will be running as a seperate process in a docker container and interfacing with the ros master remotely.
+
 
 ## Connecting to the Ohmni telepresence robot and running docker
 1. Clone this repository using git clone https://github.com/Rehab-Robotics-Lab/Flo-System-2.git 

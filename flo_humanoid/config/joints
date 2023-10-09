@@ -1,13 +1,15 @@
 #fill this table with the joints you want to control in the humanoid robot and their configurations.
-<<<<<<< HEAD
-#address refers to the motor address set in the dynamixel wizard
-address    name                             neutral    min    max   inversion
-#eg:
-# 1        left_shoulder_flexionextension   765        10     500   1
-=======
 (dynamixel motor address and joint name for each motor)
->>>>>>> 6a1935e1108d90aad7556325ae2f6b80f855f72c
-address    name                             neutral    min    max   inversion
+address    name                             type            neutral    min    max   inversion
 #eg:
-# 1        left_shoulder_flexionextension   765        10     500   1
-
+# 1        left_shoulder_flexionextension   <motortype>     765        10     500    1
+10         placeholder                      XC-430-W240-T   0           0      0     0     
+11         placeholder                      XL-430-W250-T   0           0      0     0 
+12         placeholder                      XL-430-W250-T   0           0      0     0
+13         placeholder                      XM-430-W350-T   0           0      0     0
+14         placeholder                      MX-64           0           0      0     0
+20         placeholder                      XC-430-W240-T   0           0      0     0
+21         placeholder                      XL-430-W250-T   0           0      0     0
+22         placeholder                      XL-430-W250-T   0           0      0     0
+23         placeholder                      XM-430-W350-T   0           0      0     0
+24         placeholder                      MX-64           0           0      0     0
