@@ -1,3 +1,6 @@
-[submodule "DynamixelSDK"]
-	path = DynamixelSDK
-	url = git@github.com:ROBOTIS-GIT/DynamixelSDK.git
+# [submodule "DynamixelSDK"]
+# 	path = DynamixelSDK
+# 	url = git@github.com:ROBOTIS-GIT/DynamixelSDK.git
+# [submodule "depthai-ros"]
+# 	path = depthai-ros
+# 	url = git@github.com:luxonis/depthai-ros.git
