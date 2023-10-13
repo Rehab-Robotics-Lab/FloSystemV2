@@ -1,0 +1,2 @@
+// need to look at the control table from the robotis website to get the control table location for each motor for the velocity control RAM address 
+// for eg: if using the XM430-W350 motor, control table is at https://emanual.robotis.com/docs/en/dxl/x/xm430-w350/
