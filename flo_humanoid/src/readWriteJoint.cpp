@@ -1,39 +1,3 @@
-// Copyright 2020 ROBOTIS CO., LTD.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-/*******************************************************************************
- * This example is written for DYNAMIXEL X(excluding XL-320) and MX(2.0) series with U2D2.
- * For other series, please refer to the product eManual and modify the Control Table addresses and other definitions.
- * To test this example, please follow the commands below.
- *
- * Open terminal #1
- * $ roscore
- *
- * Open terminal #2
- * $ rosrun dynamixel_sdk_examples read_write_node
- *
- * Open terminal #3 (run one of below commands at a time)
- * $ rostopic pub -1 /set_position dynamixel_sdk_examples/SetPosition "{id: 1, position: 0}"
- * $ rostopic pub -1 /set_position dynamixel_sdk_examples/SetPosition "{id: 1, position: 1000}"
- * $ rosservice call /get_position "id: 1"
- * $ rostopic pub -1 /set_position dynamixel_sdk_examples/SetPosition "{id: 2, position: 0}"
- * $ rostopic pub -1 /set_position dynamixel_sdk_examples/SetPosition "{id: 2, position: 1000}"
- * $ rosservice call /get_position "id: 2"
- *
- * Author: Zerom
-*******************************************************************************/
-
 // This code is based on the read_write_node.cpp from the dynamixel_sdk_examples package.
 #include <ros/ros.h>
 #include "std_msgs/String.h"
