@@ -53,7 +53,30 @@ bool getPresentPositionCallback(
   }
 }
 
-void setVelocityCallback(const flo_humanoid_defs::SetEndEffVelocity::ConstPtr & msg)
+bool getPresentVelocityCallback(
+  flo_humanoid_defs::GetJointVelocity::Request & req,
+  flo_humanoid_defs::GetJointVelocity::Response & res)
+{
+  uint8_t dxl_error = 0;
+  int dxl_comm_result = COMM_TX_FAIL;
+
+  // Velocity Value of X series is 4 byte data. 
+  int32_t velocity = 0;
+
+  // Read Present Velocity (length : 4 bytes) and Convert uint32 -> int32
+  dxl_comm_result = packetHandler->read4ByteTxRx(
+    portHandler, (uint8_t)req.id, ADDR_PRESENT_VELOCITY, (uint32_t *)&velocity, &dxl_error);
+  if (dxl_comm_result == COMM_SUCCESS) {
+    ROS_INFO("getPosition : [ID:%d] -> [VELOCITY:%d]", req.id, velocity);
+    res.velocity = velocity;
+    return true;
+  } else {
+    ROS_INFO("Failed to get velocity! Result: %d", dxl_comm_result);
+    return false;
+  }
+}
+
+void setVelocityCallback(const flo_humanoid_defs::SetJointVelocity::ConstPtr & msg)
 {
   uint8_t dxl_error = 0;
   int dxl_comm_result = COMM_TX_FAIL;
@@ -105,16 +128,15 @@ int main(int argc, char ** argv)
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL1_ID, ADDR_OPERATING_MODE, 1, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
-    ROS_ERROR("Failed to enable torque for Dynamixel ID %d", DXL1_ID);
+    ROS_ERROR("Failed to change operating mode to velocity control for Dynamixel ID %d", DXL1_ID);
     return -1;
   }
-
-
 
   ros::init(argc, argv, "read_write_node");
   ros::NodeHandle nh;
   ros::ServiceServer get_position_srv = nh.advertiseService("/get_position", getPresentPositionCallback);
-  ros::Subscriber set_position_sub = nh.subscribe("/set_position", 10, setPositionCallback);
+  ros::ServiceServer get_velocity_srv = nh.advertiseService("/get_velocity", getPresentVelocityCallback);
+  ros::Subscriber set_velocity_sub = nh.subscribe("/set_velocity", 10, setVelocityCallback);
   ros::spin();
 
   portHandler->closePort();
