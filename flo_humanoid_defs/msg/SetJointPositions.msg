@@ -4,19 +4,16 @@ uint8 id1
 uint8 id2
 uint8 id3
 uint8 id4
-uint8 id5
 
 string item1
 string item2
 string item3
 string item4
-string item5
 
 int32 value1
 int32 value2
 int32 value3
 int32 value4
-int32 value5
 
 
 
