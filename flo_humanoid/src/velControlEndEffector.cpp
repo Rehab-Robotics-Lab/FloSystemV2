@@ -18,16 +18,15 @@ using namespace dynamixel;
 #define ADDR_GOAL_POSITION    116
 #define ADDR_PRESENT_POSITION 132
 #define ADDR_GOAL_VELOCITY    104
-#define ADDR_GOAL
+#define ADDR_PRESENT_VELOCITY 128
 
 // Protocol version
 #define PROTOCOL_VERSION      2.0             // Default Protocol version of DYNAMIXEL X series.
 
 // Default setting
-#define DXL1_ID               1               // DXL1 ID
-#define DXL2_ID               2               // DXL2 ID
+#define DXL1_ID               14               // set this value to the identifier of the end effector motor.
 #define BAUDRATE              57600           // Default Baudrate of DYNAMIXEL X series
-//set up fixed mount point for the device, this is the same as the one set in the udev rules file.
+//set up fixed mount point for the device(U2d2), this is the same as the one set in the udev rules file.
 #define DEVICE_NAME           "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
 
 bool getPresentPositionCallback(
@@ -60,6 +59,7 @@ void setPositionCallback(const dynamixel_sdk_examples::SetPosition::ConstPtr & m
   int dxl_comm_result = COMM_TX_FAIL;
 
   // Position Value of X series is 4 byte data. For AX & MX(1.0) use 2 byte data(uint16_t) for the Position Value.
+  
   uint32_t position = (unsigned int)msg->position; // Convert int32 -> uint32
 
   // Write Goal Position (length : 4 bytes)
@@ -70,6 +70,30 @@ void setPositionCallback(const dynamixel_sdk_examples::SetPosition::ConstPtr & m
     ROS_INFO("setPosition : [ID:%d] [POSITION:%d]", msg->id, msg->position);
   } else {
     ROS_ERROR("Failed to set position! Result: %d", dxl_comm_result);
+  }
+}
+
+void setVelocityCallback(const flo_humanoid_defs::SetEndEffVelocity::ConstPtr & msg)
+{
+  uint8_t dxl_error = 0;
+  int dxl_comm_result = COMM_TX_FAIL;
+
+  // Position Value of X series is 4 byte data.
+  // The usefulness of this information is yet undecided
+  //Do testing with the gripper to figure out if we need to stop the motor at the end position (closed arm) or maintain velocity command.
+  uint32_t position = (unsigned int)msg->position; // Convert int32 -> uint32
+
+  // Write Goal Velocity (length : 4 bytes)
+  uint32_t velocity = (unsigned int)msg->velocity; // Convert int32 -> uint32
+
+  // Write Goal Velocity (length : 4 bytes)
+  //This variable is going to be used to store the 
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, (uint8_t)msg->id, ADDR_GOAL_ ADDR_GOAL_VELOCITY, velocity, &dxl_error);
+  if (dxl_comm_result == COMM_SUCCESS) {
+    ROS_INFO("setEndEffVelocity : [ID:%d] [VELOCITY:%d]", msg->id, msg->velocity);
+  } else {
+    ROS_ERROR("Failed to set end effector velocity! Result: %d", dxl_comm_result);
   }
 }
 
