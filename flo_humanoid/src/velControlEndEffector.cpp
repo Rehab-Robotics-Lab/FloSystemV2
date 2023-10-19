@@ -11,7 +11,7 @@
 using namespace dynamixel;
 
 // Control table address
-#define OPERATING_MODE 11
+#define ADDR_OPERATING_MODE 11
 //Set operating mode to 1 for velocity control mode(wheel mode) and 3 for position control mode(joint mode)
 #define ADDR_TORQUE_ENABLE    64
 #define ADDR_PRESENT_LED      65
@@ -50,26 +50,6 @@ bool getPresentPositionCallback(
   } else {
     ROS_INFO("Failed to get position! Result: %d", dxl_comm_result);
     return false;
-  }
-}
-
-void setPositionCallback(const dynamixel_sdk_examples::SetPosition::ConstPtr & msg)
-{
-  uint8_t dxl_error = 0;
-  int dxl_comm_result = COMM_TX_FAIL;
-
-  // Position Value of X series is 4 byte data. For AX & MX(1.0) use 2 byte data(uint16_t) for the Position Value.
-  
-  uint32_t position = (unsigned int)msg->position; // Convert int32 -> uint32
-
-  // Write Goal Position (length : 4 bytes)
-  // When writing 2 byte data to AX / MX(1.0), use write2ByteTxRx() instead.
-  dxl_comm_result = packetHandler->write4ByteTxRx(
-    portHandler, (uint8_t)msg->id, ADDR_GOAL_POSITION, position, &dxl_error);
-  if (dxl_comm_result == COMM_SUCCESS) {
-    ROS_INFO("setPosition : [ID:%d] [POSITION:%d]", msg->id, msg->position);
-  } else {
-    ROS_ERROR("Failed to set position! Result: %d", dxl_comm_result);
   }
 }
 
@@ -123,11 +103,13 @@ int main(int argc, char ** argv)
   }
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler, DXL2_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
+    portHandler, DXL1_ID, ADDR_OPERATING_MODE, 1, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
-    ROS_ERROR("Failed to enable torque for Dynamixel ID %d", DXL2_ID);
+    ROS_ERROR("Failed to enable torque for Dynamixel ID %d", DXL1_ID);
     return -1;
   }
+
+
 
   ros::init(argc, argv, "read_write_node");
   ros::NodeHandle nh;
