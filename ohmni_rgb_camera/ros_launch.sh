@@ -12,16 +12,16 @@ tmux new-session -d -s $session -n base
 #Ideally we should change the .bashrc file to reflect the IP of the remote master and roscore will connect to remote master
 tmux send-keys "roscore" C-m
 
-# launch first camera after sleeping for 20 seconds 
+# launch main front facing camera after sleeping for 20 seconds 
 tmux selectp -t 0
 tmux splitw -h -p 50
 tmux send-keys "sleep 20; roslaunch /maincam_v4l2.launch" C-m
 
 
-# launch second camera after sleeping for 25 seconds
+# launch aux downward facing camera after sleeping for 25 seconds
 tmux selectp -t 0
 tmux splitw -v -p 50
-tmux send-keys "sleep 25; roslaunch /maincam_v4l2.launch" C-m
+tmux send-keys "sleep 25; roslaunch /auxcam_v4l2.launch" C-m
 
 #open the htop system monitor to show system resource usage
 tmux selectp -t 1
