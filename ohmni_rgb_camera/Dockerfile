@@ -4,14 +4,6 @@ FROM ros:melodic-ros-core-bionic
 RUN apt-get update && apt-get install -y \
     ros-${ROS_DISTRO}-ros-base=1.4.1-0*
 
-# install ROS essential dependencies
-# RUN apt-get update && apt-get install -y \
-#     ros-${ROS_DISTRO}-tf2 \
-#     ros-${ROS_DISTRO}-tf2-ros \
-#     ros-${ROS_DISTRO}-tf2-geometry-msgs && \
-#     # clear cache
-#     apt-get clean
-
 # install essential tools
 RUN apt-get update && apt-get -y install \
     vim \
@@ -57,3 +49,16 @@ RUN apt-get update && apt-get install -y \
     # clear cache
     apt-get clean
 
+COPY launch/* /
+COPY ros_launch.sh /
+COPY ros_entrypoint.sh /
+
+#Build an example
+RUN mkdir -p root/catkin_ws/src
+COPY example_draw_image root/catkin_ws/src/example_draw_image
+RUN /bin/bash -c ' source /opt/ros/melodic/setup.bash; cd root/catkin_ws\
+    ;catkin_make -DCATKIN_WHITELIST_PACKAGES="example_draw_image" -DCMAKE_BUILD_TYPE=Release'
+ 
+#start core nodes
+ENTRYPOINT ["./ros_entrypoint.sh"]
+CMD ["bash"]
