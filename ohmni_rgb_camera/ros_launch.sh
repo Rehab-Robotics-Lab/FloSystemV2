@@ -23,6 +23,7 @@ tmux selectp -t 0
 tmux splitw -v -p 50
 tmux send-keys "sleep 25; roslaunch /maincam_v4l2.launch" C-m
 
+#open the htop system monitor to show system resource usage
 tmux selectp -t 1
 tmux splitw -v -p 50
 tmux send-keys "htop" C-m
