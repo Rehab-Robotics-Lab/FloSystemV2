@@ -21,10 +21,10 @@ void imageRgbCallback(const sensor_msgs::ImageConstPtr& msg)
     return;
   }
 
-  // Do you amazing things
-  cv::circle(cv_ptr->image, cv::Point(msg->width/2,msg->height/2), 20, CV_RGB(255,0,255), 5);
+  // DO SOME PROCESSING OF THE IMAGE HERE 
+  // cv::circle(cv_ptr->image, cv::Point(msg->width/2,msg->height/2), 20, CV_RGB(255,0,255), 5);
 
-  // publish the result to orther nodes
+  // publish the result to other nodes
   image_pub_.publish(cv_ptr->toImageMsg());
 }
 
