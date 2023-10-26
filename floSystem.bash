@@ -3,8 +3,9 @@ if test -f dev/block/sda1; then
   mkdir -p mnt/nvmeStorage
   mount dev/block/sda1 mnt/nvmeStorage
 fi
-echo "Pruning all stopped docker containers"
-docker container prune 
+#remove all stopped containers, along with any networks not used by at least one container, all dangling images, and all build cache. 
+echo "Pruning docker system"
+docker system prune
 echo "Starting flo_system container"
 # image=flosystem/ohmni_ros:ohmni_ros_tbcontrol_0.0.13_mod
 image=ohmnilabsvn/ohmni_ros:ohmni_ros_tbcontrol_0.0.13
