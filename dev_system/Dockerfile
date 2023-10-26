@@ -8,11 +8,7 @@ RUN apt-get update -y && apt-get install -y \
 neovim \
 tmux \
 git \
-ros-$ROS_DISTRO-catkin \
-
-
-#Lidar libraries
-#RUN git clone https://github.com/Slamtec/rplidar_ros.git
+ros-$ROS_DISTRO-catkin 
 
 #Build the catkin_ws
 # clear cache
