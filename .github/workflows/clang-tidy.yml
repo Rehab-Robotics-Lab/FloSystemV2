@@ -1,0 +1,28 @@
+# Run clang-tidy
+name: Clang-tidy
+
+on:
+  pull_request:
+    types: [synchronize, opened, reopened]
+    
+jobs:
+  checkout-and-check-formatting:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run clang-tidy
+      uses: HorstBaerbel/action-clang-tidy@1.2
+      # These are optional (defaults displayed)
+      with:
+        scandir: '.'
+        builddir: 'build'
+        excludedirs: ''
+        extensions: 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx'
+        cmakeoptions: ''
+
+# scandir: Directory to scan, e.g. 'src'. MUST be realtive to you repository, thus '.' means root of repository. MUST contain a valid CMakeLists.txt.
+# builddir: Directory to run CMake build in, e.g. 'build'. Will automatically be excluded from the scan. MUST be relative to scandir, thus 'build' means 'scandir/build'.
+# excludedirs: Directories below scandir to exclude from scanning, e.g. "test,src/third_party".
+# extensions: Extensions to include in scan, e.g. 'h,c,hpp,cpp'.
+# cmakeoptions: Pass an additional option string to cmake (will call cmake cmakeoptions scandir).
