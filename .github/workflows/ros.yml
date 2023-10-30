@@ -32,8 +32,6 @@ jobs:
           python -m pip install --upgrade pip
           echo "/home/runner/.local/bin" >> $GITHUB_PATH
           python -m pip install "pylint<2.0.0"
-          source ~/catkin_ws/src/FloSystemV2/bash_includes
-          cd $GITHUB_WORKSPACE/FloSystemV2
           git ls-files | grep 'py$' | xargs pylint --unsafe-load-any-extension=y --disable=fixme
 
       - name: Catkin Lint
@@ -41,7 +39,7 @@ jobs:
         run: |
           sudo add-apt-repository ppa:roehling/ros
           sudo apt-get update -y
-          sudo apt-get install -y python-catkin-lint
+          sudo apt-get install -y catkin-lint
           cd $GITHUB_WORKSPACE/FloSystemV2
           catkin_lint . -W2 --strict
 
