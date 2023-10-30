@@ -1,0 +1,72 @@
+---
+name: ros
+
+on:
+  pull_request:
+    types: [synchronize, opened, reopened]
+
+jobs:
+  build-install-lint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04]
+
+    steps:
+      - name: Create Catkin Workspace
+        run: mkdir ~/catkin_ws/src -p
+
+      - name: Checkout this repo
+        uses: actions/checkout@v2
+        with:
+          path: FloSystemV2
+
+      - name: Link repos into catkin ws
+        run: |
+          ln -s "$GITHUB_WORKSPACE/FloSystemV2" "$HOME/catkin_ws/src/"
+
+
+      - name: Pylint
+        if: ${{ success() || failure() }}
+        run: |
+          python -m pip install --upgrade pip
+          echo "/home/runner/.local/bin" >> $GITHUB_PATH
+          python -m pip install "pylint<2.0.0"
+          source ~/catkin_ws/src/FloSystemV2/bash_includes
+          cd $GITHUB_WORKSPACE/FloSystemV2
+          git ls-files | grep 'py$' | xargs pylint --unsafe-load-any-extension=y --disable=fixme
+
+      - name: Catkin Lint
+        if: ${{ success() || failure() }}
+        run: |
+          sudo add-apt-repository ppa:roehling/ros
+          sudo apt-get update -y
+          sudo apt-get install -y python-catkin-lint
+          cd $GITHUB_WORKSPACE/FloSystemV2
+          catkin_lint . -W2 --strict
+
+  python-todos:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v2
+        with:
+          path: FloSystemV2
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-pip-pylint
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Setup Pylint
+        run: |
+          python -m pip install --upgrade pip
+          echo "/home/runner/.local/bin" >> $GITHUB_PATH
+          python -m pip install "pylint<2.0.0"
+
+      - name: Find TODOs
+        run: |-
+          cd $GITHUB_WORKSPACE/FloSystemV2
+          git ls-files | grep 'py$' | xargs pylint --disable=all --enable=fixme
