@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04]
+        os: [ubuntu-20.04]
 
     steps:
       - name: Create Catkin Workspace
@@ -46,7 +46,7 @@ jobs:
           catkin_lint . -W2 --strict
 
   python-todos:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v2
