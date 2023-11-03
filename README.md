@@ -15,21 +15,25 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Overview:
 
-This system is intended to run on a development edition ohmni telepresence robot with docker installed. 
+The Flo V2 system runs on a set of containerized environments with each subsystem running its own docker container. 
+
+This system is intended to run on a development edition ohmni telepresence robot with docker installed but due to the nature of the docker containers 
+should be able to run with limited capacity in any system with docker.
 
 This repository contains the following components:
 
 1. Control system of the humanoid robot (Dynamixel motors: 2 XL430-W250-T, 1 XC430-W240-T, 1 XM430-W350-T and 1 RX-64 motor per arm)
 2. Control system of the mobile telepresence platform (Ohmni telepresence platform)
 3. RGB telepresence and navigation cameras (forwards facing and downwards facing)
-4. RGB-D cameras (2 Luxonis Oak-D cameras)
+4. RGB-D cameras (2 Luxonis Oak-D lite cameras)
 5. object localization system (April tag 3)
-6. Centeral user interface (web interface?)
+6. User/Operator interface (web interface)
 7. 2 dimensional lidar sensor (rp lidar a1)
+8. Obstacle avoidance and autonomous movement systems 
 
 The system is designed to be modular and each component can be run independently, ROS is used as the communication framework between the components.
 
-Each component will be running as a seperate process in a docker container and interfacing with the ros master remotely.
+Each component will be running as a seperate process and interfacing with the ros master remotely.
 
 
 ## Connecting to the Ohmni telepresence robot and running docker
@@ -39,5 +43,11 @@ Each component will be running as a seperate process in a docker container and i
 4. ./var/dockerhome/floSystem.bash - to start a docker container running the flo system (will run in detached mode)
 5. docker attach flo_system
 
+## Running the motor control nodes 
+The motors are intended to be controlled through the web interface but can also be controlled via CLI for testing
 
+## Controlling the ohmni telepresence robot 
+References at: https://docs.ohmnilabs.com/
+
+The ohmni base is controlled via the tb control node, this node can take messages via CLI but is also intended to be controlled via the user interface
 

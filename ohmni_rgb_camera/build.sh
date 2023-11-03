@@ -1,6 +1,6 @@
 #!/bin/bash
-IMAGE_NAME="ohmni_rgbcam"
-IMAGE_TAG="base"
+IMAGE_NAME="ohmni_rgb_camera"
+IMAGE_TAG="latest"
 if [ "$1" == "c" ]
 then        
         USE_CACHE=1

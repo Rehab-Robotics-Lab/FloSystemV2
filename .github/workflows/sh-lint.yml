@@ -1,0 +1,26 @@
+---
+name: Lint bash
+
+on:
+  pull_request:
+    types: [synchronize, opened, reopened]
+
+jobs:
+  bash-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v2
+        with:
+          path: FloSystemV2
+
+      - name: Setup Shell Check
+        run: |
+          sudo apt-get update
+          sudo apt-get install shellcheck
+
+      - name: Lint with Shell Check
+        run: |-
+          cd $GITHUB_WORKSPACE/FloSystemV2
+          git ls-files | grep 'sh$' | xargs shellcheck -x --source-path=SCRIPTDIR
