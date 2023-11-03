@@ -15,6 +15,7 @@ find_package(catkin REQUIRED
     roscpp
     std_msgs
     message_generation
+    actionlib_msgs
     # dynamixel_sdk
 )
 
@@ -50,7 +51,7 @@ catkin_package(
   CATKIN_DEPENDS
     roscpp
     std_msgs
-    dynamixel_sdk
+    # dynamixel_sdk
 #  DEPENDS system_lib
 )
 
