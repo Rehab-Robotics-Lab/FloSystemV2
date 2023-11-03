@@ -13,6 +13,7 @@ project(flo_humanoid)
 find_package(catkin REQUIRED
   COMPONENTS
     roscpp
+    rospy
     std_msgs
     message_generation
     dynamixel_sdk
@@ -49,6 +50,7 @@ find_package(catkin REQUIRED
 catkin_package(
   CATKIN_DEPENDS
     roscpp
+    rospy
     std_msgs
     dynamixel_sdk
     flo_humanoid_defs
