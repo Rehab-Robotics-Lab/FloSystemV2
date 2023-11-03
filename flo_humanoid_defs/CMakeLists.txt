@@ -59,9 +59,9 @@ add_message_files(
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
-  GetJointPosition.msg
-  GetJointPositions.msg
-  GetJointVelocity.msg
+  GetJointPosition.srv
+  GetJointPositions.srv
+  GetJointVelocity.srv
 )
 
 ## Generate actions in the 'action' folder
