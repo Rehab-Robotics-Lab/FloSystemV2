@@ -1,5 +1,5 @@
-#Message definition to get the position of all the joints of 1 arm in the humanoid robot
-#(5 joints in each arm, 2 at the shoulder, 2 at the elbow and 1 at the end effector)
+#Message definition to set the position of all the joints of 1 arm in the humanoid robot
+#(4 joints in each arm, 2 at the shoulder and 2 at the elbow) 
 uint8 id1
 uint8 id2
 uint8 id3
