@@ -17,6 +17,7 @@
   <build_export_depend>dynamixel_sdk</build_export_depend>
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>flo_humanoid_defs</exec_depend>
+  <exec_depend>roscpp</exec_depend>
   <export>
     <!-- Other tools can request additional information be placed here -->
   </export>
