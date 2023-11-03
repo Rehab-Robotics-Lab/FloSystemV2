@@ -1,0 +1,4 @@
+#service defintion to get the position of one joint of the robot
+int8 id
+---
+int32 position
