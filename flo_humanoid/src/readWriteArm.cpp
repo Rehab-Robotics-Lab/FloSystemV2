@@ -2,10 +2,9 @@
 // system() call can be used to run shell commands from within a C++ program.
 
 #include <ros/ros.h>
-
 #include "std_msgs/String.h"
-#include "dynamixel_sdk_examples/BulkGetItem.h"
-#include "dynamixel_sdk_examples/BulkSetItem.h"
+#include "flo_humanoid_defs/GetJointPositions.h"
+#include "flo_ humanoids_defs/SetJointPositions.h"
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
 using namespace dynamixel;
