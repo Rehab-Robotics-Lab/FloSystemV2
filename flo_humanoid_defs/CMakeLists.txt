@@ -51,7 +51,7 @@ add_message_files(
   FILES
   SetJointPosition.msg
   SetJointPositions.msg
-  SetJointVelocity.msg
+  SetJointVelocity.msg  
 )
 
 ## Generate services in the 'srv' folder
