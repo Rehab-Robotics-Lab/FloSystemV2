@@ -72,15 +72,15 @@ add_executable(readWriteJoint src/readWriteJoint.cpp)
 add_dependencies(readWriteJoint ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(readWriteJoint ${catkin_LIBRARIES})
 
-add_executable(readWriteEndEffector src/readWriteEndEffector.cpp)
-add_dependencies(readWriteEndEffector ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(readWriteEndEffector ${catkin_LIBRARIES})
+add_executable(velControlEndEffector src/velControlEndEffector.cpp)
+add_dependencies(velControlEndEffector ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(velControlEndEffector ${catkin_LIBRARIES})
 
 ################################################################################
 # Install
 ################################################################################
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-install(TARGETS readWriteArm readWriteJoint readWriteEndEffector
+install(TARGETS readWriteArm readWriteJoint velControlEndEffector
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
