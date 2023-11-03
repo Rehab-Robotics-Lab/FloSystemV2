@@ -1,0 +1,2 @@
+flo_humanoid:flo_humanoid_defs
+-DCATKIN_DEVEL_PREFIX=/home/ajay/catkin_ws_motorTest/devel -DCMAKE_INSTALL_PREFIX=/home/ajay/catkin_ws_motorTest/install -G Unix Makefiles

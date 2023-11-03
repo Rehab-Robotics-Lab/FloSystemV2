@@ -1,0 +1,8 @@
+prefix=/home/ajay/catkin_ws_motorTest/devel
+
+Name: flo_humanoid
+Description: Description of flo_humanoid
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp std_msgs dynamixel_sdk flo_humanoid_defs

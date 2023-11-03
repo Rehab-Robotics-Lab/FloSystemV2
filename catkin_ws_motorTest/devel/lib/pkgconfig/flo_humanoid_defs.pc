@@ -1,0 +1,8 @@
+prefix=/home/ajay/catkin_ws_motorTest/devel
+
+Name: flo_humanoid_defs
+Description: Description of flo_humanoid_defs
+Version: 0.0.0
+Cflags: -I/home/ajay/catkin_ws_motorTest/devel/include
+Libs: -L${prefix}/lib -lflo_humanoid_defs
+Requires: 
