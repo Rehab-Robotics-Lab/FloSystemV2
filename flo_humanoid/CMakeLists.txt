@@ -38,10 +38,10 @@ find_package(catkin REQUIRED
 # )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-    std_msgs
-)
+# generate_messages(
+#   DEPENDENCIES
+#     std_msgs
+# )
 
 ################################################################################
 # Declare catkin specific configuration to be passed to dependent projects
