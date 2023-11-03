@@ -52,7 +52,7 @@ add_message_files(
   SetJointPosition.msg
   SetJointPositions.msg
   SetJointVelocity.msg
-# )
+)
 
 ## Generate services in the 'srv' folder
 add_service_files(
@@ -60,7 +60,7 @@ add_service_files(
   GetJointPosition.msg
   GetJointPositions.msg
   GetJointVelocity.msg
-# )
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
