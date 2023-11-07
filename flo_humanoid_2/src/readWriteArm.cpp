@@ -3,8 +3,8 @@
 
 #include <ros/ros.h>
 #include "std_msgs/String.h"
-#include "flo_humanoid_defs/GetJointPositions.h"
-#include "flo_humanoids_defs/SetJointPositions.h"
+#include "flo_humanoid/GetJointPositions.h"
+#include "flo_humanoids/SetJointPositions.h"
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
 using namespace dynamixel;
