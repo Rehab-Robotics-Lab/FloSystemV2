@@ -1,2 +1,0 @@
-dynamixel_sdk:dynamixel_sdk_examples
--DCATKIN_DEVEL_PREFIX=/home/ajay/catkin_ws_dynamixel/devel -DCMAKE_INSTALL_PREFIX=/home/ajay/catkin_ws_dynamixel/install -G Unix Makefiles

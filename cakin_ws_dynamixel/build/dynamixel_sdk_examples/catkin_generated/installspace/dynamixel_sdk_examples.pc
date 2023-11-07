@@ -1,8 +1,0 @@
-prefix=/home/ajay/catkin_ws_dynamixel/install
-
-Name: dynamixel_sdk_examples
-Description: Description of dynamixel_sdk_examples
-Version: 3.7.51
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib 
-Requires: roscpp std_msgs dynamixel_sdk
