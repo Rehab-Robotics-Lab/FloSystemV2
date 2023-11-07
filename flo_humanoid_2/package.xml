@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>flo_humanoid</name>
+  <description>Contains code to pass commands to and read position information from the dynamixel motors used in the flo v2 humanoid</description>
+  <maintainer email="anandaj@seas.upenn.edu">Ajay Anand</maintainer>
+  <license>proprietery</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build>roscpp</depend>  
+  <build>std_msgs</depend>
+  <depend>dynamixel_sdk<depend>
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+  </export>
+</package>
