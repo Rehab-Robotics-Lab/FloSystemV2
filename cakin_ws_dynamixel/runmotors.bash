@@ -1,7 +1,0 @@
-rostopic pub -1 /bulk_set_item dynamixel_sdk_examples/BulkSetItem "{id1: 10, id2: 11, item1: 'position', item2: 'position', value1: 1000, value2: 1000}"
-rostopic pub -1 /bulk_set_item dynamixel_sdk_examples/BulkSetItem "{id1: 10, id2: 11, item1: 'LED', item2: 'LED', value1: 1, value2: 1}"
-rostopic pub -1 /bulk_set_item dynamixel_sdk_examples/BulkSetItem "{id1: 10, id2: 11, item1: 'position', item2: 'position', value1: 100, value2: 500}"
-rostopic pub -1 /bulk_set_item dynamixel_sdk_examples/BulkSetItem "{id1: 10, id2: 11, item1: 'position', item2: 'position', value1: 500, value2: 100}"
-#rostopic pub -1 /bulk_set_item dynamixel_sdk_examples/BulkSetItem "{id1: 10, id2: 11, item1: 'position', item2: 'position', value1: 100, value2: 500}"
-rostopic pub -1 /bulk_set_item dynamixel_sdk_examples/BulkSetItem "{id1: 10, id2: 11, item1: 'position', item2: 'position', value1: 0, value2: 0}"
-rostopic pub -1 /bulk_set_item dynamixel_sdk_examples/BulkSetItem "{id1: 10, id2: 11, item1: 'LED', item2: 'LED', value1: 0, value2: 0}"
