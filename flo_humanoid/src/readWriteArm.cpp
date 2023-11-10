@@ -173,6 +173,7 @@ void setJointPositionsCallback(const flo_humanoid::SetJointPositions::ConstPtr &
     param_goal_position[0][3] = DXL_HIBYTE(DXL_HIWORD(position1));
     addr_goal_item[0] = ADDR_GOAL_POSITION;
     len_goal_item[0] = 4;
+    ROS_INFO("position1: %d", position1);
   } else if (msg->item1 == "LED") {
     uint32_t led1 = (unsigned int)msg->value1; // Convert int32 -> uint32
     param_goal_led[0][0] = led1;
@@ -188,6 +189,7 @@ void setJointPositionsCallback(const flo_humanoid::SetJointPositions::ConstPtr &
     param_goal_position[1][3] = DXL_HIBYTE(DXL_HIWORD(position2));
     addr_goal_item[1] = ADDR_GOAL_POSITION;
     len_goal_item[1] = 4;
+    ROS_INFO("position2: %d", position2);
   } else if (msg->item2 == "LED") {
     uint32_t led2 = (unsigned int)msg->value2; // Convert int32 -> uint32
     param_goal_led[1][0] = led2;
@@ -203,6 +205,7 @@ void setJointPositionsCallback(const flo_humanoid::SetJointPositions::ConstPtr &
     param_goal_position[2][3] = DXL_HIBYTE(DXL_HIWORD(position3));
     addr_goal_item[2] = ADDR_GOAL_POSITION;
     len_goal_item[2] = 4;
+    ROS_INFO("position3: %d", position3);
   } else if (msg->item3 == "LED") {
     uint32_t led3 = (unsigned int)msg->value3; // Convert int32 -> uint32
     param_goal_led[2][0] = led3;
@@ -218,6 +221,7 @@ void setJointPositionsCallback(const flo_humanoid::SetJointPositions::ConstPtr &
     param_goal_position[3][3] = DXL_HIBYTE(DXL_HIWORD(position4));
     addr_goal_item[3] = ADDR_GOAL_POSITION;
     len_goal_item[3] = 4;
+    ROS_INFO("position4: %d", position4);
   } else if (msg->item4 == "LED") {
     uint32_t led4 = (unsigned int)msg->value4; // Convert int32 -> uint32
     param_goal_led[3][0] = led4;
