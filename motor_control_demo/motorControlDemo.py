@@ -8,15 +8,25 @@ def motorGUI():
     rospy.init_node('MotorGUI', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     layout = [
-   [psg.Text('Hello World', enable_events=True,
-   key='-TEXT-', font=('Arial Bold', 20),
-   size=(50, 2), relief="raised", border_width=5,
-   expand_x=True, justification='center')],
+    [psg.Text('Flo V2 Motor Control Demo', enable_events=True,
+    key='-TEXT-', font=('Arial Bold', 20),
+    size=(50, 2), relief="raised", border_width=5,
+    expand_x=True, justification='center')],
 
-   [psg.Slider(range=(10, 30), default_value=12,
-   expand_x=True, enable_events=True,
-   orientation='horizontal', key='-SL-')]
-    ]
+    [psg.Slider(range=(0, 1000), default_value=0,
+    expand_x=True, enable_events=True,
+    orientation='horizontal', key='Motor1')]
+    [psg.Slider(range=(0, 1000), default_value=0,
+    expand_x=True, enable_events=True,
+    orientation='horizontal', key='Motor2')]
+    [psg.Slider(range=(0, 1000), default_value=0,
+    expand_x=True, enable_events=True,
+    orientation='horizontal', key='Motor3')]
+    [psg.Slider(range=(0, 1000), default_value=0,
+    expand_x=True, enable_events=True,
+    orientation='horizontal', key='Motor4')]
+        ]
+       
     window = psg.Window('Hello', layout, size=(715, 150))
     while True:
     event, values = window.read()
