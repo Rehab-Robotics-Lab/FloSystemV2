@@ -4,7 +4,11 @@ from std_msgs.msg import String
 from flo_humanoid.msg import SetJointPositions
 
 def motorGUI():
-    pub = rospy.Publisher('MotorCmds', SetJointPositions, queue_size=10)
+    id1 = 10
+    id2 = 11
+    id3 = 12
+    id4 = 13
+    pub = rospy.Publisher("/set_joint_positions", SetJointPositions, queue_size=10)
     rospy.init_node('MotorGUI', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     layout = [
@@ -29,18 +33,24 @@ def motorGUI():
        
     window = psg.Window('Hello', layout, size=(715, 150))
     while True:
-    event, values = window.read()
-    print(event, values)
-    if event == psg.WIN_CLOSED or event == 'Exit':
-        break
-    if event == '-SL-':
-        window['-TEXT-'].update(font=('Arial Bold', int(values['-SL-'])))
-    window.close()
+        event, values = window.read()
+        # print(event, values)
+        if event == psg.WIN_CLOSED or event == 'Exit':
+            break
+        if event == 'Motor1' or event == 'Motor2' or event == 'Motor3' or event == 'Motor4':
+            pub.publish(values['Motor1'])
+            "{id1: 10, id2: 11, id3: 12, id4: 13,  item1: 'position', item2: 'position', item3: 'position', item4: 'position', value1: 0, value2: 0, value3: 0, value4: 0}"
+        window.close()
     while not rospy.is_shutdown():
-        hello_str = "hello world %s" % rospy.get_time()
-        rospy.loginfo(hello_str)
-        pub.publish(hello_str)
-        rate.sleep()
+        event, values = window.read()
+        print(event, values)
+        if event == psg.WIN_CLOSED or event == 'Exit':
+            break
+        if event == 'Motor1' or event == 'Motor2' or event == 'Motor3' or event == 'Motor4':
+            pub.publish(SetJointPositions(id1, id2, id3, id4, 'position', 'position', 'position', 'position', values['Motor1'], values['Motor2'], values['Motor3'], values['Motor4']))
+        rospy.loginfo("publishing to /set_joint_positions values: %s", values)
+    window.close()
+    rate.sleep()
 
 if __name__ == '__main__':
 
