@@ -2,10 +2,9 @@
 // system() call can be used to run shell commands from within a C++ program.
 
 #include <ros/ros.h>
-
 #include "std_msgs/String.h"
-#include "dynamixel_sdk_examples/BulkGetItem.h"
-#include "dynamixel_sdk_examples/BulkSetItem.h"
+#include "flo_humanoid/GetJointPositions.h"
+#include "flo_humanoid/SetJointPositions.h"
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
 using namespace dynamixel;
@@ -35,11 +34,11 @@ PacketHandler * packetHandler = PacketHandler::getPacketHandler(PROTOCOL_VERSION
 
 GroupBulkRead groupBulkRead(portHandler, packetHandler);
 GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
-//This function was fully modified to work with the 5 motors of the robot arm.
+//This function was fully modified to work with the 4 motors of the robot arm.
 // based on dynamixelSDK issue #196, it not possible to set multiple parameters for the same motor in a single groupBulkWrite() command.
 bool getJointPositionsCallback(
-  flo_humanoid_defs::GetJointPositions::Request & req,
-  flo_humanoid_defs::GetJointPositions::Response & res)
+  flo_humanoid::GetJointPositions::Request & req,
+  flo_humanoid::GetJointPositions::Response & res)
 {
   uint8_t dxl_error = 0;
   int dxl_comm_result = COMM_TX_FAIL;
@@ -48,6 +47,8 @@ bool getJointPositionsCallback(
   // Position Value of X series is 4 byte data. For AX & MX(1.0) use 2 byte data(int16_t) for the Position Value.
   int32_t position1 = 0;
   int32_t position2 = 0;
+  int32_t position3 = 0;
+  int32_t position4 = 0;
 
   // Read Present Position (length : 4 bytes) and Convert uint32 -> int32
   // When reading 2 byte data from AX / MX(1.0), use read2ByteTxRx() instead.
@@ -58,7 +59,8 @@ bool getJointPositionsCallback(
   }
   if (dxl_addparam_result != true) {
     ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID: %d", req.id1);
-    return 0;
+    return 0;int32_t position1 = 0;
+  int32_t position2 = 0;
   }
 
   if (req.item2 == "position") {
@@ -95,7 +97,9 @@ bool getJointPositionsCallback(
 
   uint32_t value1 = 0;
   uint32_t value2 = 0;
-  dxl_comm_result = groupBulkRead.txRxPacket();
+  uint32_t value3 = 0;
+  uint32_t value4 = 0;
+  dxl_comm_result = groupBulkRead.txRxPacket(); 
 
 
 
@@ -114,15 +118,15 @@ bool getJointPositionsCallback(
     }
 
     if (req.item1 == "position") {
-      value2 = groupBulkRead.getData((uint8_t)req.id3, ADDR_PRESENT_POSITION, 4);
+      value3 = groupBulkRead.getData((uint8_t)req.id3, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
-      value2 = groupBulkRead.getData((uint8_t)req.id3, ADDR_PRESENT_POSITION, 4);
+      value3 = groupBulkRead.getData((uint8_t)req.id3, ADDR_PRESENT_POSITION, 4);
     }
 
     if (req.item1 == "position") {
-      value2 = groupBulkRead.getData((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
+      value4 = groupBulkRead.getData((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
-      value2 = groupBulkRead.getData((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
+      value4 = groupBulkRead.getData((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
     }
 
   
@@ -144,7 +148,7 @@ bool getJointPositionsCallback(
   }
 }
 
-void setJointPositionsCallback(const flo_humanoid_defs::SetJointPositions::ConstPtr & msg)
+void setJointPositionsCallback(const flo_humanoid::SetJointPositions::ConstPtr & msg)
 {
   uint8_t dxl_error = 0;
   int dxl_comm_result = COMM_TX_FAIL;
@@ -169,6 +173,7 @@ void setJointPositionsCallback(const flo_humanoid_defs::SetJointPositions::Const
     param_goal_position[0][3] = DXL_HIBYTE(DXL_HIWORD(position1));
     addr_goal_item[0] = ADDR_GOAL_POSITION;
     len_goal_item[0] = 4;
+    ROS_INFO("position1: %d", position1);
   } else if (msg->item1 == "LED") {
     uint32_t led1 = (unsigned int)msg->value1; // Convert int32 -> uint32
     param_goal_led[0][0] = led1;
@@ -184,6 +189,7 @@ void setJointPositionsCallback(const flo_humanoid_defs::SetJointPositions::Const
     param_goal_position[1][3] = DXL_HIBYTE(DXL_HIWORD(position2));
     addr_goal_item[1] = ADDR_GOAL_POSITION;
     len_goal_item[1] = 4;
+    ROS_INFO("position2: %d", position2);
   } else if (msg->item2 == "LED") {
     uint32_t led2 = (unsigned int)msg->value2; // Convert int32 -> uint32
     param_goal_led[1][0] = led2;
@@ -199,6 +205,7 @@ void setJointPositionsCallback(const flo_humanoid_defs::SetJointPositions::Const
     param_goal_position[2][3] = DXL_HIBYTE(DXL_HIWORD(position3));
     addr_goal_item[2] = ADDR_GOAL_POSITION;
     len_goal_item[2] = 4;
+    ROS_INFO("position3: %d", position3);
   } else if (msg->item3 == "LED") {
     uint32_t led3 = (unsigned int)msg->value3; // Convert int32 -> uint32
     param_goal_led[2][0] = led3;
@@ -214,6 +221,7 @@ void setJointPositionsCallback(const flo_humanoid_defs::SetJointPositions::Const
     param_goal_position[3][3] = DXL_HIBYTE(DXL_HIWORD(position4));
     addr_goal_item[3] = ADDR_GOAL_POSITION;
     len_goal_item[3] = 4;
+    ROS_INFO("position4: %d", position4);
   } else if (msg->item4 == "LED") {
     uint32_t led4 = (unsigned int)msg->value4; // Convert int32 -> uint32
     param_goal_led[3][0] = led4;
