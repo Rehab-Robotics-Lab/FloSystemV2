@@ -32,15 +32,6 @@ def motorGUI():
         ]
        
     window = psg.Window('Hello', layout, size=(715, 150))
-    while True:
-        event, values = window.read()
-        # print(event, values)
-        if event == psg.WIN_CLOSED or event == 'Exit':
-            break
-        if event == 'Motor1' or event == 'Motor2' or event == 'Motor3' or event == 'Motor4':
-            pub.publish(values['Motor1'])
-            "{id1: 10, id2: 11, id3: 12, id4: 13,  item1: 'position', item2: 'position', item3: 'position', item4: 'position', value1: 0, value2: 0, value3: 0, value4: 0}"
-        window.close()
     while not rospy.is_shutdown():
         event, values = window.read()
         print(event, values)
