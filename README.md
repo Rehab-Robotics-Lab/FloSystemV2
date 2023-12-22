@@ -51,3 +51,7 @@ References at: https://docs.ohmnilabs.com/
 
 The ohmni base is controlled via the tb control node, this node can take messages via CLI but is also intended to be controlled via the user interface
 
+#Docker Compose
+
+All of the subsystems can be started using '''docker compose up'''
+
