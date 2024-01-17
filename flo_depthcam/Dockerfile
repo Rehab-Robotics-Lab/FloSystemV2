@@ -13,7 +13,8 @@ ros-$ROS_DISTRO-catkin \
 #install the depthai ros package for the luxonis oak-d depth camera
 ros-<distro>-depthai-ros
 
-#set udev rules for the luxonis oak-d depth camera to make it mounts at the correct location.
+#set udev rules for the luxonis oak-d lite depth camera to make it mounts at the correct location.
+# we do not need to use the serial number of the actual device as we only plan to use 1 camera.
 RUN echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="03e7", MODE="0666"' | sudo tee /etc/udev/rules.d/80-movidius.rules
 RUN udevadm control --reload-rules && sudo udevadm trigger
 
@@ -25,6 +26,7 @@ RUN apt-get clean
 RUN mkdir -p home/git
 WORKDIR /home/git
 RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
+RUN git clone --branch noetic https://github.com/luxonis/depthai-ros.git
 WORKDIR /home/git
 RUN mkdir -p catkin_ws
 # RUN cp -r /FloSystemV2/flo_humanoid /catkin_ws/src catkin_ws/flo_humanoid
@@ -32,6 +34,8 @@ RUN mkdir -p catkin_ws
 
 WORKDIR /home/git/catkin_ws
 RUN catkin_make -j1 -l1
+
+COPY ros_entrypoint.sh ros_entrypoint.sh
 
 ENTRYPOINT ["./ros_entrypoint.sh"]
 CMD ["bash"]
