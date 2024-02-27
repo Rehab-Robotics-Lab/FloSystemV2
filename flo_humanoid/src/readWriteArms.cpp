@@ -2,8 +2,8 @@
 
 #include <ros/ros.h>
 #include "std_msgs/String.h"
-#include "flo_humanoid/GetJointPositions.h"
-#include "flo_humanoid/SetJointPositions.h"
+#include "flo_humanoid/GetArmsJointPositions.h"
+#include "flo_humanoid/SetArmsJointPositions.h"
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
 using namespace dynamixel;
@@ -24,6 +24,10 @@ using namespace dynamixel;
 #define DXL2_ID              11               // DXL2 ID
 #define DXL3_ID              12               // DXL3 ID
 #define DXL4_ID              13               // DXL4 ID
+#define DXL5_ID              20               // DXL5 ID
+#define DXL6_ID              21               // DXL6 ID
+#define DXL7_ID              22               // DXL7 ID
+#define DXL8_ID              23               // DXL8 ID
 // BAUDRATE should be defined here.
 #define BAUDRATE             57600            // Default Baudrate of DYNAMIXEL X series
 //set up fixed mount point for the device, this is the same as the one set in the udev rules file.
@@ -50,9 +54,12 @@ bool getJointPositionsCallback(
   int32_t position2 = 0;
   int32_t position3 = 0;
   int32_t position4 = 0;
+  int32_t position5 = 0;
+  int32_t position6 = 0;
+  int32_t position7 = 0;
+  int32_t position8 = 0;
 
   // Read Present Position (length : 4 bytes) and Convert uint32 -> int32
-  // When reading 2 byte data from AX / MX(1.0), use read2ByteTxRx() instead.
   if (req.item1 == "position") {
     dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id1, ADDR_PRESENT_POSITION, 4);
   } else if (req.item1 == "LED") {
@@ -94,12 +101,56 @@ bool getJointPositionsCallback(
     return 0;
   }
 
+   if (req.item5 == "position") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id5, ADDR_PRESENT_POSITION, 4);
+  } else if (req.item5 == "LED") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id5, ADDR_PRESENT_LED, 1);
+  }
+  if (dxl_addparam_result != true) {
+    ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id5);
+    return 0;
+  }
+    
+  if (req.item6 == "position") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id6, ADDR_PRESENT_POSITION, 4);
+  } else if (req.item6 == "LED") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id6, ADDR_PRESENT_LED, 1);
+  }
+  if (dxl_addparam_result != true) {
+    ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id6);
+    return 0;
+  }
+    
+  if (req.item7 == "position") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id7, ADDR_PRESENT_POSITION, 4);
+  } else if (req.item7 == "LED") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id7, ADDR_PRESENT_LED, 1);
+  }
+  if (dxl_addparam_result != true) {
+    ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id7);
+    return 0;
+  }
 
+    
+  if (req.item8 == "position") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id8, ADDR_PRESENT_POSITION, 4);
+  } else if (req.item8 == "LED") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id8, ADDR_PRESENT_LED, 1);
+  }
+  if (dxl_addparam_result != true) {
+    ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id8);
+    return 0;
+  }
 
   uint32_t value1 = 0;
   uint32_t value2 = 0;
   uint32_t value3 = 0;
   uint32_t value4 = 0;
+  uint32_t value5 = 0;
+  uint32_t value6 = 0;
+  uint32_t value7 = 0;
+  uint32_t value8 = 0;
+
   dxl_comm_result = groupBulkRead.txRxPacket(); 
 
 
