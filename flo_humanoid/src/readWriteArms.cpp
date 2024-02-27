@@ -41,9 +41,9 @@ PacketHandler * packetHandler = PacketHandler::getPacketHandler(PROTOCOL_VERSION
 // GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
 //This function was fully modified to work with the 4 motors of the robot arm.
 // based on dynamixelSDK issue #196, it not possible to set multiple parameters for the same motor in a single groupBulkWrite() command.
-bool getJointPositionsCallback(
-  flo_humanoid::GetJointPositions::Request & req,
-  flo_humanoid::GetJointPositions::Response & res)
+bool getArmsJointPositionsCallback(
+  flo_humanoid::GetArmsJointPositions::Request & req,
+  flo_humanoid::GetArmsJointPositions::Response & res)
 {
   uint8_t dxl_error = 0;
   int dxl_comm_result = COMM_TX_FAIL;
@@ -230,7 +230,7 @@ bool getJointPositionsCallback(
   }
 }
 
-void setJointPositionsCallback(const flo_humanoid::SetJointPositions::ConstPtr & msg)
+void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::ConstPtr & msg)
 {
   uint8_t dxl_error = 0;
   int dxl_comm_result = COMM_TX_FAIL;
@@ -538,14 +538,10 @@ int main(int argc, char ** argv)
     return -1;
   }
 
-
-
-  
-
-  ros::init(argc, argv, "read_write_arm_node");
+  ros::init(argc, argv, "read_write_arms_node");
   ros::NodeHandle nh;
-  ros::ServiceServer get_joint_positions_srv = nh.advertiseService("/get_joint_positions", getJointPositionsCallback);
-  ros::Subscriber set_joint_positions_sub = nh.subscribe("/set_joint_positions", 10, setJointPositionsCallback);
+  ros::ServiceServer get_joint_positions_srv = nh.advertiseService("/get_arms_joint_positions", getArmsJointPositionsCallback);
+  ros::Subscriber set_joint_positions_sub = nh.subscribe("/set__arms_joint_positions", 10, setArmsJointPositionsCallback);
   ros::spin();
 
   portHandler->closePort();
