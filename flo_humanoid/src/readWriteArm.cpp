@@ -108,25 +108,25 @@ bool getJointPositionsCallback(
     if (req.item1 == "position") {
       value1 = groupBulkRead.getData((uint8_t)req.id1, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
-      value1 = groupBulkRead.getData((uint8_t)req.id1, ADDR_PRESENT_POSITION, 4);
+      value1 = groupBulkRead.getData((uint8_t)req.id1, ADDR_PRESENT_LED, 1);
     }
 
     if (req.item1 == "position") {
       value2 = groupBulkRead.getData((uint8_t)req.id2, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
-      value2 = groupBulkRead.getData((uint8_t)req.id2, ADDR_PRESENT_POSITION, 4);
+      value2 = groupBulkRead.getData((uint8_t)req.id2, ADDR_PRESENT_LED, 1);
     }
 
     if (req.item1 == "position") {
       value3 = groupBulkRead.getData((uint8_t)req.id3, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
-      value3 = groupBulkRead.getData((uint8_t)req.id3, ADDR_PRESENT_POSITION, 4);
+      value3 = groupBulkRead.getData((uint8_t)req.id3, ADDR_PRESENT_LED, 1);
     }
 
     if (req.item1 == "position") {
       value4 = groupBulkRead.getData((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
-      value4 = groupBulkRead.getData((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
+      value4 = groupBulkRead.getData((uint8_t)req.id4, ADDR_PRESENT_LED, 1);
     }
 
   

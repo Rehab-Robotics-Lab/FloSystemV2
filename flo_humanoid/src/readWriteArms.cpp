@@ -541,7 +541,7 @@ int main(int argc, char ** argv)
   ros::init(argc, argv, "read_write_arms_node");
   ros::NodeHandle nh;
   ros::ServiceServer get_joint_positions_srv = nh.advertiseService("/get_arms_joint_positions", getArmsJointPositionsCallback);
-  ros::Subscriber set_joint_positions_sub = nh.subscribe("/set__arms_joint_positions", 10, setArmsJointPositionsCallback);
+  ros::Subscriber set_joint_positions_sub = nh.subscribe("/set_arms_joint_positions", 10, setArmsJointPositionsCallback);
   ros::spin();
 
   portHandler->closePort();
