@@ -71,9 +71,9 @@ add_executable(read_write_arm_node src/readWriteArm.cpp)
 add_dependencies(read_write_arm_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(read_write_arm_node ${catkin_LIBRARIES})
 
-add_executable(read_write_arms_node src/readWriteArms.cpp)
-add_dependencies(read_write_arms_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(read_write_arms_node ${catkin_LIBRARIES})
+# add_executable(read_write_arms_node src/readWriteArms.cpp)
+# add_dependencies(read_write_arms_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# target_link_libraries(read_write_arms_node ${catkin_LIBRARIES})
 
 ################################################################################
 # Install
