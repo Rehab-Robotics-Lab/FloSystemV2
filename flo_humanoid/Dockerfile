@@ -7,11 +7,12 @@ ENV ROS_DISTRO="$ROS_DISTRO"
 RUN apt-get update -y && apt-get install -y \
 neovim nano \
 tmux \
-git \
+git python3 python3-pip \
 ros-$ROS_DISTRO-catkin \
 ros-$ROS_DISTRO-dynamixel-sdk \
 ros-$ROS_DISTRO-dynamixel-sdk-examples
 
+RUN python3 -m pip install -y tk PySimpleGUI 
 #Lidar libraries
 #RUN git clone https://github.com/Slamtec/rplidar_ros.git
 
