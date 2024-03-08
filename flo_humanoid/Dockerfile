@@ -38,6 +38,8 @@ RUN /ros_entrypoint.sh catkin_make
 WORKDIR /home/git
 RUN cp -r FloSystemV2/flo_humanoid catkin_ws/src 
 RUN cp -r FloSystemV2/flo_humanoid catkin_ws
+RUN cp -r FloSystemV2/motor_control_demo catkin_ws/src
+
 #RUN cp -r FloSystemV2/flo_humanoid_defs catkin_ws/src catkin_ws/flo_humanoid_defs
 WORKDIR /home/git/catkin_ws
 RUN /ros_entrypoint.sh  catkin_make -j1 -l1
