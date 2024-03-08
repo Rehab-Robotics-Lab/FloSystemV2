@@ -16,8 +16,8 @@ using namespace dynamixel;
 #define PROTOCOL_VERSION      2.0             // Default Protocol version of DYNAMIXEL X series.
 
 // Default setting
-#define DXL1_ID               1               // DXL1 ID
-#define DXL2_ID               2               // DXL2 ID
+#define DXL1_ID               121               // DXL1 ID
+#define DXL2_ID               122               // DXL2 ID
 #define BAUDRATE              57600           // Default Baudrate of DYNAMIXEL X series
 //set up fixed mount point for the device, this is the same as the one set in the udev rules file.
 #define DEVICE_NAME           "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
@@ -100,10 +100,10 @@ int main(int argc, char ** argv)
     return -1;
   }
 
-  ros::init(argc, argv, "read_write_node");
+  ros::init(argc, argv, "read_write_joint_node");
   ros::NodeHandle nh;
-  ros::ServiceServer get_position_srv = nh.advertiseService("/get_position", getPresentPositionCallback);
-  ros::Subscriber set_position_sub = nh.subscribe("/set_position", 10, setPositionCallback);
+  ros::ServiceServer get_position_srv = nh.advertiseService("/get_joint_position", getPresentPositionCallback);
+  ros::Subscriber set_position_sub = nh.subscribe("/set_joint_position", 10, setPositionCallback);
   ros::spin();
 
   portHandler->closePort();

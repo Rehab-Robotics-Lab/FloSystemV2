@@ -5,7 +5,7 @@ ARG ROS_DISTRO=melodic
 ENV ROS_DISTRO="$ROS_DISTRO"
 #install essential tools
 RUN apt-get update -y && apt-get install -y \
-neovim \
+neovim nano \
 tmux \
 git \
 ros-$ROS_DISTRO-catkin \
@@ -20,7 +20,7 @@ ros-$ROS_DISTRO-dynamixel-sdk-examples
 RUN apt-get clean
 RUN mkdir -p home/git
 WORKDIR /home/git
-RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
+RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git -b anh-testmotor
 WORKDIR /home/git
 RUN mkdir -p catkin_ws
 
@@ -37,7 +37,7 @@ RUN /ros_entrypoint.sh catkin_make
 
 WORKDIR /home/git
 RUN cp -r FloSystemV2/flo_humanoid catkin_ws/src 
-RUN cp -r FloSystemV2/flo_humanoid catkin_ws/flo_humanoid 
+RUN cp -r FloSystemV2/flo_humanoid catkin_ws
 #RUN cp -r FloSystemV2/flo_humanoid_defs catkin_ws/src catkin_ws/flo_humanoid_defs
 WORKDIR /home/git/catkin_ws
 RUN /ros_entrypoint.sh  catkin_make -j1 -l1

@@ -20,10 +20,10 @@ using namespace dynamixel;
 
 // Default setting
 // Modify the values below to fit the motor Id's assigned in the dynamixel wizard.
-#define DXL1_ID              10               // DXL1 ID
-#define DXL2_ID              11               // DXL2 ID
-#define DXL3_ID              12               // DXL3 ID
-#define DXL4_ID              13               // DXL4 ID
+#define DXL1_ID              111               // DXL1 ID
+#define DXL2_ID              112               // DXL2 ID
+#define DXL3_ID              121               // DXL3 ID
+#define DXL4_ID              122               // DXL4 ID
 #define BAUDRATE             57600            // Default Baudrate of DYNAMIXEL X series
 //set up fixed mount point for the device, this is the same as the one set in the udev rules file.
 #define DEVICE_NAME          "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
