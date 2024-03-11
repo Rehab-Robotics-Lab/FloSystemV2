@@ -23,9 +23,11 @@ RUN apt-get clean
 #build catkin_ws 
 RUN mkdir -p home/git
 WORKDIR /home/git
-RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
+#RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
+#optional command to clone specific branch, --single-branch used to avoid cloning all branches.
+RUN git clone -b 2ArmJointControl --single-branch https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
 RUN mkdir -p catkin_ws
-RUN cp -r FloSystemV2/flo_humanoid catkin_ws/src
+RUN cp -r FloSystemV2/flo_humanoid catkin_ws/src/flo_humanoid
 WORKDIR /home/git/catkin_ws
 
 #catkin build options are j1 for single thread and l1 for load average
