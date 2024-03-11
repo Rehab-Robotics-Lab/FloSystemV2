@@ -13,6 +13,8 @@ RUN apt-get update -y && apt-get install -y \
 neovim \
 tmux \
 git \
+python3 \
+python3-catkin-tools \
 ros-$ROS_DISTRO-catkin \
 ros-$ROS_DISTRO-dynamixel-sdk \
 ros-$ROS_DISTRO-dynamixel-sdk-examples
