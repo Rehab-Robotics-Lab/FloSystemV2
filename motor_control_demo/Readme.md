@@ -35,3 +35,8 @@ This is a demo of the motor control system. It is a python script that will open
 
 The read_write_arms node needs to be running for this to work as it publishes messages to the /set_arms_joint_positions topic
 Remember to add execute permission to the python executable before being able to run it (to add exucutable permissions to the file, run the command `chmod +x biMotorControlDemo.py` in the terminal)
+
+## install files
+
+apt install python3-tk
+pip3 install PySimpleGUI
