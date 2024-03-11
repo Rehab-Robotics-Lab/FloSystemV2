@@ -37,8 +37,8 @@ using namespace dynamixel;
 PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
 PacketHandler * packetHandler = PacketHandler::getPacketHandler(PROTOCOL_VERSION);
 
-// GroupBulkRead groupBulkRead(portHandler, packetHandler);
-// GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
+GroupBulkRead groupBulkRead(portHandler, packetHandler);
+GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
 //This function was fully modified to work with the 4 motors of the robot arm.
 // based on dynamixelSDK issue #196, it not possible to set multiple parameters for the same motor in a single groupBulkWrite() command.
 bool getArmsJointPositionsCallback(
@@ -462,10 +462,10 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
 
 int main(int argc, char ** argv)
 { 
-  #define DEVICE_NAME          "/dev/ttyUSB0"
-  PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
-  GroupBulkRead groupBulkRead(portHandler, packetHandler);
-  GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
+  // #define DEVICE_NAME          "/dev/ttyUSB0"
+  // PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
+  // GroupBulkRead groupBulkRead(portHandler, packetHandler);
+  // GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
   uint8_t dxl_error = 0;
   int dxl_comm_result = COMM_TX_FAIL;
 
