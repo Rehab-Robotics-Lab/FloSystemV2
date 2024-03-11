@@ -9,7 +9,7 @@ neovim \
 tmux \
 git \
 ros-$ROS_DISTRO-catkin \
-ros-$ROS_DISTRO-dynamixel-sdk\
+ros-$ROS_DISTRO-dynamixel-sdk \
 ros-$ROS_DISTRO-dynamixel-sdk-examples
 
 #Lidar libraries
@@ -22,12 +22,10 @@ RUN apt-get clean
 RUN mkdir -p home/git
 WORKDIR /home/git
 RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
-WORKDIR /home/git
 RUN mkdir -p catkin_ws
-RUN cp -r /FloSystemV2/flo_humanoid /catkin_ws/src catkin_ws/flo_humanoid
-RUN cp -r /FloSystemV2/flo_humanoid_defs /catkin_ws/src catkin_ws/flo_humanoid_defs
+RUN cp -r FloSystemV2/flo_humanoid catkin_ws/src
 WORKDIR /home/git/catkin_ws
-RUN catkin_make -j1 -l1
+RUN catkin build -j1 -l1
 
 ENTRYPOINT ["./ros_entrypoint.sh"]
 CMD ["bash"]
