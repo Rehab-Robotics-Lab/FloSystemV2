@@ -26,7 +26,7 @@ WORKDIR /home/git
 #RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
 #optional command to clone specific branch, --single-branch used to avoid cloning all branches.
 RUN git clone -b 2ArmJointControl --single-branch https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
-RUN mkdir -p catkin_ws
+RUN mkdir -p catkin_ws/src/flo_humanoid
 RUN cp -r FloSystemV2/flo_humanoid catkin_ws/src/flo_humanoid
 WORKDIR /home/git/catkin_ws
 
