@@ -52,7 +52,7 @@ RUN head -n -1 /ros_entrypoint.sh > /tmp.sh \
     && chmod +x /ros_entrypoint.sh
 
 WORKDIR /home/git/catkin_ws/src/motor_control_demo
-RUN bash run_motor_demo.bash
+RUN bash runMotorDemo.bash
 
 
 ENTRYPOINT ["/ros_entrypoint.sh"]
