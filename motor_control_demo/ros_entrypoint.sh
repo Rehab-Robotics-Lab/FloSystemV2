@@ -2,10 +2,13 @@
 #export ROS_MASTER_URI=http://
 #export ROS_IP=
 #export ROS_HOSTNAME=
+cd /home/catkin_ws
 tmux new -s motor_control_demo
 ## run roscore if running as a standalone container
-#roscore
-tmux split-window;                             # split the detached tmux session
-tmux new window;                               # create a new window
-tmux send 'command -t' ENTER;                  # send 2nd command 'command' to 2nd pane. I believe there's a `--target` option to target specific pane.
+roscore
+tmux split-window                             # split the detached tmux session
+source devel/setup.bash                       # source the workspace
+rosrun flo_humanoid 
+                            # create a new window
+tmux send 'command -t' ENTER                  # send 2nd command 'command' to 2nd pane. I believe there's a `--target` option to target specific pane.
 tmux a;                                        # open (attach) tmux session.
