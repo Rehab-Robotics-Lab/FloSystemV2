@@ -33,6 +33,7 @@ WORKDIR /home/git
 #optional command to clone specific branch, --single-branch used to avoid cloning all branches.
 RUN git clone -b 2ArmJointControl --single-branch https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
 RUN mkdir -p catkin_ws/src
+# RUN catkin build
 RUN cp -r FloSystemV2/flo_humanoid catkin_ws/src
 RUN cp -r FloSystemV2/motor_control_demo catkin_ws/src
 WORKDIR /home/git/catkin_ws
@@ -41,7 +42,7 @@ WORKDIR /home/git/catkin_ws
 #this is to avoid memory issues and processor limitations on the 
 #ohmni telepresence robot
 #RUN catkin build -j1 -l1
-RUN catkin build
+RUN catkin /ros_entrypoint.sh build
 
 ENTRYPOINT ["./ros_entrypoint.sh"]
 CMD ["bash"]
