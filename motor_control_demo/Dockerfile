@@ -49,7 +49,8 @@ RUN head -n -1 /ros_entrypoint.sh > /tmp.sh \
     && echo 'source "/home/git/catkin_ws/devel/setup.bash"' >> /ros_entrypoint.sh \
     && echo 'exec $@' >> /ros_entrypoint.sh \
     && chmod +x /ros_entrypoint.sh
-
+    
+WORKDIR /home/git/catkin_ws
 RUN source devel/setup.bash # source the workspace
 #setup connection the the remote roscore using its IP address, make the IP address visible to all the containers, set the IP static if possible, else make it a parameter passed on during the docker run command to all containers.\
 #export ROS_MASTER_URI=http://
