@@ -40,7 +40,8 @@ WORKDIR /home/git/catkin_ws
 #catkin build options are j1 for single thread and l1 for load average
 #this is to avoid memory issues and processor limitations on the 
 #ohmni telepresence robot
-RUN catkin build -j1 -l1
+#RUN catkin build -j1 -l1
+RUN catkin build
 
 ENTRYPOINT ["./ros_entrypoint.sh"]
 CMD ["bash"]
