@@ -5,6 +5,7 @@ source devel/setup.bash
 #export ROS_IP=
 #export ROS_HOSTNAME=
 tmux new -s motor_control_demo
+tmux attach -t motor_control_demo
 ## run roscore if running as a standalone container
 roscore
 tmux split-window;                               

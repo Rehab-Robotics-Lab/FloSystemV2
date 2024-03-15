@@ -40,3 +40,10 @@ Remember to add execute permission to the python executable before being able to
 
 apt install python3-tk
 pip3 install PySimpleGUI
+
+# Motor Ranges 
+
+Motor ID 111 - neutral position 1500
+
+# Docker Command
+
