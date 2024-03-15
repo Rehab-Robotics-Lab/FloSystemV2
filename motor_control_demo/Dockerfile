@@ -43,7 +43,7 @@ WORKDIR /home/git/catkin_ws
 #RUN catkin build -j1 -l1
 RUN /ros_entrypoint.sh catkin build
 # RUN catkin build
-
+USER root
 RUN head -n -1 /ros_entrypoint.sh > /tmp.sh \
     && mv /tmp.sh /ros_entrypoint.sh \
     && echo 'source "/home/git/catkin_ws/devel/setup.bash"' >> /ros_entrypoint.sh \
