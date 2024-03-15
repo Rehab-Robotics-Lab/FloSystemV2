@@ -50,7 +50,7 @@ RUN head -n -1 /ros_entrypoint.sh > /tmp.sh \
     && echo 'exec $@' >> /ros_entrypoint.sh \
     && chmod +x /ros_entrypoint.sh
 
-ENTRYPOINT ["./ros_entrypoint.sh"]
+ENTRYPOINT ["/ros_entrypoint.sh"]
 CMD ["bash"]
 
 
