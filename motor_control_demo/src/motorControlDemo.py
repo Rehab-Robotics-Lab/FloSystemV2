@@ -1,14 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import PySimpleGUI as psg
 import rospy
 from std_msgs.msg import String
 from flo_humanoid.msg import SetJointPositions
 
 def motorGUI():
-    id1 = 10
-    id2 = 11
-    id3 = 12
-    id4 = 13
+    id1 = 111
+    id2 = 112
+    id3 = 121
+    id4 = 122
     pub = rospy.Publisher("/set_joint_positions", SetJointPositions, queue_size=10)
     rospy.init_node('MotorGUI', anonymous=True)
     rate = rospy.Rate(10) # 10hz
