@@ -19,7 +19,7 @@ ros-$ROS_DISTRO-catkin \
 ros-$ROS_DISTRO-dynamixel-sdk \
 ros-$ROS_DISTRO-dynamixel-sdk-examples \
 python3-tk
-RUN pip3 install PySimpleGUI
+RUN pip3 install pysimpleGUI
 
 #clear cache
 RUN apt-get clean
