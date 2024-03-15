@@ -10,7 +10,7 @@ def motorGUI():
     id3 = 121
     id4 = 122
     pub = rospy.Publisher("/set_joint_positions", SetJointPositions, queue_size=10)
-    rospy.init_node('MotorGUI', anonymous=True)
+    rospy.init_node('motor_control_demo_node', anonymous=True)
     rate = rospy.Rate(10) # 10hz
     layout = [
     [psg.Text('Flo V2 Motor Control Demo', enable_events=True,
