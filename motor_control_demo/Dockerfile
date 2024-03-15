@@ -1,5 +1,6 @@
 #use melodic robot bionic base image from ROS foundation 
 FROM ros:melodic-robot-bionic
+SHELL ["/bin/bash", "-c"]
 
 #make super user
 RUN su
