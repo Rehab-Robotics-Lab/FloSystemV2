@@ -17,7 +17,7 @@ ENV R_GID="${R_GID}"
 ARG R_UID
 ENV R_UID="${R_UID}"
 
-RUN echo "$ROS_USER"
+RUN echo "$ROS_USER"    
 
 RUN useradd -m $ROS_USER && \
         echo "$ROS_USER:$ROS_USER" | chpasswd && \
@@ -51,19 +51,22 @@ RUN pip3 install pysimpleGUI
 #clear cache
 RUN apt-get clean
 
-#build catkin_ws 
-RUN mkdir -p home/git
-WORKDIR /home/git
+#build catkin_ws
+RUN mkdir /home/$ROS_USER/catkin_ws/src -p
+RUN chown -R $ROS_USER /home/$ROS_USER
+
+USER $ROS_USER
+
+WORKDIR /home/$ROS_USER
 #RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
 #optional command to clone specific branch, --single-branch used to avoid cloning all branches.
 RUN git clone -b 2ArmJointControl --single-branch https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
-WORKDIR /home/git/FloSystemV2
+WORKDIR /home/$ROS_USER/FloSystemV2
 RUN git pull
-WORKDIR /home/git
-RUN mkdir -p catkin_ws/src
+WORKDIR /home/$ROS_USER
 RUN cp -r FloSystemV2/flo_humanoid catkin_ws/src
 RUN cp -r FloSystemV2/motor_control_demo catkin_ws/src
-WORKDIR /home/git/catkin_ws
+WORKDIR /home/$ROS_USER/catkin_ws
 
 #catkin build options are j1 for single thread and l1 for load average
 #this is to avoid memory issues and processor limitations on the 
@@ -80,7 +83,6 @@ RUN head -n -1 /ros_entrypoint.sh > /tmp.sh \
 
 WORKDIR /home/git/catkin_ws/src/motor_control_demo
 # RUN ./runMotorDemo.bash
-
 
 ENTRYPOINT ["/ros_entrypoint.sh"]
 CMD ["bash"]
