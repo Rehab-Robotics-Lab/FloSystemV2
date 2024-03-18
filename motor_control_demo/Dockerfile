@@ -10,7 +10,7 @@ RUN su
 
 
 #these argscome in from docker compose.yml, defined by the corresponding variables in the host env.
-ARG ROS_USER = floV2
+ARG ROS_USER=floV2
 ENV ROS_USER="${ROS_USER}"
 
 # ARG R_GID
