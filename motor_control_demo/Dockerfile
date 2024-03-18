@@ -30,7 +30,7 @@ ENV ROS_USER="${ROS_USER}"
 #         usermod  --uid $R_UID $ROS_USER && \
 #         groupmod --gid $R_GID $ROS_USER
 
-#set environment variable
+#set environment variable for ROS distro
 ARG ROS_DISTRO=melodic
 ENV ROS_DISTRO="$ROS_DISTRO"
 
@@ -85,7 +85,7 @@ RUN head -n -1 /ros_entrypoint.sh > /tmp.sh \
 RUN su
 
 #USER $ROS_USER
-WORKDIR /home/git/catkin_ws/src/motor_control_demo
+WORKDIR /home/$ROS_USER/catkin_ws/src/motor_control_demo
 # RUN ./runMotorDemo.bash
 
 ENTRYPOINT ["/ros_entrypoint.sh"]
