@@ -82,8 +82,9 @@ RUN head -n -1 /ros_entrypoint.sh > /tmp.sh \
     && echo 'exec $@' >> /ros_entrypoint.sh \
     && chmod +x /ros_entrypoint.sh
 
-USER su
+RUN su
 
+#USER $ROS_USER
 WORKDIR /home/git/catkin_ws/src/motor_control_demo
 # RUN ./runMotorDemo.bash
 
