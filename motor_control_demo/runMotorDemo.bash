@@ -29,8 +29,9 @@ source devel/setup.bash
 #export ROS_HOSTNAME=
 tmux new -s motor_control_demo;
 tmux attach -t motor_control_demo;
-## run roscore if running as a standalone container
-tmux send 'roscore' ENTER;
+
+# run roscore if running as a standalone container
+tmux send-keys 'roscore' ENTER;
 tmux split-window;                               
 tmux send 'rosrun flo_humanoid read_write_arm_node';       # run the unilateral arm control node
 tmux split-window;
