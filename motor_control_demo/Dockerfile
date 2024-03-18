@@ -78,7 +78,7 @@ RUN /ros_entrypoint.sh catkin build
 USER root
 RUN head -n -1 /ros_entrypoint.sh > /tmp.sh \
     && mv /tmp.sh /ros_entrypoint.sh \
-    && echo 'source "/home/git/catkin_ws/devel/setup.bash"' >> /ros_entrypoint.sh \
+    && echo 'source "/home/$ROS_USER/catkin_ws/devel/setup.bash"' >> /ros_entrypoint.sh \
     && echo 'exec $@' >> /ros_entrypoint.sh \
     && chmod +x /ros_entrypoint.sh
 
