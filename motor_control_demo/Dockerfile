@@ -1,6 +1,9 @@
 #use melodic robot bionic base image from ROS foundation 
 FROM ros:melodic-robot-bionic
-SHELL ["/bin/bash", "-c"]
+
+#This is bad practice (can lead to security vulnerabilities and dependancy issues)
+#change shell to bash where required in entrypoint or cmd.
+#SHELL ["/bin/bash", "-c"]
 
 #make super user
 RUN su
