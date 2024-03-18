@@ -1,33 +1,34 @@
-#use melodic robot bionic base image from ROS foundation 
-FROM osrf/ros::melodic-robot-bionic
+ FROM osrf/ros::melodic-robot-bionic
 
 #This is bad practice (can lead to security vulnerabilities and dependancy issues)
-#change shell to bash where required in entrypoint or cmd.
+#changed shell to bash where required in entrypoint or cmd.
 #SHELL ["/bin/bash", "-c"]
 
-#make super user 
-#This is also bad practice 
-#RUN su
+#Make super user 
+#This is also bad practice, replace once docker compose setup is complete
+RUN su
 
-ARG ROS_USER
+
+#these argscome in from docker compose.yml, defined by the corresponding variables in the host env.
+ARG ROS_USER = floV2
 ENV ROS_USER="${ROS_USER}"
 
-ARG R_GID
-ENV R_GID="${R_GID}"
-ARG R_UID
-ENV R_UID="${R_UID}"
+# ARG R_GID
+# ENV R_GID="${R_GID}"
+# ARG R_UID
+# ENV R_UID="${R_UID}"
 
-RUN echo "$ROS_USER"    
+# RUN echo "$ROS_USER"    
 
-RUN useradd -m $ROS_USER && \
-        echo "$ROS_USER:$ROS_USER" | chpasswd && \
-        usermod --shell /bin/bash $ROS_USER && \
-        usermod -aG sudo $ROS_USER && \
-        echo "$ROS_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$ROS_USER && \
-        chmod 0440 /etc/sudoers.d/$ROS_USER && \
-        # Replace 1000 with your user/group id
-        usermod  --uid $R_UID $ROS_USER && \
-        groupmod --gid $R_GID $ROS_USER
+# RUN useradd -m $ROS_USER && \
+#         echo "$ROS_USER:$ROS_USER" | chpasswd && \
+#         usermod --shell /bin/bash $ROS_USER && \
+#         usermod -aG sudo $ROS_USER && \
+#         echo "$ROS_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$ROS_USER && \
+#         chmod 0440 /etc/sudoers.d/$ROS_USER && \
+#         # Replace 1000 with your user/group id
+#         usermod  --uid $R_UID $ROS_USER && \
+#         groupmod --gid $R_GID $ROS_USER
 
 #set environment variable
 ARG ROS_DISTRO=melodic
@@ -53,9 +54,9 @@ RUN apt-get clean
 
 #build catkin_ws
 RUN mkdir /home/$ROS_USER/catkin_ws/src -p
-RUN chown -R $ROS_USER /home/$ROS_USER
+# RUN chown -R $ROS_USER /home/$ROS_USER
 
-USER $ROS_USER
+# USER $ROS_USER
 
 WORKDIR /home/$ROS_USER
 #RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
@@ -80,6 +81,8 @@ RUN head -n -1 /ros_entrypoint.sh > /tmp.sh \
     && echo 'source "/home/git/catkin_ws/devel/setup.bash"' >> /ros_entrypoint.sh \
     && echo 'exec $@' >> /ros_entrypoint.sh \
     && chmod +x /ros_entrypoint.sh
+
+USER su
 
 WORKDIR /home/git/catkin_ws/src/motor_control_demo
 # RUN ./runMotorDemo.bash
