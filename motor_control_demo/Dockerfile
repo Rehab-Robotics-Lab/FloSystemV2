@@ -5,8 +5,29 @@ FROM ros:melodic-robot-bionic
 #change shell to bash where required in entrypoint or cmd.
 #SHELL ["/bin/bash", "-c"]
 
-#make super user
-RUN su
+#make super user 
+#This is also bad practice 
+#RUN su
+
+ARG ROS_USER
+ENV ROS_USER="${ROS_USER}"
+
+ARG R_GID
+ENV R_GID="${R_GID}"
+ARG R_UID
+ENV R_UID="${R_UID}"
+
+RUN echo "$ROS_USER"
+
+RUN useradd -m $ROS_USER && \
+        echo "$ROS_USER:$ROS_USER" | chpasswd && \
+        usermod --shell /bin/bash $ROS_USER && \
+        usermod -aG sudo $ROS_USER && \
+        echo "$ROS_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$ROS_USER && \
+        chmod 0440 /etc/sudoers.d/$ROS_USER && \
+        # Replace 1000 with your user/group id
+        usermod  --uid $R_UID $ROS_USER && \
+        groupmod --gid $R_GID $ROS_USER
 
 #set environment variable
 ARG ROS_DISTRO=melodic
