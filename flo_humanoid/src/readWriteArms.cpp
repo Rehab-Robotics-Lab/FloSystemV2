@@ -20,14 +20,14 @@ using namespace dynamixel;
 // Default setting
 // Modify the values below to fit the motor Id's assigned in the dynamixel wizard.
 // these lines do not need to be here, instead define the dynamixel id's in the config file and read them in here.
-#define DXL1_ID              10               // DXL1 ID
-#define DXL2_ID              11               // DXL2 ID
-#define DXL3_ID              12               // DXL3 ID
-#define DXL4_ID              13               // DXL4 ID
-#define DXL5_ID              20               // DXL5 ID
-#define DXL6_ID              21               // DXL6 ID
-#define DXL7_ID              22               // DXL7 ID
-#define DXL8_ID              23               // DXL8 ID
+#define DXL1_ID              111               // DXL1 ID
+#define DXL2_ID              112               // DXL2 ID
+#define DXL3_ID              121               // DXL3 ID
+#define DXL4_ID              122               // DXL4 ID
+#define DXL5_ID              211               // DXL5 ID
+#define DXL6_ID              212               // DXL6 ID
+#define DXL7_ID              221               // DXL7 ID
+#define DXL8_ID              222               // DXL8 ID
 // BAUDRATE should be defined here.
 #define BAUDRATE             57600            // Default Baudrate of DYNAMIXEL X series
 //set up fixed mount point for the device, this is the same as the one set in the udev rules file.
@@ -37,9 +37,9 @@ using namespace dynamixel;
 PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
 PacketHandler * packetHandler = PacketHandler::getPacketHandler(PROTOCOL_VERSION);
 
-// GroupBulkRead groupBulkRead(portHandler, packetHandler);
-// GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
-//This function was fully modified to work with the 4 motors of the robot arm.
+GroupBulkRead groupBulkRead(portHandler, packetHandler);
+GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
+//This function was fully modified to work with the 8 joint motors of the 2 arms of the robot.
 // based on dynamixelSDK issue #196, it not possible to set multiple parameters for the same motor in a single groupBulkWrite() command.
 bool getArmsJointPositionsCallback(
   flo_humanoid::GetArmsJointPositions::Request & req,
@@ -462,10 +462,10 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
 
 int main(int argc, char ** argv)
 { 
-  #define DEVICE_NAME          "/dev/ttyUSB0"
-  PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
-  GroupBulkRead groupBulkRead(portHandler, packetHandler);
-  GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
+  // #define DEVICE_NAME          "/dev/ttyUSB0"
+  // PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
+  // GroupBulkRead groupBulkRead(portHandler, packetHandler);
+  // GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
   uint8_t dxl_error = 0;
   int dxl_comm_result = COMM_TX_FAIL;
 
@@ -541,7 +541,7 @@ int main(int argc, char ** argv)
   ros::init(argc, argv, "read_write_arms_node");
   ros::NodeHandle nh;
   ros::ServiceServer get_joint_positions_srv = nh.advertiseService("/get_arms_joint_positions", getArmsJointPositionsCallback);
-  ros::Subscriber set_joint_positions_sub = nh.subscribe("/set__arms_joint_positions", 10, setArmsJointPositionsCallback);
+  ros::Subscriber set_joint_positions_sub = nh.subscribe("/set_arms_joint_positions", 10, setArmsJointPositionsCallback);
   ros::spin();
 
   portHandler->closePort();
