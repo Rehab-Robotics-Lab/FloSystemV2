@@ -1,0 +1,1 @@
+docker build ./ -t ajyanand/motor_control_demo:latest
