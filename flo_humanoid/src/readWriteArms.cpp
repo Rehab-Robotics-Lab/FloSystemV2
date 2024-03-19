@@ -39,7 +39,7 @@ PacketHandler * packetHandler = PacketHandler::getPacketHandler(PROTOCOL_VERSION
 
 GroupBulkRead groupBulkRead(portHandler, packetHandler);
 GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
-//This function was fully modified to work with the 4 motors of the robot arm.
+//This function was fully modified to work with the 8 joint motors of the 2 arms of the robot.
 // based on dynamixelSDK issue #196, it not possible to set multiple parameters for the same motor in a single groupBulkWrite() command.
 bool getArmsJointPositionsCallback(
   flo_humanoid::GetArmsJointPositions::Request & req,
