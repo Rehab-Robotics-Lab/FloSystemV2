@@ -56,8 +56,8 @@ def biMotorGUI():
             or event == 'Motor5' or event == 'Motor6' or event == 'Motor7' or event == 'Motor8'):
             pub.publish(SetArmsJointPositions(id1, id2, id3, id4, id5, id6, id7,id8, 
                                               'position', 'position', 'position', 'position','position', 'position', 'position', 'position',
-                                                int(values['Motor1']), int(values['Motor2']), int(values['Motor3']), int(values['Motor4'],
-                                                    int(values['Motor5']), int(values['Motor6']), int(values['Motor7']), int(values['Motor8']))))
+                                                int(values['Motor1']), int(values['Motor2']), int(values['Motor3']), int(values['Motor4']),
+                                                    int(values['Motor5']), int(values['Motor6']), int(values['Motor7']), int(values['Motor8'])))
             rospy.loginfo("publishing to /set_arms_joint_positions values: %s", values)
     window.close()
     rate.sleep()
