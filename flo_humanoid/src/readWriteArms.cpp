@@ -20,14 +20,14 @@ using namespace dynamixel;
 // Default setting
 // Modify the values below to fit the motor Id's assigned in the dynamixel wizard.
 // these lines do not need to be here, instead define the dynamixel id's in the config file and read them in here.
-#define DXL1_ID              10               // DXL1 ID
-#define DXL2_ID              11               // DXL2 ID
-#define DXL3_ID              12               // DXL3 ID
-#define DXL4_ID              13               // DXL4 ID
-#define DXL5_ID              20               // DXL5 ID
-#define DXL6_ID              21               // DXL6 ID
-#define DXL7_ID              22               // DXL7 ID
-#define DXL8_ID              23               // DXL8 ID
+#define DXL1_ID              111               // DXL1 ID
+#define DXL2_ID              112               // DXL2 ID
+#define DXL3_ID              121               // DXL3 ID
+#define DXL4_ID              122               // DXL4 ID
+#define DXL5_ID              211               // DXL5 ID
+#define DXL6_ID              212               // DXL6 ID
+#define DXL7_ID              221               // DXL7 ID
+#define DXL8_ID              222               // DXL8 ID
 // BAUDRATE should be defined here.
 #define BAUDRATE             57600            // Default Baudrate of DYNAMIXEL X series
 //set up fixed mount point for the device, this is the same as the one set in the udev rules file.
