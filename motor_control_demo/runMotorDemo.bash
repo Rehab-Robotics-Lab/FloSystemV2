@@ -1,5 +1,7 @@
 #!/bin/bash
 # container default set to bash, maybe change that 
+
+#This script still has issues, do not use
 """
 source ~/.bashrc
 
