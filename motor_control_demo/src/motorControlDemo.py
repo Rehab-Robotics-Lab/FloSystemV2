@@ -15,7 +15,7 @@ def motorGUI():
     layout = [
     [psg.Text('Flo V2 Motor Control Demo', enable_events=True,
     key='-TEXT-', font=('Arial Bold', 20),
-    size=(100, 2), relief="raised", border_width=5,
+    size=(50, 2), relief="raised", border_width=5,
     expand_x=True, justification='center')],
     [psg.Slider(range=(0, 1500), default_value=500,
     expand_x=True, enable_events=True,
@@ -31,7 +31,7 @@ def motorGUI():
     orientation='horizontal', key='Motor4')]
         ]
        
-    window = psg.Window('Flo V2 Unilateral Demo', layout, size=(715, 300))
+    window = psg.Window('Flo V2 Unilateral Demo', layout, size=(1000, 1000))
     while not rospy.is_shutdown():
         event, values = window.read()
         print(event, values)
