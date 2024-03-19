@@ -47,9 +47,10 @@ ros-$ROS_DISTRO-dynamixel-sdk-examples \
 ros-$ROS_DISTRO-rospy \
 python3-tk \
 python3-pip \
-python3-rospkg
+python3-yaml 
 RUN apt-get update -y
-RUN pip3 install pysimpleGUI
+RUN pip3 install pysimpleGUI rospkg catkin_pkg
+RUN apt-get update -y
 
 #clear cache
 RUN apt-get clean
