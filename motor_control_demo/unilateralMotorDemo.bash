@@ -29,8 +29,8 @@ tmux send-keys 'sleep 10 && connect_to_robot 0 && roslaunch --wait flo_teleprese
 #export ROS_IP=
 #export ROS_HOSTNAME=
 tmux new -d -s motor_control_demo;
-tmux rename-window roscore;
 tmux attach -t motor_control_demo;
+tmux rename-window roscore;
 # run roscore if running as a standalone container
 tmux send-keys 'roscore' ENTER;
 # if running as part of system connected to remote ROS master, check connection status.
