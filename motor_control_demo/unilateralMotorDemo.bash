@@ -2,6 +2,8 @@
 # container default set to bash, maybe change that 
 
 #This script still has issues, do not use
+
+# refer to https://tao-of-tmux.readthedocs.io/en/latest/manuscript/10-scripting.html for more information on tmux scripting
 """
 source ~/.bashrc
 
@@ -28,8 +30,9 @@ tmux send-keys 'sleep 10 && connect_to_robot 0 && roslaunch --wait flo_teleprese
 #export ROS_MASTER_URI=http://
 #export ROS_IP=
 #export ROS_HOSTNAME=
+#start a new tmux session with the name motor_control_demo in detached mode
 tmux new -d -s motor_control_demo;
-tmux attach -t motor_control_demo;
+#rename the window to roscore
 tmux rename-window roscore;
 # run roscore if running as a standalone container
 tmux send-keys 'roscore' ENTER;
