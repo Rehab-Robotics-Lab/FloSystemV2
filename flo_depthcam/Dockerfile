@@ -4,6 +4,7 @@ FROM ros:noetic-robot-focal
 RUN su
 ARG ROS_DISTRO=noetic
 ENV ROS_DISTRO="$ROS_DISTRO"
+ARG ROS_USER=flov2_cam
 #install essential tools
 RUN apt-get update -y && apt-get install -y \
 neovim \
@@ -23,14 +24,14 @@ RUN udevadm control --reload-rules && sudo udevadm trigger
 # clear cache
 RUN apt-get clean
  
-RUN mkdir -p home/git
-WORKDIR /home/git
+RUN mkdir -p home/$ROS_USER/git
+WORKDIR  home/$ROS_USER/git
 RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
 RUN git clone --branch noetic https://github.com/luxonis/depthai-ros.git
 WORKDIR /home/git
 RUN mkdir -p catkin_ws
-# RUN cp -r /FloSystemV2/flo_humanoid /catkin_ws/src catkin_ws/flo_humanoid
-# RUN cp -r /FloSystemV2/flo_humanoid_defs /catkin_ws/src catkin_ws/flo_humanoid_defs
+RUN cp -r /FloSystemV2/flo_humanoid /catkin_ws/src catkin_ws/flo_humanoid
+RUN cp -r /FloSystemV2/flo_humanoid_defs /catkin_ws/src catkin_ws/flo_humanoid_defs
 
 WORKDIR /home/git/catkin_ws
 RUN catkin_make -j1 -l1
