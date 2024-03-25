@@ -33,7 +33,7 @@ def biMotorGUI():
     [psg.Slider(range=(3100, 3900), default_value=3800,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor4')],
-    [psg.Slider(range=(0, 1000), default_value=0,
+    [psg.Slider(range=(2000, 3900), default_value=3000,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor5')],
     [psg.Slider(range=(0, 1000), default_value=0,
@@ -46,7 +46,7 @@ def biMotorGUI():
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor8')]
         ]
-    window = psg.Window('BiMotorControl', layout, size=(2000, 2000))
+    window = psg.Window('BiMotorControl', layout, size=(1000, 1000))
     while not rospy.is_shutdown():
         event, values = window.read()
         print(event, values)
