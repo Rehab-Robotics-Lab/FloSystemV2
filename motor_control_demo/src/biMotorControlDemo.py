@@ -36,13 +36,13 @@ def biMotorGUI():
     [psg.Slider(range=(2000, 3900), default_value=3000,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor5')],
-    [psg.Slider(range=(0, 1000), default_value=0,
+    [psg.Slider(range=(3050, 3900), default_value=3100,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor6')],
-    [psg.Slider(range=(0, 1000), default_value=0,
+    [psg.Slider(range=(800, 2000), default_value=1000,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor7')],
-    [psg.Slider(range=(0, 1000), default_value=0,
+    [psg.Slider(range=(3050, 3090), default_value=3100,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor8')]
         ]
