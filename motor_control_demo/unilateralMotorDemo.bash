@@ -1,45 +1,31 @@
 #!/bin/bash
-# container default set to bash, maybe change that 
 
-#This script still has issues, do not use
-
-# refer to https://tao-of-tmux.readthedocs.io/en/latest/manuscript/10-scripting.html for more information on tmux scripting
-"""
-source ~/.bashrc
-
-tmux new-session -d -s flo
-tmux rename-window startup
-tmux send-keys 'connect_to_robot 0 && roscore' Enter
-tmux split-window -t flo -h
-
-
-tmux split-window -t flo
-tmux send-keys 'mkdir -p ~/flo_data && connect_to_robot 0 && roslaunch --wait flo_core podium_bringup.launch' Enter # it is just more stable..
-
-tmux rotate-window -t flo
-
-tmux split-window -t flo -h
-tmux send-keys 'sleep 5 && connect_to_robot 0 && roslaunch --wait flo_telepresence realsense-sp-1.launch platform:=podium' Enter # it is just more stable..
-
-tmux split-window -t flo
-tmux send-keys 'sleep 10 && connect_to_robot 0 && roslaunch --wait flo_telepresence realsense-sp-2.launch platform:=podium' Enter # it is just more stable..
-"""
-
-#source the workspace
 #setup connection the the remote roscore using its IP address, make the IP address visible to all the containers, set the IP static if possible, else make it a parameter passed on during the docker run command to all containers.\
 #export ROS_MASTER_URI=http://
 #export ROS_IP=
 #export ROS_HOSTNAME=
-#start a new tmux session with the name motor_control_demo in detached mode
-tmux new -d -s motor_control_demo;
-#rename the window to roscore
-tmux rename-window roscore;
-# run roscore if running as a standalone container
-tmux send-keys 'roscore' ENTER;
-# if running as part of system connected to remote ROS master, check connection status.
-tmux split-window;    
-tmux send-keys 'source ../../devel/setup.bash' ENTER;
-tmux send-keys 'rosrun flo_humanoid read_write_arm_node' ENTER;       # run the unilateral arm control node
-tmux split-window;
-tmux send-keys 'python3 src/motorControlDemo.py' ENTER;               # run the motor control demo
-tmux detach;
+# source ~/.bashrc
+# tmux new-session -s -d motor_demo
+# tmux split-window -h
+# # run roscore if running as a standalone container in the first pane
+# tmux send-keys -t 0 'roscore' Enter
+# # source the flo2 package environment and run the unilateral arm control node
+# tmux send-keys -t 1 'sleep 5 && source ../../devel/setup.bash && roslaunch flo_humanoid read_write_arm_node' Enter 
+# tmux split-window -v
+# tmux send-keys 'sleep 5 && python3 src/motorControlDemo.py' Enter
+# tmux attach-session -t motor_control_demo
+# tmux new-session -s -d motor_demo
+# tmux send-keys -t "echo hi" Enter
+
+# source ~/.bashrc
+
+tmux new-session -d -s motor_demo
+tmux rename-window startup
+tmux send-keys 'roscore' Enter
+tmux split-window -t motor_demo -h
+tmux send-keys 'sleep 5 && source ../../devel/setup.bash && roslaunch flo_humanoid read_write_arm_node' Enter
+tmux split-window -t motor_demo -v
+tmux send-keys 'htop' Enter
+tmux split-window -t motor_demo -h
+tmux send-keys 'sleep 5 && python3 src/motorControlDemo.py' Enter
+tmux attach-session -t motor_demo
