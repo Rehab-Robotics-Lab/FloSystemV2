@@ -39,6 +39,7 @@ RUN apt-get update -y && apt-get install -y \
 neovim \
 tmux \
 git \
+htop \
 python3 \
 python3-catkin-tools \
 ros-$ROS_DISTRO-catkin \
@@ -64,7 +65,7 @@ RUN mkdir /home/$ROS_USER/catkin_ws/src -p
 WORKDIR /home/$ROS_USER
 #RUN git clone https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
 #optional command to clone specific branch, --single-branch used to avoid cloning all branches.
-RUN git clone -b 2ArmJointControl --single-branch https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
+RUN git clone -b users/ajyanand/AutomateMotorDemo --single-branch https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
 WORKDIR /home/$ROS_USER/FloSystemV2
 RUN git pull
 WORKDIR /home/$ROS_USER
