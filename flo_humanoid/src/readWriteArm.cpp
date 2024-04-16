@@ -21,10 +21,12 @@ using namespace dynamixel;
 
 // Default setting
 // Modify the values below to fit the motor Id's assigned in the dynamixel wizard.
-#define DXL1_ID              10               // DXL1 ID
-#define DXL2_ID              11               // DXL2 ID
-#define DXL3_ID              12               // DXL3 ID
-#define DXL4_ID              13               // DXL4 ID
+// these lines do not need to be here, instead define the dynamixel id's in the config file and read them in here.
+#define DXL1_ID              111               // DXL1 ID
+#define DXL2_ID              112               // DXL2 ID
+#define DXL3_ID              121               // DXL3 ID
+#define DXL4_ID              122               // DXL4 ID
+// BAUDRATE should be defined here.
 #define BAUDRATE             57600            // Default Baudrate of DYNAMIXEL X series
 //set up fixed mount point for the device, this is the same as the one set in the udev rules file.
 #define DEVICE_NAME          "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
@@ -284,7 +286,11 @@ void setJointPositionsCallback(const flo_humanoid::SetJointPositions::ConstPtr &
 }
 
 int main(int argc, char ** argv)
-{
+{ 
+  // #define DEVICE_NAME          "/dev/ttyUSB0"
+  // PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
+  // GroupBulkRead groupBulkRead(portHandler, packetHandler);
+  // GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
   uint8_t dxl_error = 0;
   int dxl_comm_result = COMM_TX_FAIL;
 

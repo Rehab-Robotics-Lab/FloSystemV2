@@ -1,15 +1,18 @@
 #fill this table with the joints you want to control in the humanoid robot and their configurations.
 (dynamixel motor address and joint name for each motor)
+#set the min and max limits of the motor values in the dynamixel wizard after final assembly of the robot.
 address    name                             type            neutral    min    max   inversion
 #eg:
-# 1        left_shoulder_flexionextension   <motortype>     765        10     500    1
-10         placeholder                      XC-430-W240-T   0           0      0     0     
-11         placeholder                      XL-430-W250-T   0           0      0     0 
-12         placeholder                      XL-430-W250-T   0           0      0     0
-13         placeholder                      XM-430-W350-T   0           0      0     0
-14         placeholder                      MX-64           0           0      0     0
-20         placeholder                      XC-430-W240-T   0           0      0     0
-21         placeholder                      XL-430-W250-T   0           0      0     0
-22         placeholder                      XL-430-W250-T   0           0      0     0
-23         placeholder                      XM-430-W350-T   0           0      0     0
-24         placeholder                      MX-64           0           0      0     0
+# 1        left_shoulder_flexionextension   <motortype>     765        10     500     1
+111        left_shoulder_flexionextension    XC-430-W240-T  1500           0      0     0 
+112        left_shoulder_abductionadduction  XC-430-W240-T  500           0      0     0     
+121        left_elbow_flexionextension       XL-430-W250-T  3000           0      0     0 
+122        left_elbow_rotation               XL-430-W250-T  2100           0      0     0
+131        left_gripper                      XM-430-W350-T   0           0      0     0
+211        right_shoulder_flexionextension   XC-430-W240-T   0           0      0     0 
+212        right_shoulder_abductionadduction XC-430-W240-T   0           0      0     0     
+221        right_elbow_flexionextension      XL-430-W250-T   0           0      0     0 
+222        right_elbow_rotation              XL-430-W250-T   0           0      0     0
+231        right_gripper                     XM-430-W350-T   0           0      0     0
+
+

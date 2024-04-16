@@ -26,6 +26,7 @@ add_message_files(
   FILES
     SetJointPosition.msg
     SetJointPositions.msg
+    SetArmsJointPositions.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -33,6 +34,7 @@ add_service_files(
   FILES
     GetJointPosition.srv
     GetJointPositions.srv
+    GetArmsJointPositions.srv
     )
 
 ## Generate added messages and services with any dependencies listed here
@@ -61,14 +63,17 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+add_executable(read_write_joint_node src/readWriteJoint.cpp)
+add_dependencies(read_write_joint_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(read_write_joint_node ${catkin_LIBRARIES})
+
 add_executable(read_write_arm_node src/readWriteArm.cpp)
 add_dependencies(read_write_arm_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(read_write_arm_node ${catkin_LIBRARIES})
 
-add_executable(read_write_joint_node src/readWriteArm.cpp)
-add_dependencies(read_write_joint_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(read_write_joint_node ${catkin_LIBRARIES})
-
+add_executable(read_write_arms_node src/readWriteArms.cpp)
+add_dependencies(read_write_arms_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(read_write_arms_node ${catkin_LIBRARIES})
 
 ################################################################################
 # Install
