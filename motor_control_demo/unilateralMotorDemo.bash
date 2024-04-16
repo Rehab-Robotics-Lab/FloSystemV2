@@ -23,7 +23,7 @@ tmux new-session -d -s motor_demo
 tmux rename-window startup
 tmux send-keys 'roscore' Enter
 tmux split-window -t motor_demo -h
-tmux send-keys 'sleep 5 && source ../../devel/setup.bash && roslaunch flo_humanoid read_write_arm_node' Enter
+tmux send-keys 'sleep 5 && source ../../devel/setup.bash && rosrun flo_humanoid read_write_arm_node' Enter
 tmux split-window -t motor_demo -v
 tmux send-keys 'htop' Enter
 tmux split-window -t motor_demo -h
