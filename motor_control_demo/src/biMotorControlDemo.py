@@ -21,32 +21,32 @@ def biMotorGUI():
     key='-TEXT-', font=('Arial Bold', 20),
     size=(50, 2), relief="raised", border_width=5,
     expand_x=True, justification='center')],
-    [psg.Slider(range=(0, 1000), default_value=0,
+    [psg.Slider(range=(0, 1500), default_value=500,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor1')],
-    [psg.Slider(range=(0, 1000), default_value=0,
+    [psg.Slider(range=(2500, 3500), default_value=3000,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor2')],
-    [psg.Slider(range=(0, 1000), default_value=0,
+    [psg.Slider(range=(600,1200), default_value=1000,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor3')],
-    [psg.Slider(range=(0, 1000), default_value=0,
+    [psg.Slider(range=(3100, 3900), default_value=3800,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor4')],
-    [psg.Slider(range=(0, 1000), default_value=0,
+    [psg.Slider(range=(2000, 3900), default_value=3000,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor5')],
-    [psg.Slider(range=(0, 1000), default_value=0,
+    [psg.Slider(range=(3050, 3900), default_value=3100,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor6')],
-    [psg.Slider(range=(0, 1000), default_value=0,
+    [psg.Slider(range=(800, 2000), default_value=1000,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor7')],
-    [psg.Slider(range=(0, 1000), default_value=0,
+    [psg.Slider(range=(3050, 3900), default_value=3100,
     expand_x=True, enable_events=True,
     orientation='horizontal', key='Motor8')]
         ]
-    window = psg.Window('BiMotorControl', layout, size=(2000, 2000))
+    window = psg.Window('BiMotorControl', layout, size=(1000, 1000))
     while not rospy.is_shutdown():
         event, values = window.read()
         print(event, values)
