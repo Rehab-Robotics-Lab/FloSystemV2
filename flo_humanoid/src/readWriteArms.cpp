@@ -13,6 +13,7 @@ using namespace dynamixel;
 #define ADDR_PRESENT_LED      65
 #define ADDR_PRESENT_POSITION 132
 #define ADDR_GOAL_POSITION    116
+#define ADDR_OPER_MODE        11
 
 // Protocol version
 #define PROTOCOL_VERSION      2.0             // Default Protocol version of DYNAMIXEL X series.
@@ -20,26 +21,30 @@ using namespace dynamixel;
 // Default setting
 // Modify the values below to fit the motor Id's assigned in the dynamixel wizard.
 // these lines do not need to be here, instead define the dynamixel id's in the config file and read them in here.
-#define DXL1_ID              10               // DXL1 ID
-#define DXL2_ID              11               // DXL2 ID
-#define DXL3_ID              12               // DXL3 ID
-#define DXL4_ID              13               // DXL4 ID
-#define DXL5_ID              20               // DXL5 ID
-#define DXL6_ID              21               // DXL6 ID
-#define DXL7_ID              22               // DXL7 ID
-#define DXL8_ID              23               // DXL8 ID
+#define DXL1_ID              111               // DXL1 ID
+#define DXL2_ID              112               // DXL2 ID
+#define DXL3_ID              121               // DXL3 ID
+#define DXL4_ID              122               // DXL4 ID
+#define DXL5_ID              211               // DXL5 ID
+#define DXL6_ID              212               // DXL6 ID
+#define DXL7_ID              221               // DXL7 ID
+#define DXL8_ID              222               // DXL8 ID
 // BAUDRATE should be defined here.
 #define BAUDRATE             57600            // Default Baudrate of DYNAMIXEL X series
 //set up fixed mount point for the device, this is the same as the one set in the udev rules file.
 #define DEVICE_NAME          "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
 
+// ensure that DXL1_ID, DXL2_ID, DXL3_ID, DXL4_ID are connected to the device labeled DEVICE_NAME1
+// and DXL5_ID, DXL6_ID, DXL7_ID, DXL8_ID are connected to the device labeled DEVICE_NAME2
+
 
 PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
 PacketHandler * packetHandler = PacketHandler::getPacketHandler(PROTOCOL_VERSION);
 
-// GroupBulkRead groupBulkRead(portHandler, packetHandler);
-// GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
-//This function was fully modified to work with the 4 motors of the robot arm.
+GroupBulkRead groupBulkRead(portHandler, packetHandler);
+GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
+
+//This function was fully modified to work with the 8 joint motors of the 2 arms of the robot.
 // based on dynamixelSDK issue #196, it not possible to set multiple parameters for the same motor in a single groupBulkWrite() command.
 bool getArmsJointPositionsCallback(
   flo_humanoid::GetArmsJointPositions::Request & req,
@@ -462,10 +467,6 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
 
 int main(int argc, char ** argv)
 { 
-  #define DEVICE_NAME          "/dev/ttyUSB0"
-  PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
-  GroupBulkRead groupBulkRead(portHandler, packetHandler);
-  GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
   uint8_t dxl_error = 0;
   int dxl_comm_result = COMM_TX_FAIL;
 
@@ -487,9 +488,23 @@ int main(int argc, char ** argv)
   }
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL1_ID, ADDR_OPER_MODE, 3, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL1_ID);
+    return -1;
+  }
+
+  dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL2_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to enable torque for Dynamixel ID: %d", DXL2_ID);
+    return -1;
+  }
+
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL2_ID, ADDR_OPER_MODE, 3, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL2_ID);
     return -1;
   }
 
@@ -501,6 +516,13 @@ int main(int argc, char ** argv)
   }
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL3_ID, ADDR_OPER_MODE, 3, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL3_ID);
+    return -1;
+  }
+
+  dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL4_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to enable torque for Dynamixel ID: %d", DXL4_ID);
@@ -508,9 +530,23 @@ int main(int argc, char ** argv)
   }
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL4_ID, ADDR_OPER_MODE, 3, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL4_ID);
+    return -1;
+  }
+
+  dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL5_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to enable torque for Dynamixel ID: %d", DXL5_ID);
+    return -1;
+  }
+
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL5_ID, ADDR_OPER_MODE, 3, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL5_ID);
     return -1;
   }
 
@@ -522,11 +558,25 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL6_ID, ADDR_OPER_MODE, 3, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL6_ID);
+    return -1;
+  }
+
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL7_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to enable torque for Dynamixel ID: %d", DXL7_ID);
+    return -1;
+  }
+
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL7_ID, ADDR_OPER_MODE, 3, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL7_ID);
     return -1;
   }
 
@@ -538,10 +588,17 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL8_ID, ADDR_OPER_MODE, 3, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL8_ID);
+    return -1;
+  }
+
   ros::init(argc, argv, "read_write_arms_node");
   ros::NodeHandle nh;
   ros::ServiceServer get_joint_positions_srv = nh.advertiseService("/get_arms_joint_positions", getArmsJointPositionsCallback);
-  ros::Subscriber set_joint_positions_sub = nh.subscribe("/set__arms_joint_positions", 10, setArmsJointPositionsCallback);
+  ros::Subscriber set_joint_positions_sub = nh.subscribe("/set_arms_joint_positions", 10, setArmsJointPositionsCallback);
   ros::spin();
 
   portHandler->closePort();

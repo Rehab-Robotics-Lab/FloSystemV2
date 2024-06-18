@@ -11,6 +11,7 @@ using namespace dynamixel;
 #define ADDR_TORQUE_ENABLE    64
 #define ADDR_GOAL_POSITION    116
 #define ADDR_PRESENT_POSITION 132
+#define ADDR_OPER_MODE        11
 
 // Protocol version
 #define PROTOCOL_VERSION      2.0             // Default Protocol version of DYNAMIXEL X series.
@@ -94,12 +95,25 @@ int main(int argc, char ** argv)
   }
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL1_ID, ADDR_OPER_MODE, 3, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL1_ID);
+    return -1;
+  }
+
+  dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL2_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to enable torque for Dynamixel ID %d", DXL2_ID);
     return -1;
   }
 
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL2_ID, ADDR_OPER_MODE, 3, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL2_ID);
+    return -1;
+  }
   ros::init(argc, argv, "read_write_node");
   ros::NodeHandle nh;
   ros::ServiceServer get_position_srv = nh.advertiseService("/get_position", getPresentPositionCallback);
