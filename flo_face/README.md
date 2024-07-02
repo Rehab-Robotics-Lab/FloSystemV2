@@ -5,12 +5,13 @@ are components for both the onboard arduino and the oncomputer
 ROS nodes.
 
 ## Expected System:
-- A computer with ROS Kinetic installed
+- A computer with ROS Kinetic/Noetic installed
 - A teensy 3.2 Microcontroller
 - An adafruit 2039 LED matrix or similar (mouth)
 - Two adafruit 959 LED matricies or similar (eyes)
 - Arduino installed
 - [Teensyduino installed](https://www.pjrc.com/teensy/td_download.html#linux_issues)
+- Libraries installed in Arduino: Adafruit_LED_Backpack, Adafruit-GFX-Library
 
 ## Setting Up:
 1. Set address for eyes and mouth: The left eye should be
@@ -28,8 +29,8 @@ ROS nodes.
    `<this repo>/teensy.ino`, if necessary change the
    board in the arduino IDE to be a teensy 3.2, and upload the
    code.
-4. Clone or link this repo into a catkin ws. Instructions here: http://wiki.ros.org/catkin/Tutorials/create_a_workspace
-4. Build the catkin workspace using `catkin_make` from the catkin_ws directory
+4. Clone or link this repo into a catkin ws (such as `catkin_ws/src/FloSystemV2`). Instructions here: http://wiki.ros.org/catkin/Tutorials/create_a_workspace
+4. Build the catkin workspace using `catkin build` from the catkin_ws directory (Using catkin_tools: https://catkin-tools.readthedocs.io/en/latest/verbs/catkin_build.html) (To buil only the flo_face package, use `catkin build flo_face`)
 5. Navigate to `<this repo>/teensy/src/serial_coms/computer/python/serial-coms/`
    and run `python setup.py install --user`
 6. Setup [UDEV Rules to make the face always have the same name](https://unix.stackexchange.com/a/183492):
@@ -47,13 +48,14 @@ ROS nodes.
     4. Load the rules: `sudo udevadm trigger`
     5. You can check that it worked by running: `ls -l /dev/flo_face`
     6. You may need to `sudo chmod 666 /dev/flo_face`
+    7. You may need to create and edit file `/etc/udev/rules.d/00-teensy.rules` (https://www.pjrc.com/teensy/00-teensy.rules)
 
 
 ## Running:
 1. Run a roscore
-2. Open a new terminal window
+2. Open a new terminal window. Run `source devel/setup.bash`. (Make sure `flo_face` package can be found when using `rospack find flo_face`)
 3. Run `roslaunch flo_face base.launch`
-4. Open a third terminal window
+4. Open a third terminal window. Run `source devel/setup.bash`.
 ### Keyboard
 5. You can now run `rosrun flo_face keyboard_teleop.py` to operate the face with
    your keyboard.
