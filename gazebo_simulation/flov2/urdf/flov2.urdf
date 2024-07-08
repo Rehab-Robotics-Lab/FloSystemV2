@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="flov2">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="7.53347513648417E-05 -0.0517564322706769 0.103083105603625"
+        rpy="0 0 0" />
+      <mass
+        value="0.411096920186486" />
+      <inertia
+        ixx="0.000777346761704768"
+        ixy="1.72546357053531E-06"
+        ixz="3.18573945326303E-07"
+        iyy="0.000809189457749475"
+        iyz="4.70818433093879E-05"
+        izz="0.000628127608082685" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="L1">
+    <inertial>
+      <origin
+        xyz="1.48905722474613E-09 -1.45844986088051E-09 -0.0155738461318574"
+        rpy="0 0 0" />
+      <mass
+        value="0.0215352043212417" />
+      <inertia
+        ixx="6.43260429128134E-06"
+        ixy="-1.64918315678719E-11"
+        ixz="1.80617856052557E-13"
+        iyy="1.14424316265306E-05"
+        iyz="-1.49771692039564E-13"
+        izz="8.50517912691032E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/L1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/L1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l1"
+    type="revolute">
+    <origin
+      xyz="-0.0938040574073513 -0.0509682805214639 0.130501789182255"
+      rpy="-1.57320341741765 -0.049370287896931 1.56991048766249" />
+    <parent
+      link="base_link" />
+    <child
+      link="L1" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="1" />
+  </joint>
+  <link
+    name="L2">
+    <inertial>
+      <origin
+        xyz="0.0370794770496813 6.01665007013974E-05 -0.00561150423120081"
+        rpy="0 0 0" />
+      <mass
+        value="0.142004328182954" />
+      <inertia
+        ixx="3.19807078365598E-05"
+        ixy="-4.35455973306734E-08"
+        ixz="2.24405030421614E-06"
+        iyy="6.16421143447785E-05"
+        iyz="9.77605499102352E-10"
+        izz="6.84742565733564E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/L2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/L2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l2"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="-1.57079632679491 -1.38688581460649 -1.57079632679488" />
+    <parent
+      link="L1" />
+    <child
+      link="L2" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="1" />
+  </joint>
+  <link
+    name="L3">
+    <inertial>
+      <origin
+        xyz="2.21867052507818E-10 4.23724749731846E-10 -0.015573846160944"
+        rpy="0 0 0" />
+      <mass
+        value="0.0215352058223807" />
+      <inertia
+        ixx="6.43260450514852E-06"
+        ixy="-1.69531055854438E-11"
+        ixz="-5.96429571956571E-14"
+        iyy="1.14424319697711E-05"
+        iyz="1.59988846347624E-14"
+        izz="8.50517953268872E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/L3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/L3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l3"
+    type="revolute">
+    <origin
+      xyz="0.1158 0 -0.0012"
+      rpy="-1.5708 0.26115 -1.5708" />
+    <parent
+      link="L2" />
+    <child
+      link="L3" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="1" />
+  </joint>
+  <link
+    name="L4">
+    <inertial>
+      <origin
+        xyz="0.054011861840731 -0.000585223019091474 -0.000434276238749226"
+        rpy="0 0 0" />
+      <mass
+        value="0.123987301393138" />
+      <inertia
+        ixx="2.5522314824236E-05"
+        ixy="5.69796357342498E-06"
+        ixz="1.291360801618E-09"
+        iyy="0.000227684932515927"
+        iyz="4.88557547540023E-10"
+        izz="0.000244794742303776" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/L4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/L4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l4"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="1.5707963267949 -0.302966230227451 -1.5707963267949" />
+    <parent
+      link="L3" />
+    <child
+      link="L4" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="1" />
+  </joint>
+  <link
+    name="R1">
+    <inertial>
+      <origin
+        xyz="-7.3101036335288E-10 1.42214115483874E-09 -0.0155738461008338"
+        rpy="0 0 0" />
+      <mass
+        value="0.0215352046092187" />
+      <inertia
+        ixx="6.43260432556564E-06"
+        ixy="-1.67886054366163E-11"
+        ixz="2.25506509706198E-15"
+        iyy="1.14424316815474E-05"
+        iyz="1.67144531197466E-13"
+        izz="8.50517918879637E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/R1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/R1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r1"
+    type="revolute">
+    <origin
+      xyz="0.09279510924547 -0.0511557438776884 0.131033556238334"
+      rpy="1.56837759398057 -0.109836205757756 1.5700568280532" />
+    <parent
+      link="base_link" />
+    <child
+      link="R1" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="1" />
+  </joint>
+  <link
+    name="R2">
+    <inertial>
+      <origin
+        xyz="0.0370794699736247 6.01718120815387E-05 -0.0052115109687059"
+        rpy="0 0 0" />
+      <mass
+        value="0.142004356223961" />
+      <inertia
+        ixx="3.198072926258E-05"
+        ixy="-4.35330274713812E-08"
+        ixz="2.24405200421591E-06"
+        iyy="6.1642105916023E-05"
+        iyz="9.83064282856538E-10"
+        izz="6.84742779522144E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/R2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/R2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r2"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="-1.57079632679492 -1.42665704697169 -1.57079632679488" />
+    <parent
+      link="R1" />
+    <child
+      link="R2" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="1" />
+  </joint>
+  <link
+    name="R3">
+    <inertial>
+      <origin
+        xyz="2.54169654767544E-09 -1.69163517915738E-09 -0.0155738437363972"
+        rpy="0 0 0" />
+      <mass
+        value="0.0215352101067535" />
+      <inertia
+        ixx="6.43260432011342E-06"
+        ixy="-1.6873445526951E-11"
+        ixz="4.82256792386027E-14"
+        iyy="1.14424323601872E-05"
+        iyz="-2.20955616486998E-13"
+        izz="8.50517969840653E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/R3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/R3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r3"
+    type="revolute">
+    <origin
+      xyz="0.1158 0 -0.000800000000002798"
+      rpy="1.5707963267949 -0.26114885650053 1.5707963267949" />
+    <parent
+      link="R2" />
+    <child
+      link="R3" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="1" />
+  </joint>
+  <link
+    name="R4">
+    <inertial>
+      <origin
+        xyz="0.054012022520983 0.000585991251745036 0.000436160147761988"
+        rpy="0 0 0" />
+      <mass
+        value="0.123994982546424" />
+      <inertia
+        ixx="2.55222442076303E-05"
+        ixy="-5.69775533688218E-06"
+        ixz="-1.20975226399338E-09"
+        iyy="0.000227684671227836"
+        iyz="4.86560224751499E-10"
+        izz="0.00024479434853081" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/R4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://flov2/meshes/R4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r4"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="-1.5707963267949 -0.302966230228033 1.5707963267949" />
+    <parent
+      link="R3" />
+    <child
+      link="R4" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="1" />
+  </joint>
+</robot>
