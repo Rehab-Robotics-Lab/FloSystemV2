@@ -16,5 +16,5 @@
     name="rviz"
     pkg="rviz"
     type="rviz"
-    args="-d $(find flov2)/urdf.rviz" />
+    args="-d $(find flov2)/config/flov2rviz.rviz" />
 </launch>
