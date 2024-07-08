@@ -10,12 +10,16 @@ This directory contains the necessary files to simulate the FLO robot in Gazebo.
    ```sh
    cd ~/catkin_ws
 4. Build the workspace:
+    ```sh
     catkin_make
 5. Source the workspace:
+    ```sh
     source devel/setup.bash
 6. Launch the Gazebo simulation:
+    ```sh
     roslaunch flov2 gazebo.launch
 7. To launch the RViz simulation:
+    ```sh
     roslaunch flov2 display.launch
 
 ## Example
