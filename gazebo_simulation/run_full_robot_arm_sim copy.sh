@@ -1,0 +1,3 @@
+catkin_make
+source devel/setup.bash
+roslaunch test_moveit full_robot_arm_sim.launch
