@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: flov2tag
+    relative_path: urdf/flov2tag.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/flov2tag.srdf
+  CONFIG:
+    author_name: hao
+    author_email: h@mail.com
+    generated_timestamp: 1720578812

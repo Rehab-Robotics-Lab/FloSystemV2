@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot name="flov2tag">
+    <link name="world" />
+    <joint name="base_joint" type="fixed">
+        <parent link="world" />
+        <child link="base_link" />
+        <origin rpy="0 0 0" xyz="0.0 0.0 0.0" />
+    </joint>
+    <link name="base_link">
+        <inertial>
+            <origin xyz="7.53347513647862E-05 -0.0517564322706769 0.103083105603625" rpy="0 0 0" />
+            <mass value="0.411096920186486" />
+            <inertia ixx="0.000777346761704768" ixy="1.72546357053517E-06" ixz="3.18573945326137E-07" iyy="0.000809189457749476" iyz="4.70818433093878E-05" izz="0.000628127608082685" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/base_link.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/base_link.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="L1">
+        <inertial>
+            <origin xyz="1.48905722474613E-09 -1.45844988863608E-09 -0.0155738461318574" rpy="0 0 0" />
+            <mass value="0.0215352043212417" />
+            <inertia ixx="6.43260429128133E-06" ixy="-1.64918315675543E-11" ixz="1.80617855631626E-13" iyy="1.14424316265306E-05" iyz="-1.4977169211401E-13" izz="8.50517912691032E-06" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/L1.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/L1.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="l1" type="revolute">
+        <origin xyz="-0.093804 -0.050968 0.1305" rpy="-1.5732 -0.04937 1.5699" />
+        <parent link="base_link" />
+        <child link="L1" />
+        <axis xyz="0 0 -1" />
+        <limit lower="-3.14" upper="3.14" effort="100" velocity="1" />
+    </joint>
+    <link name="L2">
+        <inertial>
+            <origin xyz="0.0370794722770472 6.01619796232744E-05 -0.00561150495180869" rpy="0 0 0" />
+            <mass value="0.14200428130742" />
+            <inertia ixx="3.19807041640019E-05" ixy="-4.35443153481225E-08" ixz="2.24405152482658E-06" iyy="6.16420914340457E-05" iyz="9.75980531415953E-10" izz="6.84742357959681E-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/L2.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/L2.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="l2" type="revolute">
+        <origin xyz="0 0 0" rpy="1.57079632679491 -1.30823648462815 1.57079632679489" />
+        <parent link="L1" />
+        <child link="L2" />
+        <axis xyz="0 0 -1" />
+        <limit lower="-3.14" upper="3.14" effort="100" velocity="1" />
+    </joint>
+    <link name="L3">
+        <inertial>
+            <origin xyz="-6.85686452062129E-10 -1.18321497044604E-09 -0.0155738461320077" rpy="0 0 0" />
+            <mass value="0.0215352058948494" />
+            <inertia ixx="6.43260450990738E-06" ixy="-1.66741513524277E-11" ixz="-1.99406870351107E-13" iyy="1.14424319738705E-05" iyz="-5.43220634835429E-14" izz="8.50517954548888E-06" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/L3.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/L3.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="l3" type="revolute">
+        <origin xyz="0.1158 0 -0.00119999999999776" rpy="-1.5707963267949 0.26114885650053 -1.57079632679489" />
+        <parent link="L2" />
+        <child link="L3" />
+        <axis xyz="0 0 -1" />
+        <limit lower="-3.14" upper="3.14" effort="100" velocity="1" />
+    </joint>
+    <link name="L4">
+        <inertial>
+            <origin xyz="0.0540116223479984 -0.00058620478941096 -0.00011406572389161" rpy="0 0 0" />
+            <mass value="0.123994710978818" />
+            <inertia ixx="2.55225739121218E-05" ixy="5.69764188850555E-06" ixz="1.26677524651344E-09" iyy="0.000227685871332109" iyz="7.44244239048614E-10" izz="0.000244795391460618" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/L4.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/L4.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="l4" type="revolute">
+        <origin xyz="0 0 0" rpy="1.5707963267949 -0.30296623022798 -1.5707963267949" />
+        <parent link="L3" />
+        <child link="L4" />
+        <axis xyz="0 0 1" />
+        <limit lower="-3.14" upper="3.14" effort="100" velocity="1" />
+    </joint>
+    <link name="LT">
+        <inertial>
+            <origin xyz="-2.1094237467878E-15 3.66373598126302E-15 -4.99999999999251E-05" rpy="0 0 0" />
+            <mass value="4.4257186507448E-05" />
+            <inertia ixx="1.59291210005991E-09" ixy="4.71238898038435E-11" ixz="2.08733857698928E-24" iyy="1.565423164341E-09" iyz="3.43796942092352E-24" izz="3.1582615024234E-09" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/LT.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="1 1 1 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/LT.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="lt" type="revolute">
+        <origin xyz="0.16084 0 0" rpy="1.5708 0 1.5708" />
+        <parent link="L4" />
+        <child link="LT" />
+        <axis xyz="0 0 -1" />
+        <limit lower="-3.14" upper="3.14" effort="100" velocity="1" />
+    </joint>
+    <link name="R1">
+        <inertial>
+            <origin xyz="-7.3101036335288E-10 1.42214115483874E-09 -0.0155738461008337" rpy="0 0 0" />
+            <mass value="0.0215352046092187" />
+            <inertia ixx="6.43260432556565E-06" ixy="-1.67886054370398E-11" ixz="2.25506499780031E-15" iyy="1.14424316815474E-05" iyz="1.67144531263641E-13" izz="8.50517918879637E-06" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/R1.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/R1.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="r1" type="revolute">
+        <origin xyz="0.09279510924547 -0.0511557438776884 0.131033556238334" rpy="1.56837759398057 -0.109836205757756 1.5700568280532" />
+        <parent link="base_link" />
+        <child link="R1" />
+        <axis xyz="0 0 -1" />
+        <limit lower="-3.14" upper="3.14" effort="100" velocity="1" />
+    </joint>
+    <link name="R2">
+        <inertial>
+            <origin xyz="0.0370794698343928 6.01703938903075E-05 -0.00521151070552417" rpy="0 0 0" />
+            <mass value="0.142004353704167" />
+            <inertia ixx="3.19807296486965E-05" ixy="-4.35327533669279E-08" ixz="2.24405237078302E-06" iyy="6.16421075611623E-05" iyz="9.81607943199515E-10" izz="6.84742805487049E-05" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/R2.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/R2.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="r2" type="revolute">
+        <origin xyz="0 0 0" rpy="1.57079632679491 -1.47144508321867 1.57079632679488" />
+        <parent link="R1" />
+        <child link="R2" />
+        <axis xyz="0 0 -1" />
+        <limit lower="-3.14" upper="3.14" effort="100" velocity="1" />
+    </joint>
+    <link name="R3">
+        <inertial>
+            <origin xyz="2.05074301984354E-09 5.46313924654207E-10 -0.0155738455006264" rpy="0 0 0" />
+            <mass value="0.0215352048399659" />
+            <inertia ixx="6.432604168036E-06" ixy="-1.66648027588443E-11" ixz="6.81152760309558E-14" iyy="1.14424315919614E-05" iyz="-4.79486622218707E-14" izz="8.5051789959427E-06" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/R3.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/R3.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="r3" type="revolute">
+        <origin xyz="0.115800000000001 0 -0.000800000000004408" rpy="1.5707963267949 -0.26114885650053 1.5707963267949" />
+        <parent link="R2" />
+        <child link="R3" />
+        <axis xyz="0 0 -1" />
+        <limit lower="-3.14" upper="3.14" effort="100" velocity="1" />
+    </joint>
+    <link name="R4">
+        <inertial>
+            <origin xyz="0.0540120901541251 0.000585955138703967 0.000114212206980158" rpy="0 0 0" />
+            <mass value="0.123994478571995" />
+            <inertia ixx="2.55222563136458E-05" ixy="-5.697433497379E-06" ixz="-1.15541189210634E-09" iyy="0.000227685021295983" iyz="5.41220980799628E-10" izz="0.000244794757521387" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/R4.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/R4.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="r4" type="revolute">
+        <origin xyz="0 0 0" rpy="-1.5707963267949 -0.302966230227995 1.5707963267949" />
+        <parent link="R3" />
+        <child link="R4" />
+        <axis xyz="0 0 1" />
+        <limit lower="-3.14" upper="3.14" effort="100" velocity="1" />
+    </joint>
+    <link name="RT">
+        <inertial>
+            <origin xyz="-1.12505491034476E-14 -3.88578058618805E-16 -5.00000000000778E-05" rpy="0 0 0" />
+            <mass value="4.4257186507449E-05" />
+            <inertia ixx="1.59291210005995E-09" ixy="-4.71238898038503E-11" ixz="8.7605212335328E-25" iyy="1.56542316434104E-09" iyz="5.84196307615576E-24" izz="3.15826150242347E-09" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/RT.STL" />
+            </geometry>
+            <material name="">
+                <color rgba="1 1 1 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://flov2tag/meshes/RT.STL" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="rt" type="revolute">
+        <origin xyz="0.16084 0 0" rpy="-1.5708 0 -1.5708" />
+        <parent link="R4" />
+        <child link="RT" />
+        <axis xyz="0 0 -1" />
+        <limit lower="-3.14" upper="3.14" effort="100" velocity="1" />
+    </joint>
+    <transmission name="L1_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="l1">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="L1_motor">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="L2_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="l2">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="L2_motor">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="L3_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="l3">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="L3_motor">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="L4_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="l4">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="L4_motor">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="R1_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="r1">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="R1_motor">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="R2_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="r2">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="R2_motor">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="R3_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="r3">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="R3_motor">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="R4_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="r4">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="R4_motor">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="RT_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="rt">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="RT_motor">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <transmission name="LT_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="lt">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="LT_motor">
+            <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+    </transmission>
+    <gazebo>
+        <plugin name="control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/</robotNamespace>
+        </plugin>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/</robotNamespace>
+        </plugin>
+    </gazebo>
+    <gazebo reference="L1">
+        <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="L2">
+        <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="L3">
+        <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="L4">
+        <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="R1">
+        <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="R2">
+        <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="R3">
+        <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="R4">
+        <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="RT">
+        <selfCollide>true</selfCollide>
+    </gazebo>
+    <gazebo reference="LT">
+        <selfCollide>true</selfCollide>
+    </gazebo>
+</robot>
+
