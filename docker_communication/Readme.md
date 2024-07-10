@@ -63,29 +63,17 @@ bash run_subscriber.sh
 
 You should now be able to see the content of the topics published by the `apriltag_detector` container in the `docker_communication` container.
 
-## Script Details
-
-### `run_docker_network.sh`
-
-This script stops and removes any existing container with the same name, then runs a new instance of `docker_communication_image`.
-
 ```bash
-#!/bin/bash
-
-# Stop and remove any existing container
-docker stop docker_communication || true
-docker rm docker_communication || true
-
-# Run the docker_communication container
-docker run -it --name docker_communication --net=host docker_communication_image
+[INFO] [1720591656.594447]: Received Info: data: "ID: 1, Position: [ 0.04528721 -0.02857276  0.10782878], Orientation: [ 0.03360608\
+  \  0.11030647 -0.97947868  0.16530166]"
+[INFO] [1720591656.595072]: Received Pose: position: 
+  x: 0.0135547994962
+  y: 0.0111185471433
+  z: 0.144450182544
+orientation: 
+  x: 0.0481012177678
+  y: 0.268386608513
+  z: -0.837331206929
+  w: 0.47384739223
 ```
-
-
-## Issues and Improvements
-
-- Ensure the correct package names are used in the scripts and commands.
-- If you encounter any issues, check the Docker logs for detailed error messages.
-
-## Contact
-
 For any questions or issues, please contact Tian Tan at tiantan@seas.upenn.edu.
