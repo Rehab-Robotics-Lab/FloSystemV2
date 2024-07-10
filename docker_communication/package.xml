@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>docker_communication</name>
+  <version>0.1.0</version>
+  <description>The docker_communication package</description>
+
+  <maintainer email="tiantan@seas.upenn.edu">Tian Tan</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>image_transport</build_depend>
+
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>image_transport</exec_depend>
+
+  <export>
+  </export>
+</package>
