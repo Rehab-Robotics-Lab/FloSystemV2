@@ -1,0 +1,1 @@
+docker build -t gazebo_simulation .
