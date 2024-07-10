@@ -10,7 +10,7 @@ The test_moveit package sets up the ROS controller and MoveIt.
 
 
 ## Usage
-
+Before starting, make sure you are at `FloSystemV2/gazebo_simulation`.
 
 1. Build docker:
     ```sh
