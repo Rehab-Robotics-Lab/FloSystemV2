@@ -1,74 +1,91 @@
 
-# AprilTag Detector Docker Project
+# FLOSystemV2 Docker Communication Development
 
-## Overview
+This repository contains the necessary files to set up and run Docker containers for communication development in the FLOSystemV2 project. The setup includes two primary containers: `apriltag_detector` for detecting AprilTags and `docker_communication` for subscribing to the published topics.
 
-This project leverages a USB camera feed alongside AprilTag detection technology to determine the position, distance, and pose of AprilTags in the camera's field of view. The system runs within a Docker container, which simplifies setup and ensures consistency across different machines.
+## Prerequisites
 
-### Key Features
+Ensure you have Docker installed on your system. You can follow the official Docker installation guide: [Docker Installation](https://docs.docker.com/get-docker/)
 
-- Detection of AprilTag positions, distances, and poses using a USB camera.
-- Docker integration for easy setup and deployment.
-- Real-time display of detection results.
-- Storage of AprilTag information through ROS topics `/apriltag_info` and `/apriltag_poses`.
+## Setup Instructions
 
-## How to Use
+### 1. Run the AprilTag Detector
 
-Follow these step-by-step instructions to get the AprilTag Detector running on your system.
+Navigate to the directory where the `apriltag_detector` is located and run the container. Replace `run_Docker_AprilTagDetector.sh` with `run_Docker_AprilTagDetector_network.sh` as follows:
 
-### Setup and Initial Run
+```bash
+bash run_Docker_AprilTagDetector_network.sh
+```
 
-1. **Build the Docker Image**
-   Open a terminal and execute the following script to build the Docker image:
-   ```bash
-   ./build_Docker_Apriltag_Detector_Demo.sh
-   ```
+### 2. Verify Topics
 
-2. **Run the Docker Container**
-   After building the image, start the Docker container with:
-   ```bash
-   ./run_Docker_AprilTagDetector.sh
-   ```
+Open a terminal and use the following command to list the topics to ensure they are being published:
 
-3. **Start ROS Core**
-   Within the same terminal, start a new `tmux` session to manage multiple processes easily:
-   ```bash
-   tmux
-   ```
-   Then start the ROS core:
-   ```bash
-   roscore
-   ```
+```bash
+rostopic list
+```
 
-### Running the Detection
+You should see the topics `/apriltag_poses` and `/apriltag_info` listed.
 
-4. **Start the USB Camera Feed**
-   Open a new terminal pane in `tmux` by pressing `Ctrl+b` followed by `c`. In the new pane, run:
-   ```bash
-   ./runUSBCamera.sh
-   ```
+### 3. Navigate to `docker_communication` Directory
 
-5. **Run the AprilTag Detection**
-   Again, open another new terminal pane in `tmux` by pressing `Ctrl+b` followed by `c`. Start the AprilTag detection with:
-   ```bash
-   ./run_apriltag_detector_demo.sh
-   ```
+Ensure you are in the `FloSystemV2/docker_communication` directory:
 
-### Viewing the Results
+```bash
+cd ~/Documents/FloSystemV2/docker_communication
+```
 
-Now, the system should be operational, and you can view the window showing the AprilTag detection results.
-![AprilTag Detection Example](example.png)
+### 4. Build the Docker Image for `docker_communication`
 
-### Topics
+In another terminal, build the Docker image using the `build_Docker.sh` script:
 
-1. **/apriltag_poses**
-   - **Type**: `geometry_msgs/Pose`
-   - **Description**: Publishes the 3D pose (position and orientation) of detected AprilTags. Useful for spatial analyses and interactions in 3D environments.
+```bash
+bash build_Docker.sh
+```
 
-2. **/apriltag_info**
-   - **Type**: `std_msgs/String`
-   - **Description**: Provides a string with detailed information about each detected AprilTag, including its ID, position, and orientation. Ideal for logging, debugging, and simple text-based processing.
+### 5. Run the Docker Communication Container
 
-## Additional Information
+Use the `run_docker_network.sh` script to start the `docker_communication` container:
 
-Ensure that your USB camera is properly connected and configured to be accessible by the Docker container. The scripts provided assume that all necessary permissions and access rights are set correctly. Refer to the Docker and ROS documentation for more details on configuration and troubleshooting.
+```bash
+bash run_docker_network.sh
+```
+
+### 6. Run the Subscriber Script
+
+Inside the `docker_communication` container, run the `run_subscriber.sh` script:
+
+```bash
+bash run_subscriber.sh
+```
+
+### 7. View Topic Content
+
+You should now be able to see the content of the topics published by the `apriltag_detector` container in the `docker_communication` container.
+
+## Script Details
+
+### `run_docker_network.sh`
+
+This script stops and removes any existing container with the same name, then runs a new instance of `docker_communication_image`.
+
+```bash
+#!/bin/bash
+
+# Stop and remove any existing container
+docker stop docker_communication || true
+docker rm docker_communication || true
+
+# Run the docker_communication container
+docker run -it --name docker_communication --net=host docker_communication_image
+```
+
+
+## Issues and Improvements
+
+- Ensure the correct package names are used in the scripts and commands.
+- If you encounter any issues, check the Docker logs for detailed error messages.
+
+## Contact
+
+For any questions or issues, please contact Tian Tan at tiantan@seas.upenn.edu.
