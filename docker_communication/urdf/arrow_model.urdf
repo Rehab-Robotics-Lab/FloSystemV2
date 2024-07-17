@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<robot name="arrow_model">
+
+  <!-- Base Link -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <material name="grey">
+        <color rgba="0.5 0.5 0.5 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- X Arrow -->
+  <link name="x_arrow">
+    <visual>
+      <geometry>
+        <cylinder length="0.2" radius="0.01"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+      <origin xyz="0.1 0 0" rpy="0 0 1.5708"/>
+    </visual>
+  </link>
+
+  <!-- Y Arrow -->
+  <link name="y_arrow">
+    <visual>
+      <geometry>
+        <cylinder length="0.2" radius="0.01"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0 1 0 1"/>
+      </material>
+      <origin xyz="0 0.1 0" rpy="1.5708 0 0"/>
+    </visual>
+  </link>
+
+  <!-- Z Arrow -->
+  <link name="z_arrow">
+    <visual>
+      <geometry>
+        <cylinder length="0.2" radius="0.01"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 1 1"/>
+      </material>
+      <origin xyz="0 0 0.1" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- Joint Definitions (Fixed) -->
+  <joint name="fixed_x" type="fixed">
+    <parent link="base_link"/>
+    <child link="x_arrow"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="fixed_y" type="fixed">
+    <parent link="base_link"/>
+    <child link="y_arrow"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="fixed_z" type="fixed">
+    <parent link="base_link"/>
+    <child link="z_arrow"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>

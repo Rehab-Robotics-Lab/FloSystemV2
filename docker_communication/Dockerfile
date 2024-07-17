@@ -17,8 +17,18 @@ RUN apt-get update && apt-get install -y \
     tmux \
     ros-melodic-tf \
     ros-melodic-tf-conversions \
-    ros-melodic-tf2-geometry-msgs 
+    ros-melodic-tf2-geometry-msgs \
+    ros-melodic-desktop-full \
+    ros-melodic-gazebo-ros-pkgs \
+    ros-melodic-gazebo-ros-control \
+    ros-melodic-joint-state-controller \
+    ros-melodic-effort-controllers \
+    ros-melodic-joint-trajectory-controller \
+    python-catkin-tools \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 # Install Python packages
+RUN pip3 install --upgrade pip && pip3 install rospkg catkin_pkg
 RUN pip install numpy
 
 # Install OpenCV and dependencies for image processing
@@ -39,7 +49,7 @@ WORKDIR /catkin_ws
 RUN /bin/bash -c '. /opt/ros/melodic/setup.bash; catkin_init_workspace /catkin_ws/src'
 
 # Copy ROS package into the workspace
-COPY . /catkin_ws/src/apriltag_detector
+COPY . /catkin_ws/src/docker_communication
 
 # Copy individual .sh files to their intended locations
 

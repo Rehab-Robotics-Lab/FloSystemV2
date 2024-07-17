@@ -1,0 +1,20 @@
+<launch>
+    <!-- Launch Gazebo with a specified world -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find docker_communication)/world/simple_world.world"/>
+        <arg name="paused" default="false"/>
+        <arg name="use_sim_time" default="true"/>
+        <arg name="gui" default="true"/>
+        <arg name="headless" default="false"/>
+        <arg name="debug" default="false"/>
+    </include>
+
+    <!-- Load the URDF Model -->
+    <param name="robot_description" command="$(find xacro)/xacro $(find docker_communication)/urdf/arrow_model.urdf"/>
+
+    <!-- Spawn the Arrow Model into the world -->
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model arrow_model"/>
+
+    <!-- Launch the subscriber node for AprilTag detection -->
+    <node name="apriltag_subscriber_node" pkg="docker_communication" type="subscriber.py" output="screen"/>
+</launch>

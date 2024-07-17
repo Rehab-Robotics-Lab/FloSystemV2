@@ -14,12 +14,13 @@ def pose_callback(data):
     model_state_msg = ModelState()
     model_state_msg.model_name = 'apriltag_model'
     model_state_msg.pose = data
+    model_state_msg.reference_frame = 'world'
 
     # Call the service to update the model state in Gazebo
     try:
         set_model_state = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
         resp = set_model_state(model_state_msg)
-        rospy.loginfo("Model state updated: {}".format(resp))
+        rospy.loginfo("Model state updated: {}".format(resp.status_message))
     except rospy.ServiceException as e:
         rospy.logerr("Service call failed: %s" % e)
 
@@ -39,14 +40,20 @@ def spawn_model():
 
     # Read the model SDF file
     model_path = '/catkin_ws/src/flov2tag/meshes/apriltag_model/model.sdf'
-    with open(model_path, 'r') as model_file:
-        model_xml = model_file.read()
+    rospy.loginfo("Reading model file from: {}".format(model_path))
+    
+    try:
+        with open(model_path, 'r') as model_file:
+            model_xml = model_file.read()
+    except IOError as e:
+        rospy.logerr("Could not read model file: %s" % e)
+        return
 
     rospy.wait_for_service('/gazebo/spawn_sdf_model')
     try:
         spawn_model_prox = rospy.ServiceProxy('/gazebo/spawn_sdf_model', SpawnModel)
         resp = spawn_model_prox(model_name, model_xml, "", initial_pose, "world")
-        rospy.loginfo("Model spawned: {}".format(resp))
+        rospy.loginfo("Model spawned: {}".format(resp.status_message))
     except rospy.ServiceException as e:
         rospy.logerr("Service call failed: %s" % e)
 

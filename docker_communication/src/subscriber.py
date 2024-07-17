@@ -1,10 +1,17 @@
 #!/usr/bin/env python
 import rospy
+import tf
 from geometry_msgs.msg import Pose
 from std_msgs.msg import String
 
 def pose_callback(data):
-    rospy.loginfo("Received Pose: {}".format(data))
+    br = tf.TransformBroadcaster()
+    br.sendTransform((data.position.x, data.position.y, data.position.z),
+                     (data.orientation.x, data.orientation.y, data.orientation.z, data.orientation.w),
+                     rospy.Time.now(),
+                     "apriltag",  # child frame
+                     "world")    # parent frame
+    rospy.loginfo("Published Pose to TF: {}".format(data))
 
 def info_callback(data):
     rospy.loginfo("Received Info: {}".format(data))
