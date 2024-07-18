@@ -13,7 +13,7 @@
   </include>
 
   <!-- Set the robot urdf on the parameter server -->
-  <param name="robot_description" textfile="$(find movewithhead)/config/gazebo_flov2withhead.urdf" />
+  <param name="robot_description" textfile="$(find flov2withhead)/urdf/flov2withhead.urdf" />
 
   <!-- Unpause the simulation after loading the robot model -->
   <arg name="unpause" value="$(eval '' if arg('paused') else '-unpause')" />
