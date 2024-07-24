@@ -26,6 +26,7 @@ using namespace dynamixel;
 #define DXL2_ID              212               // DXL2 ID
 #define DXL3_ID              221               // DXL3 ID
 #define DXL4_ID              222               // DXL4 ID
+#define DXL5_ID              225              // DXL5 ID
 // BAUDRATE should be defined here.
 #define BAUDRATE             57600            // Default Baudrate of DYNAMIXEL X series
 //set up fixed mount point for the device, this is the same as the one set in the udev rules file.
@@ -52,7 +53,7 @@ bool getJointPositionsCallback(
   int32_t position2 = 0;
   int32_t position3 = 0;
   int32_t position4 = 0;
-
+  int32_t position5 = 0;
   // Read Present Position (length : 4 bytes) and Convert uint32 -> int32
   // When reading 2 byte data from AX / MX(1.0), use read2ByteTxRx() instead.
   if (req.item1 == "position") {
@@ -96,12 +97,21 @@ bool getJointPositionsCallback(
     return 0;
   }
 
-
+  if (req.item5 == "position") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id5, ADDR_PRESENT_POSITION, 4);
+  } else if (req.item5 == "LED") {
+    dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id5, ADDR_PRESENT_LED, 1);
+  }
+  if (dxl_addparam_result != true) {
+    ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id5);
+    return 0;
+  }
 
   uint32_t value1 = 0;
   uint32_t value2 = 0;
   uint32_t value3 = 0;
   uint32_t value4 = 0;
+  uint32_t value5 = 0;
   dxl_comm_result = groupBulkRead.txRxPacket(); 
 
 
@@ -131,6 +141,11 @@ bool getJointPositionsCallback(
     } else if (req.item2 == "LED") {
       value4 = groupBulkRead.getData((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
     }
+    if (req.item1 == "position") {
+      value5 = groupBulkRead.getData((uint8_t)req.id5, ADDR_PRESENT_POSITION, 4);
+    } else if (req.item2 == "LED") {
+      value5 = groupBulkRead.getData((uint8_t)req.id5, ADDR_PRESENT_POSITION, 4);
+    }
 
   
 
@@ -138,10 +153,12 @@ bool getJointPositionsCallback(
     ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id2, req.item2.c_str(), value2);
     ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id3, req.item3.c_str(), value3);
     ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id4, req.item4.c_str(), value4);
+    ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id5, req.item5.c_str(), value5);
     res.value1 = value1;
     res.value2 = value2;
     res.value3 = value3;
     res.value4 = value4;
+    res.value5 = value5;
     groupBulkRead.clearParam();
     return true;
   } else {
@@ -162,10 +179,10 @@ void setJointPositionsCallback(const flo_humanoid::SetJointPositions::ConstPtr &
   // uint8_t param_goal_led2[1];
   // uint8_t addr_goal_item[2];
   // uint8_t len_goal_item[2];
-  uint8_t param_goal_position[4][4];
-  uint8_t param_goal_led[4][1];
-  uint8_t addr_goal_item[4];
-  uint8_t len_goal_item[4];
+  uint8_t param_goal_position[5][4];
+  uint8_t param_goal_led[5][1];
+  uint8_t addr_goal_item[5];
+  uint8_t len_goal_item[5];
 
   // Position Value of X series is 4 byte data. For AX & MX(1.0) use 2 byte data(uint16_t) for the Position Value.
   if (msg->item1 == "position") {
@@ -232,7 +249,21 @@ void setJointPositionsCallback(const flo_humanoid::SetJointPositions::ConstPtr &
     len_goal_item[3] = 1;
   }
 
-
+    if (msg->item5 == "position") {
+    uint32_t position5 = (unsigned int)msg->value5; // Convert int32 -> uint32
+    param_goal_position[4][0] = DXL_LOBYTE(DXL_LOWORD(position5));
+    param_goal_position[4][1] = DXL_HIBYTE(DXL_LOWORD(position5));
+    param_goal_position[4][2] = DXL_LOBYTE(DXL_HIWORD(position5));
+    param_goal_position[4][3] = DXL_HIBYTE(DXL_HIWORD(position5));
+    addr_goal_item[4] = ADDR_GOAL_POSITION;
+    len_goal_item[4] = 4;
+    ROS_INFO("position5: %d", position5);
+  } else if (msg->item5 == "LED") {
+    uint32_t led5 = (unsigned int)msg->value5; // Convert int32 -> uint32
+    param_goal_led[4][0] = led5;
+    addr_goal_item[4] = ADDR_PRESENT_LED;
+    len_goal_item[4] = 1;
+  }
 
   // Write Goal Position (length : 4 bytes)
   // When writing 2 byte data to AX / MX(1.0), use write2ByteTxRx() instead.
@@ -272,12 +303,22 @@ void setJointPositionsCallback(const flo_humanoid::SetJointPositions::ConstPtr &
     ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id4);
   }
 
+  if (msg->item5 == "position") {
+    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id5, addr_goal_item[4], len_goal_item[4], param_goal_position[4]);
+  } else if (msg->item5 == "LED") {
+    dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id5, addr_goal_item[4], len_goal_item[4], param_goal_led[4]);
+  }
+  if (dxl_addparam_result != true) {
+    ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id5);
+  }
+
   dxl_comm_result = groupBulkWrite.txPacket();
   if (dxl_comm_result == COMM_SUCCESS) {
     ROS_INFO("setItem : [ID:%d] [%s:%d]", msg->id1, msg->item1.c_str(), msg->value1);
     ROS_INFO("setItem : [ID:%d] [%s:%d]", msg->id2, msg->item2.c_str(), msg->value2);
     ROS_INFO("setItem : [ID:%d] [%s:%d]", msg->id3, msg->item3.c_str(), msg->value3);
     ROS_INFO("setItem : [ID:%d] [%s:%d]", msg->id4, msg->item4.c_str(), msg->value4);
+    ROS_INFO("setItem : [ID:%d] [%s:%d]", msg->id5, msg->item5.c_str(), msg->value5);
   } else {
     ROS_INFO("Failed to set position! Result: %d", dxl_comm_result);
   }
@@ -359,6 +400,21 @@ int main(int argc, char ** argv)
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL4_ID);
     return -1;
   }
+
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL5_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to enable torque for Dynamixel ID: %d", DXL5_ID);
+    return -1;
+  }
+
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL5_ID, ADDR_OPER_MODE, 3, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL5_ID);
+    return -1;
+  }
+
 
   ros::init(argc, argv, "read_write_arm_node");
   ros::NodeHandle nh;

@@ -15,7 +15,7 @@ address    name                             type            neutral    min    ma
 212        right_shoulder_abductionadduction XC-430-W240-T  95         90     185     0     
 221        right_elbow_flexionextension      XL-430-W250-T  180        95     270     0 
 222        right_elbow_rotation              XL-430-W250-T  180        175    260     0
-231        right_gripper                     XM-430-W350-T   0           0      0     0
+13        right_gripper                     XM-430-W350-T   0                0     0
 
 # Updated June 18, 2024 
 

@@ -1,0 +1,48 @@
+<launch>
+  <!-- Include the empty world for Gazebo simulation -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch" />
+
+  <!-- Static transform publisher for the first model -->
+  <node
+    name="tf_footprint_base_camera"
+    pkg="tf"
+    type="static_transform_publisher"
+    args="0 0 0 0 0 0 camera_base_link camera_base_footprint 40" />
+
+  <!-- Spawn the first model into Gazebo -->
+  <node
+    name="spawn_model_camera"
+    pkg="gazebo_ros"
+    type="spawn_model"
+    args="-file $(find camera)/urdf/camera.urdf -urdf -model camera"
+    output="screen" />
+
+  <!-- Fake joint calibration for the first model -->
+  <node
+    name="fake_joint_calibration_camera"
+    pkg="rostopic"
+    type="rostopic"
+    args="pub /camera_calibrated std_msgs/Bool true" />
+
+  <!-- Static transform publisher for the second model -->
+  <node
+    name="tf_footprint_base_flov2withhead"
+    pkg="tf"
+    type="static_transform_publisher"
+    args="0 0 0 0 0 0 flov2withhead_base_link flov2withhead_base_footprint 40" />
+
+  <!-- Spawn the second model into Gazebo -->
+  <node
+    name="spawn_model_flov2withhead"
+    pkg="gazebo_ros"
+    type="spawn_model"
+    args="-file $(find flov2withhead)/urdf/flov2withhead.urdf -urdf -model flov2withhead"
+    output="screen" />
+
+  <!-- Fake joint calibration for the second model -->
+  <node
+    name="fake_joint_calibration_flov2withhead"
+    pkg="rostopic"
+    type="rostopic"
+    args="pub /flov2withhead_calibrated std_msgs/Bool true" />
+</launch>

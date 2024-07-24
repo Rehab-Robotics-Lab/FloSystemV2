@@ -9,13 +9,10 @@ controller_list:
     - r2
     - r3
     - r4
-    - l1
-    - l2
-    - l3
-    - l4
+ 
   - name: hand_ee_controller
     action_ns: follow_joint_trajectory
     type: FollowJointTrajectory
     joints:
-    - lt
+
     - rt

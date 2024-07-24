@@ -38,6 +38,18 @@
         <joint name="l3" value="0"/>
         <joint name="l4" value="0"/>
     </group_state>
+    <group_state name="R_wave_start" group="R">
+        <joint name="r1" value="0.1489"/>
+        <joint name="r2" value="1.5167"/>
+        <joint name="r3" value="1.24184"/>
+        <joint name="r4" value="-0.082519"/>
+    </group_state>
+    <group_state name="R_wave_end" group="R">
+        <joint name="r1" value="0.1489"/>
+        <joint name="r2" value="0.6593"/>
+        <joint name="r3" value="1.1857"/>
+        <joint name="r4" value="0.5555"/>
+    </group_state>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="base" type="fixed" parent_frame="/world" child_link="base_link"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->

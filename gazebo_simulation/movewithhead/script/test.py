@@ -1,24 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright 2019 Wuhan PS-Micro Technology Co., Itd.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import rospy, sys
 import moveit_commander
-from geometry_msgs.msg import PoseStamped, Pose
-
+from geometry_msgs.msg import PoseStamped
+from std_msgs.msg import Float64MultiArray, Int32
 
 class MoveItIkDemo:
     def __init__(self):
@@ -27,66 +13,116 @@ class MoveItIkDemo:
         
         # 初始化ROS节点
         rospy.init_node('moveit_ik_demo')
-                
+
+        self.left_arm_joint_angles_pub = rospy.Publisher('/joint_angles', Float64MultiArray, queue_size=10)
+        self.gripper_pub = rospy.Publisher('/gripper', Int32, queue_size=10)
+
+
         # 初始化需要使用move group控制的机械臂中的arm group
-        arm = moveit_commander.MoveGroupCommander('R')
+        self.arm = moveit_commander.MoveGroupCommander('R')
                 
         # 获取终端link的名称
-        end_effector_link = arm.get_end_effector_link()
+        self.end_effector_link = self.arm.get_end_effector_link()
                         
         # 设置目标位置所使用的参考坐标系
         reference_frame = 'world'
-        arm.set_pose_reference_frame(reference_frame)
+        self.arm.set_pose_reference_frame(reference_frame)
                 
         # 当运动规划失败后，允许重新规划
-        arm.allow_replanning(True)
+        self.arm.allow_replanning(True)
         
         # 设置位置(单位：米)和姿态（单位：弧度）的允许误差
-        arm.set_goal_position_tolerance(0.001)
-        arm.set_goal_orientation_tolerance(1)
+        self.arm.set_goal_position_tolerance(0.001)
+        self.arm.set_goal_orientation_tolerance(1)
        
         # 设置允许的最大速度和加速度
-        arm.set_max_acceleration_scaling_factor(0.5)
-        arm.set_max_velocity_scaling_factor(0.5)
+        self.arm.set_max_acceleration_scaling_factor(0.5)
+        self.arm.set_max_velocity_scaling_factor(0.3)
 
         # 控制机械臂先回到初始化位置
-        #arm.set_named_target('home')
-        #arm.go()
-        #rospy.sleep(1)
-               
-        # 设置机械臂工作空间中的目标位姿，位置使用x、y、z坐标描述，
-        # 姿态使用四元数描述，基于base_link坐标系
+        self.arm.set_named_target('Rhome')
+        self.arm.go()
+
+        self.arm.set_named_target('R_wave_start')
+        self.arm.go()
+
+        self.arm.set_named_target('R_wave_end')
+        self.arm.go()
+
+        self.arm.set_named_target('R_wave_start')
+        self.arm.go()
+
+        self.arm.set_named_target('R_wave_end')
+        self.arm.go()
+
+        self.arm.set_named_target('R_wave_start')
+        self.arm.go()
+
+        self.arm.set_named_target('Rhome')
+        self.arm.go()
+        
+        """
+        
+        
+        
+        x = 0.09
+        y = 0.17
+        z = 1.03
+
+        self.print_current_pose()
+        current_pose = self.arm.get_current_pose(self.end_effector_link).pose
         target_pose = PoseStamped()
         target_pose.header.frame_id = reference_frame
         target_pose.header.stamp = rospy.Time.now()     
-        target_pose.pose.position.x = 0.2
-        target_pose.pose.position.y = 0.12
-        target_pose.pose.position.z = 1.13998
-        target_pose.pose.orientation.x = -0.500260
-        target_pose.pose.orientation.y = -0.499948
-        target_pose.pose.orientation.z = -0.499583
-        target_pose.pose.orientation.w = 0.500209
-        
+        target_pose.pose.position.x = x
+        target_pose.pose.position.y = y
+        target_pose.pose.position.z = z
+        #target_pose.pose.orientation.x = current_pose.orientation
+        target_pose.pose.orientation.x = -0.50
+        target_pose.pose.orientation.y = -0.50
+        target_pose.pose.orientation.z = -0.50
+        target_pose.pose.orientation.w =  0.50
+
         # 设置机器臂当前的状态作为运动初始状态
-        arm.set_start_state_to_current_state()
+        self.arm.set_start_state_to_current_state()
         
         # 设置机械臂终端运动的目标位姿
-        arm.set_joint_value_target(target_pose, end_effector_link,True)
+        self.arm.set_joint_value_target(target_pose, self.end_effector_link, True)
         
         # 规划运动路径
-        _,traj,_,_ = arm.plan()
-        
+        _, traj, _, _ = self.arm.plan()
+
+        joint_angles_pub = self.left_arm_joint_angles_pub
+
+        # 提取规划路径中的关节角度
+        joint_angle_sequences = []
+        for point in traj.joint_trajectory.points:
+            joint_angle_sequences.append(point.positions)
+
+        # 发布关节角度序列
+        joint_angle_array = Float64MultiArray()
+        for joint_angles in joint_angle_sequences:
+            joint_angle_array.data.extend(joint_angles)
+        joint_angles_pub.publish(joint_angle_array)
+
         # 按照规划的运动路径控制机械臂运动
-        arm.execute(traj)
+        self.arm.execute(traj)
         rospy.sleep(1)
+        self.print_current_pose()
 
-        # 控制机械臂回到初始化位置
-        #arm.set_named_target('home')
-        #arm.go()
+        
+        gripper_angle = 3982  # 示例角度值，根据需求调整
+        self.gripper_pub.publish(gripper_angle)
+        """
 
-        # 关闭并退出moveit
         moveit_commander.roscpp_shutdown()
         moveit_commander.os._exit(0)
+
+    def print_current_pose(self):
+        current_pose = self.arm.get_current_pose(self.end_effector_link).pose
+        rospy.loginfo(f"Current Pose: {current_pose}")
+
+    
 
 if __name__ == "__main__":
     MoveItIkDemo()

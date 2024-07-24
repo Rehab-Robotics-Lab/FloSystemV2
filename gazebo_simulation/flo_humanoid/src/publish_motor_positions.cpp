@@ -4,6 +4,9 @@
 
 using namespace dynamixel;
 
+
+#define DEG_TO_RAD(deg) ((deg) * M_PI / 180.0)
+
 // Control table address
 #define ADDR_PRESENT_POSITION 132
 
@@ -35,13 +38,17 @@ void publishJointPositions(ros::Publisher &pub1, ros::Publisher &pub2, ros::Publ
 
     // Publish positions
     std_msgs::Float64 msg;
-    msg.data = position1 * 0.088;  // Convert to degrees if necessary
+    // 进行位置转换并发布消息
+    msg.data = DEG_TO_RAD(position1 * 0.088 - 110);  // 将位置转换为弧度
     pub1.publish(msg);
-    msg.data = position2 * 0.088;
+    
+    msg.data = DEG_TO_RAD(position2 * 0.088 - 90);
     pub2.publish(msg);
-    msg.data = position3 * 0.088;
+    
+    msg.data = DEG_TO_RAD(position3 * 0.088 - 180);
     pub3.publish(msg);
-    msg.data = position4 * 0.088;
+    
+    msg.data = DEG_TO_RAD(position4 * 0.088 - 90);
     pub4.publish(msg);
 }
 

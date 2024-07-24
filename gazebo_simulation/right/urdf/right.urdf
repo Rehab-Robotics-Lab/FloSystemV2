@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="right">
+  
+  
+  
+  
+  
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.000333168231091419 -0.0490077134325242 0.105556739128517"
+        rpy="0 0 0" />
+      <mass
+        value="0.43756889593348" />
+      <inertia
+        ixx="0.000780173945392211"
+        ixy="1.72547696446317E-06"
+        ixz="-8.11722846382749E-08"
+        iyy="0.000825842165328829"
+        iyz="4.67151417985947E-05"
+        izz="0.000643183765667985" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://right/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://right/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="right_up_joint">
+    <inertial>
+      <origin
+        xyz="5.09595476927416E-10 7.24041410160581E-10 -0.0157092653420776"
+        rpy="0 0 0" />
+      <mass
+        value="0.0208133468453592" />
+      <inertia
+        ixx="6.27974968154286E-06"
+        ixy="-1.32343047844373E-11"
+        ixz="8.95773786943948E-14"
+        iyy="1.11423800240112E-05"
+        iyz="1.27944084403299E-13"
+        izz="8.2135527700594E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://right/meshes/right_up_joint.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://right/meshes/right_up_joint.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r1"
+    type="revolute">
+    <origin
+      xyz="0.093361 -0.051062 0.13081"
+      rpy="1.5708 0 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="right_up_joint" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="1" />
+  </joint>
+  <link
+    name="right_up_arm">
+    <inertial>
+      <origin
+        xyz="0.0373903260955437 6.01721482874629E-05 -0.00541151025560815"
+        rpy="0 0 0" />
+      <mass
+        value="0.142004365290478" />
+      <inertia
+        ixx="3.19807239576317E-05"
+        ixy="-4.35320002639338E-08"
+        ixz="2.24405433812147E-06"
+        iyy="6.16421105939795E-05"
+        iyz="9.81629533545382E-10"
+        izz="6.84742764155626E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://right/meshes/right_up_arm.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://right/meshes/right_up_arm.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r2"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="-1.5708 0 -1.5708" />
+    <parent
+      link="right_up_joint" />
+    <child
+      link="right_up_arm" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="1" />
+  </joint>
+  <link
+    name="right_low_joint">
+    <inertial>
+      <origin
+        xyz="5.09595032838206E-10 7.24041260974362E-10 -0.0157092653420775"
+        rpy="0 0 0" />
+      <mass
+        value="0.0208133468453592" />
+      <inertia
+        ixx="6.27974968154287E-06"
+        ixy="-1.32343047943893E-11"
+        ixz="8.95773980905949E-14"
+        iyy="1.11423800240113E-05"
+        iyz="1.27944096508203E-13"
+        izz="8.21355277005941E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://right/meshes/right_low_joint.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://right/meshes/right_low_joint.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r3"
+    type="revolute">
+    <origin
+      xyz="0.117 0 -0.001"
+      rpy="-1.5708 -3.1416 -1.5708" />
+    <parent
+      link="right_up_arm" />
+    <child
+      link="right_low_joint" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="1" />
+  </joint>
+  <link
+    name="right_low_arm">
+    <inertial>
+      <origin
+        xyz="0.000145349481929017 0.048119627739288 0.000141021295785637"
+        rpy="0 0 0" />
+      <mass
+        value="0.18903364369622" />
+      <inertia
+        ixx="8.21074310058178E-05"
+        ixy="3.38641336425118E-07"
+        ixz="5.51403520464925E-07"
+        iyy="7.6979741225698E-05"
+        iyz="-3.25828337646955E-09"
+        izz="0.000103326261719523" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://right/meshes/right_low_arm.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://right/meshes/right_low_arm.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r4"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="0 -1.5708 0" />
+    <parent
+      link="right_low_joint" />
+    <child
+      link="right_low_arm" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="100"
+      velocity="1" />
+  </joint>
+  <link
+    name="right_gripper">
+    <inertial>
+      <origin
+        xyz="0.00394028289478416 0.000648626674701447 -0.0216328066989442"
+        rpy="0 0 0" />
+      <mass
+        value="0.103299324219439" />
+      <inertia
+        ixx="2.0963004369683E-05"
+        ixy="2.90752267814508E-08"
+        ixz="-3.12167035365808E-07"
+        iyy="1.89319959235232E-05"
+        iyz="1.75561004581702E-08"
+        izz="2.33522908570637E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://right/meshes/right_gripper.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://right/meshes/right_gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r5"
+    type="fixed">
+    <origin
+      xyz="-0.00025 0.15114 -0.0005"
+      rpy="1.5708 0 -3.1416" />
+    <parent
+      link="right_low_arm" />
+    <child
+      link="right_gripper" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  
+  
+    <transmission name="right_up_joint_trans">
+	<type>transmission_interface/SimpleTransmission</type>
+	<joint name="r1">
+		<hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+	</joint>
+	<actuator name="right_up_joint_motor">
+		<hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+		<mechanicalReduction>1</mechanicalReduction>
+	</actuator>
+  </transmission>
+  
+  <transmission name="right_up_arm_trans">
+	<type>transmission_interface/SimpleTransmission</type>
+	<joint name="r2">
+		<hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+	</joint>
+	<actuator name="right_up_arm_motor">
+		<hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+		<mechanicalReduction>1</mechanicalReduction>
+	</actuator>
+  </transmission>
+  
+  <transmission name="right_low_joint_trans">
+	<type>transmission_interface/SimpleTransmission</type>
+	<joint name="r3">
+		<hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+	</joint>
+	<actuator name="right_low_joint_motor">
+		<hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+		<mechanicalReduction>1</mechanicalReduction>
+	</actuator>
+  </transmission>
+  
+  <transmission name="right_low_arm_trans">
+	<type>transmission_interface/SimpleTransmission</type>
+	<joint name="r4">
+		<hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+	</joint>
+	<actuator name="right_low_arm_motor">
+		<hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+		<mechanicalReduction>1</mechanicalReduction>
+	</actuator>
+  </transmission>  
+  
+
+  
+  <gazebo>
+	<plugin name="control" filename="libgazebo_ros_control.so">
+		<robotNamespace>/</robotNamespace>
+	</plugin>
+  </gazebo>
+  
+  <gazebo reference="right_up_joint">
+	<selfCollide>true</selfCollide>
+  </gazebo>
+
+  <gazebo reference="right_up_arm">
+	<selfCollide>true</selfCollide>
+  </gazebo>
+  
+  <gazebo reference="right_low_joint">
+	<selfCollide>true</selfCollide>
+  </gazebo>
+  
+  <gazebo reference="right_low_arm">
+	<selfCollide>true</selfCollide>
+  </gazebo>
+  
+</robot>

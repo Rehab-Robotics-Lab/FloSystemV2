@@ -1,0 +1,769 @@
+<COLLADA xmlns="http://www.collada.org/2008/03/COLLADASchema" version="1.5.0">
+	<asset>
+		<contributor>
+			<authoring_tool>URDF Collada Writer</authoring_tool>
+		</contributor>
+		<created>2024-07-16T22:53:00.000000</created>
+		<modified>2024-07-16T22:53:00.000000</modified>
+		<unit/>
+		<up_axis>Z_UP</up_axis>
+	</asset>
+	<library_visual_scenes id="vscenes">
+		<visual_scene id="vscene" name="URDF Visual Scene">
+			<node id="visual0" name="right" sid="visual0">
+				<node id="vkmodel0_node0" name="base_link" sid="node0">
+					<translate>0.0 0.0 0.0</translate>
+					<rotate>1.0 0.0 0.0 0.0</rotate>
+					<instance_geometry url="#gkmodel0_base_link_geom0">
+						<bind_material>
+							<technique_common>
+								<instance_material symbol="mat0" target="#gkmodel0_base_link_geom0_mat"/>
+							</technique_common>
+						</bind_material>
+					</instance_geometry>
+					<node id="vkmodel0_node5" name="right_up_joint" sid="node5">
+						<translate>-0.0 -0.0 -0.0</translate>
+						<rotate>1.0 0.0 0.0 0.0</rotate>
+						<translate>0.09336 -0.05106 0.13081</translate>
+						<rotate>0.57735 0.57735 0.57735 120.00024</rotate>
+						<rotate sid="node_r1_axis0">0.0 0.0 1.0 0.0</rotate>
+						<translate>0.0 0.0 0.0</translate>
+						<rotate>1.0 0.0 0.0 0.0</rotate>
+						<instance_geometry url="#gkmodel0_right_up_joint_geom0">
+							<bind_material>
+								<technique_common>
+									<instance_material symbol="mat0" target="#gkmodel0_right_up_joint_geom0_mat"/>
+								</technique_common>
+							</bind_material>
+						</instance_geometry>
+						<node id="vkmodel0_node4" name="right_up_arm" sid="node4">
+							<translate>-0.0 -0.0 -0.0</translate>
+							<rotate>1.0 0.0 0.0 0.0</rotate>
+							<translate>0.0 0.0 0.0</translate>
+							<rotate>-0.57735 0.57735 -0.57735 120.00024</rotate>
+							<rotate sid="node_r2_axis0">0.0 0.0 -1.0 0.0</rotate>
+							<translate>0.0 0.0 0.0</translate>
+							<rotate>1.0 0.0 0.0 0.0</rotate>
+							<instance_geometry url="#gkmodel0_right_up_arm_geom0">
+								<bind_material>
+									<technique_common>
+										<instance_material symbol="mat0" target="#gkmodel0_right_up_arm_geom0_mat"/>
+									</technique_common>
+								</bind_material>
+							</instance_geometry>
+							<node id="vkmodel0_node3" name="right_low_joint" sid="node3">
+								<translate>-0.0 -0.0 -0.0</translate>
+								<rotate>1.0 0.0 0.0 0.0</rotate>
+								<translate>0.117 0.0 -0.001</translate>
+								<rotate>0.57735 0.57735 0.57735 119.99951</rotate>
+								<rotate sid="node_r3_axis0">0.0 0.0 1.0 0.0</rotate>
+								<translate>0.0 0.0 0.0</translate>
+								<rotate>1.0 0.0 0.0 0.0</rotate>
+								<instance_geometry url="#gkmodel0_right_low_joint_geom0">
+									<bind_material>
+										<technique_common>
+											<instance_material symbol="mat0" target="#gkmodel0_right_low_joint_geom0_mat"/>
+										</technique_common>
+									</bind_material>
+								</instance_geometry>
+								<node id="vkmodel0_node2" name="right_low_arm" sid="node2">
+									<translate>-0.0 -0.0 -0.0</translate>
+									<rotate>1.0 0.0 0.0 0.0</rotate>
+									<translate>0.0 0.0 0.0</translate>
+									<rotate>0.0 -1.0 0.0 90.00021</rotate>
+									<rotate sid="node_r4_axis0">0.0 0.0 -1.0 0.0</rotate>
+									<translate>0.0 0.0 0.0</translate>
+									<rotate>1.0 0.0 0.0 0.0</rotate>
+									<instance_geometry url="#gkmodel0_right_low_arm_geom0">
+										<bind_material>
+											<technique_common>
+												<instance_material symbol="mat0" target="#gkmodel0_right_low_arm_geom0_mat"/>
+											</technique_common>
+										</bind_material>
+									</instance_geometry>
+									<node id="vkmodel0_node1" name="right_gripper" sid="node1">
+										<translate>-0.0 -0.0 -0.0</translate>
+										<rotate>1.0 0.0 0.0 0.0</rotate>
+										<translate>-0.00025 0.15114 -0.0005</translate>
+										<rotate>0.0 0.70711 0.70711 179.9997</rotate>
+										<rotate sid="node_r5_axis0">0.0 0.0 0.0 0.0</rotate>
+										<translate>0.0 0.0 0.0</translate>
+										<rotate>1.0 0.0 0.0 0.0</rotate>
+										<instance_geometry url="#gkmodel0_right_gripper_geom0">
+											<bind_material>
+												<technique_common>
+													<instance_material symbol="mat0" target="#gkmodel0_right_gripper_geom0_mat"/>
+												</technique_common>
+											</bind_material>
+										</instance_geometry>
+									</node>
+								</node>
+							</node>
+						</node>
+					</node>
+				</node>
+			</node>
+		</visual_scene>
+	</library_visual_scenes>
+	<library_geometries id="geometries">
+		<geometry id="gkmodel0_base_link_geom0" name="package://right/meshes/base_link.STL"/>
+		<geometry id="gkmodel0_right_up_joint_geom0" name="package://right/meshes/right_up_joint.STL"/>
+		<geometry id="gkmodel0_right_up_arm_geom0" name="package://right/meshes/right_up_arm.STL"/>
+		<geometry id="gkmodel0_right_low_joint_geom0" name="package://right/meshes/right_low_joint.STL"/>
+		<geometry id="gkmodel0_right_low_arm_geom0" name="package://right/meshes/right_low_arm.STL"/>
+		<geometry id="gkmodel0_right_gripper_geom0" name="package://right/meshes/right_gripper.STL"/>
+	</library_geometries>
+	<library_effects id="effects">
+		<effect id="gkmodel0_base_link_geom0">
+			<profile_COMMON>
+				<technique sid="">
+					<phong>
+						<ambient>
+							<color>1 1 1 1</color>
+						</ambient>
+						<diffuse>
+							<color>1 1 1 1</color>
+						</diffuse>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+		<effect id="gkmodel0_base_link_geom0_eff">
+			<profile_COMMON>
+				<technique sid="">
+					<phong>
+						<ambient>
+							<color>1 1 1 1</color>
+						</ambient>
+						<diffuse>
+							<color>1 1 1 1</color>
+						</diffuse>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+		<effect id="gkmodel0_right_up_joint_geom0">
+			<profile_COMMON>
+				<technique sid="">
+					<phong>
+						<ambient>
+							<color>0.7921568751335144 0.8196078538894653 0.9333333373069763 1</color>
+						</ambient>
+						<diffuse>
+							<color>0.7921568751335144 0.8196078538894653 0.9333333373069763 1</color>
+						</diffuse>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+		<effect id="gkmodel0_right_up_joint_geom0_eff">
+			<profile_COMMON>
+				<technique sid="">
+					<phong>
+						<ambient>
+							<color>0.7921568751335144 0.8196078538894653 0.9333333373069763 1</color>
+						</ambient>
+						<diffuse>
+							<color>0.7921568751335144 0.8196078538894653 0.9333333373069763 1</color>
+						</diffuse>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+		<effect id="gkmodel0_right_up_arm_geom0">
+			<profile_COMMON>
+				<technique sid="">
+					<phong>
+						<ambient>
+							<color>0.7529411911964417 0.7529411911964417 0.7529411911964417 1</color>
+						</ambient>
+						<diffuse>
+							<color>0.7529411911964417 0.7529411911964417 0.7529411911964417 1</color>
+						</diffuse>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+		<effect id="gkmodel0_right_up_arm_geom0_eff">
+			<profile_COMMON>
+				<technique sid="">
+					<phong>
+						<ambient>
+							<color>0.7529411911964417 0.7529411911964417 0.7529411911964417 1</color>
+						</ambient>
+						<diffuse>
+							<color>0.7529411911964417 0.7529411911964417 0.7529411911964417 1</color>
+						</diffuse>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+		<effect id="gkmodel0_right_low_joint_geom0">
+			<profile_COMMON>
+				<technique sid="">
+					<phong>
+						<ambient>
+							<color>0.7921568751335144 0.8196078538894653 0.9333333373069763 1</color>
+						</ambient>
+						<diffuse>
+							<color>0.7921568751335144 0.8196078538894653 0.9333333373069763 1</color>
+						</diffuse>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+		<effect id="gkmodel0_right_low_joint_geom0_eff">
+			<profile_COMMON>
+				<technique sid="">
+					<phong>
+						<ambient>
+							<color>0.7921568751335144 0.8196078538894653 0.9333333373069763 1</color>
+						</ambient>
+						<diffuse>
+							<color>0.7921568751335144 0.8196078538894653 0.9333333373069763 1</color>
+						</diffuse>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+		<effect id="gkmodel0_right_low_arm_geom0">
+			<profile_COMMON>
+				<technique sid="">
+					<phong>
+						<ambient>
+							<color>0.7529411911964417 0.7529411911964417 0.7529411911964417 1</color>
+						</ambient>
+						<diffuse>
+							<color>0.7529411911964417 0.7529411911964417 0.7529411911964417 1</color>
+						</diffuse>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+		<effect id="gkmodel0_right_low_arm_geom0_eff">
+			<profile_COMMON>
+				<technique sid="">
+					<phong>
+						<ambient>
+							<color>0.7529411911964417 0.7529411911964417 0.7529411911964417 1</color>
+						</ambient>
+						<diffuse>
+							<color>0.7529411911964417 0.7529411911964417 0.7529411911964417 1</color>
+						</diffuse>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+		<effect id="gkmodel0_right_gripper_geom0">
+			<profile_COMMON>
+				<technique sid="">
+					<phong>
+						<ambient>
+							<color>0.7529411911964417 0.7529411911964417 0.7529411911964417 1</color>
+						</ambient>
+						<diffuse>
+							<color>0.7529411911964417 0.7529411911964417 0.7529411911964417 1</color>
+						</diffuse>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+		<effect id="gkmodel0_right_gripper_geom0_eff">
+			<profile_COMMON>
+				<technique sid="">
+					<phong>
+						<ambient>
+							<color>0.7529411911964417 0.7529411911964417 0.7529411911964417 1</color>
+						</ambient>
+						<diffuse>
+							<color>0.7529411911964417 0.7529411911964417 0.7529411911964417 1</color>
+						</diffuse>
+					</phong>
+				</technique>
+			</profile_COMMON>
+		</effect>
+	</library_effects>
+	<library_materials id="materials">
+		<material id="gkmodel0_base_link_geom0_mat">
+			<instance_effect url="#gkmodel0_base_link_geom0_eff"/>
+		</material>
+		<material id="gkmodel0_base_link_geom0_mat">
+			<instance_effect url="#gkmodel0_base_link_geom0"/>
+		</material>
+		<material id="gkmodel0_right_up_joint_geom0_mat">
+			<instance_effect url="#gkmodel0_right_up_joint_geom0_eff"/>
+		</material>
+		<material id="gkmodel0_right_up_joint_geom0_mat">
+			<instance_effect url="#gkmodel0_right_up_joint_geom0"/>
+		</material>
+		<material id="gkmodel0_right_up_arm_geom0_mat">
+			<instance_effect url="#gkmodel0_right_up_arm_geom0_eff"/>
+		</material>
+		<material id="gkmodel0_right_up_arm_geom0_mat">
+			<instance_effect url="#gkmodel0_right_up_arm_geom0"/>
+		</material>
+		<material id="gkmodel0_right_low_joint_geom0_mat">
+			<instance_effect url="#gkmodel0_right_low_joint_geom0_eff"/>
+		</material>
+		<material id="gkmodel0_right_low_joint_geom0_mat">
+			<instance_effect url="#gkmodel0_right_low_joint_geom0"/>
+		</material>
+		<material id="gkmodel0_right_low_arm_geom0_mat">
+			<instance_effect url="#gkmodel0_right_low_arm_geom0_eff"/>
+		</material>
+		<material id="gkmodel0_right_low_arm_geom0_mat">
+			<instance_effect url="#gkmodel0_right_low_arm_geom0"/>
+		</material>
+		<material id="gkmodel0_right_gripper_geom0_mat">
+			<instance_effect url="#gkmodel0_right_gripper_geom0_eff"/>
+		</material>
+		<material id="gkmodel0_right_gripper_geom0_mat">
+			<instance_effect url="#gkmodel0_right_gripper_geom0"/>
+		</material>
+	</library_materials>
+	<library_kinematics_models id="kmodels">
+		<kinematics_model id="kmodel0" name="right">
+			<technique_common>
+				<joint name="r1" sid="r1">
+					<revolute sid="axis0">
+						<axis>0 0 1</axis>
+						<limits>
+							<min>-179.90875</min>
+							<max>179.90875</max>
+						</limits>
+					</revolute>
+				</joint>
+				<joint name="r2" sid="r2">
+					<revolute sid="axis0">
+						<axis>0 0 -1</axis>
+						<limits>
+							<min>-179.90875</min>
+							<max>179.90875</max>
+						</limits>
+					</revolute>
+				</joint>
+				<joint name="r3" sid="r3">
+					<revolute sid="axis0">
+						<axis>0 0 1</axis>
+						<limits>
+							<min>-179.90875</min>
+							<max>179.90875</max>
+						</limits>
+					</revolute>
+				</joint>
+				<joint name="r4" sid="r4">
+					<revolute sid="axis0">
+						<axis>0 0 -1</axis>
+						<limits>
+							<min>-179.90875</min>
+							<max>179.90875</max>
+						</limits>
+					</revolute>
+				</joint>
+				<joint name="r5" sid="r5">
+					<revolute sid="axis0">
+						<axis>0 0 0</axis>
+						<limits>
+							<min>0.0</min>
+							<max>0.0</max>
+						</limits>
+					</revolute>
+				</joint>
+				<link sid="base_link" name="base_link">
+					<attachment_full joint="kmodel0/r1">
+						<translate>0.09336 -0.05106 0.13081</translate>
+						<rotate>0.57735 0.57735 0.57735 120.00024</rotate>
+						<link sid="right_up_joint" name="right_up_joint">
+							<attachment_full joint="kmodel0/r2">
+								<translate>0.0 0.0 0.0</translate>
+								<rotate>-0.57735 0.57735 -0.57735 120.00024</rotate>
+								<link sid="right_up_arm" name="right_up_arm">
+									<attachment_full joint="kmodel0/r3">
+										<translate>0.117 0.0 -0.001</translate>
+										<rotate>0.57735 0.57735 0.57735 119.99951</rotate>
+										<link sid="right_low_joint" name="right_low_joint">
+											<attachment_full joint="kmodel0/r4">
+												<translate>0.0 0.0 0.0</translate>
+												<rotate>0.0 -1.0 0.0 90.00021</rotate>
+												<link sid="right_low_arm" name="right_low_arm">
+													<attachment_full joint="kmodel0/r5">
+														<translate>-0.00025 0.15114 -0.0005</translate>
+														<rotate>0.0 0.70711 0.70711 179.9997</rotate>
+														<link sid="right_gripper" name="right_gripper"/>
+													</attachment_full>
+												</link>
+											</attachment_full>
+										</link>
+									</attachment_full>
+								</link>
+							</attachment_full>
+						</link>
+					</attachment_full>
+				</link>
+			</technique_common>
+		</kinematics_model>
+	</library_kinematics_models>
+	<library_articulated_systems id="asystems">
+		<articulated_system id="robot0_motion">
+			<motion>
+				<instance_articulated_system url="#robot0_kinematics">
+					<newparam sid="robot0_motion_kmodel0_inst">
+						<SIDREF>robot0_kinematics/robot0_kinematics_kmodel0_inst</SIDREF>
+					</newparam>
+					<newparam sid="robot0_motion_robot0_kinematics_kmodel0_inst_r1_axis0">
+						<SIDREF>robot0_kinematics/robot0_kinematics_kmodel0_inst_r1_axis0</SIDREF>
+					</newparam>
+					<newparam sid="robot0_motion_robot0_kinematics_kmodel0_inst_r1_axis0_value">
+						<SIDREF>robot0_kinematics/robot0_kinematics_kmodel0_inst_r1_axis0_value</SIDREF>
+					</newparam>
+					<newparam sid="robot0_motion_robot0_kinematics_kmodel0_inst_r2_axis0">
+						<SIDREF>robot0_kinematics/robot0_kinematics_kmodel0_inst_r2_axis0</SIDREF>
+					</newparam>
+					<newparam sid="robot0_motion_robot0_kinematics_kmodel0_inst_r2_axis0_value">
+						<SIDREF>robot0_kinematics/robot0_kinematics_kmodel0_inst_r2_axis0_value</SIDREF>
+					</newparam>
+					<newparam sid="robot0_motion_robot0_kinematics_kmodel0_inst_r3_axis0">
+						<SIDREF>robot0_kinematics/robot0_kinematics_kmodel0_inst_r3_axis0</SIDREF>
+					</newparam>
+					<newparam sid="robot0_motion_robot0_kinematics_kmodel0_inst_r3_axis0_value">
+						<SIDREF>robot0_kinematics/robot0_kinematics_kmodel0_inst_r3_axis0_value</SIDREF>
+					</newparam>
+					<newparam sid="robot0_motion_robot0_kinematics_kmodel0_inst_r4_axis0">
+						<SIDREF>robot0_kinematics/robot0_kinematics_kmodel0_inst_r4_axis0</SIDREF>
+					</newparam>
+					<newparam sid="robot0_motion_robot0_kinematics_kmodel0_inst_r4_axis0_value">
+						<SIDREF>robot0_kinematics/robot0_kinematics_kmodel0_inst_r4_axis0_value</SIDREF>
+					</newparam>
+					<newparam sid="robot0_motion_robot0_kinematics_kmodel0_inst_r5_axis0">
+						<SIDREF>robot0_kinematics/robot0_kinematics_kmodel0_inst_r5_axis0</SIDREF>
+					</newparam>
+					<newparam sid="robot0_motion_robot0_kinematics_kmodel0_inst_r5_axis0_value">
+						<SIDREF>robot0_kinematics/robot0_kinematics_kmodel0_inst_r5_axis0_value</SIDREF>
+					</newparam>
+				</instance_articulated_system>
+				<technique_common>
+					<axis_info axis="robot0_kinematics/axis_info_inst0">
+						<speed>
+							<float>1.0</float>
+						</speed>
+						<acceleration>
+							<float>100.0</float>
+						</acceleration>
+					</axis_info>
+					<axis_info axis="robot0_kinematics/axis_info_inst1">
+						<speed>
+							<float>1.0</float>
+						</speed>
+						<acceleration>
+							<float>100.0</float>
+						</acceleration>
+					</axis_info>
+					<axis_info axis="robot0_kinematics/axis_info_inst2">
+						<speed>
+							<float>1.0</float>
+						</speed>
+						<acceleration>
+							<float>100.0</float>
+						</acceleration>
+					</axis_info>
+					<axis_info axis="robot0_kinematics/axis_info_inst3">
+						<speed>
+							<float>1.0</float>
+						</speed>
+						<acceleration>
+							<float>100.0</float>
+						</acceleration>
+					</axis_info>
+					<axis_info axis="robot0_kinematics/axis_info_inst4"/>
+				</technique_common>
+			</motion>
+		</articulated_system>
+		<articulated_system id="robot0_kinematics">
+			<kinematics>
+				<instance_kinematics_model url="#kmodel0" sid="kmodel0_inst">
+					<newparam sid="robot0_kinematics_kmodel0_inst">
+						<SIDREF>robot0_kinematics/kmodel0_inst</SIDREF>
+					</newparam>
+					<newparam sid="robot0_kinematics_kmodel0_inst_r1_axis0">
+						<SIDREF>robot0_kinematics/kmodel0_inst/r1/axis0</SIDREF>
+					</newparam>
+					<newparam sid="robot0_kinematics_kmodel0_inst_r1_axis0_value">
+						<float>0.0</float>
+					</newparam>
+					<newparam sid="robot0_kinematics_kmodel0_inst_r2_axis0">
+						<SIDREF>robot0_kinematics/kmodel0_inst/r2/axis0</SIDREF>
+					</newparam>
+					<newparam sid="robot0_kinematics_kmodel0_inst_r2_axis0_value">
+						<float>0.0</float>
+					</newparam>
+					<newparam sid="robot0_kinematics_kmodel0_inst_r3_axis0">
+						<SIDREF>robot0_kinematics/kmodel0_inst/r3/axis0</SIDREF>
+					</newparam>
+					<newparam sid="robot0_kinematics_kmodel0_inst_r3_axis0_value">
+						<float>0.0</float>
+					</newparam>
+					<newparam sid="robot0_kinematics_kmodel0_inst_r4_axis0">
+						<SIDREF>robot0_kinematics/kmodel0_inst/r4/axis0</SIDREF>
+					</newparam>
+					<newparam sid="robot0_kinematics_kmodel0_inst_r4_axis0_value">
+						<float>0.0</float>
+					</newparam>
+					<newparam sid="robot0_kinematics_kmodel0_inst_r5_axis0">
+						<SIDREF>robot0_kinematics/kmodel0_inst/r5/axis0</SIDREF>
+					</newparam>
+					<newparam sid="robot0_kinematics_kmodel0_inst_r5_axis0_value">
+						<float>0.0</float>
+					</newparam>
+				</instance_kinematics_model>
+				<technique_common>
+					<axis_info sid="axis_info_inst0" axis="kmodel0/r1/axis0">
+						<active>
+							<bool>true</bool>
+						</active>
+						<locked>
+							<bool>false</bool>
+						</locked>
+						<limits>
+							<min><float>-179.90875</float>
+							</min>
+							<max><float>179.90875</float>
+							</max>
+						</limits>
+					</axis_info>
+					<axis_info sid="axis_info_inst1" axis="kmodel0/r2/axis0">
+						<active>
+							<bool>true</bool>
+						</active>
+						<locked>
+							<bool>false</bool>
+						</locked>
+						<limits>
+							<min><float>-179.90875</float>
+							</min>
+							<max><float>179.90875</float>
+							</max>
+						</limits>
+					</axis_info>
+					<axis_info sid="axis_info_inst2" axis="kmodel0/r3/axis0">
+						<active>
+							<bool>true</bool>
+						</active>
+						<locked>
+							<bool>false</bool>
+						</locked>
+						<limits>
+							<min><float>-179.90875</float>
+							</min>
+							<max><float>179.90875</float>
+							</max>
+						</limits>
+					</axis_info>
+					<axis_info sid="axis_info_inst3" axis="kmodel0/r4/axis0">
+						<active>
+							<bool>true</bool>
+						</active>
+						<locked>
+							<bool>false</bool>
+						</locked>
+						<limits>
+							<min><float>-179.90875</float>
+							</min>
+							<max><float>179.90875</float>
+							</max>
+						</limits>
+					</axis_info>
+					<axis_info sid="axis_info_inst4" axis="kmodel0/r5/axis0">
+						<active>
+							<bool>false</bool>
+						</active>
+						<locked>
+							<bool>false</bool>
+						</locked>
+						<limits>
+							<min><float>0.0</float>
+							</min>
+							<max><float>0.0</float>
+							</max>
+						</limits>
+					</axis_info>
+				</technique_common>
+			</kinematics>
+		</articulated_system>
+	</library_articulated_systems>
+	<library_kinematics_scenes id="kscenes">
+		<kinematics_scene id="kscene" name="URDF Kinematics Scene">
+			<instance_articulated_system sid="robot0_motion_inst" url="#robot0_motion" name="right">
+				<bind symbol="kscene_kmodel0_inst">
+					<param ref="robot0_motion/robot0_motion_kmodel0_inst"/>
+				</bind>
+				<bind symbol="kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r1_axis0">
+					<param ref="robot0_motion/robot0_motion_robot0_kinematics_kmodel0_inst_r1_axis0"/>
+				</bind>
+				<bind symbol="kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r1_axis0_value">
+					<param ref="robot0_motion/robot0_motion_robot0_kinematics_kmodel0_inst_r1_axis0_value"/>
+				</bind>
+				<bind symbol="kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r2_axis0">
+					<param ref="robot0_motion/robot0_motion_robot0_kinematics_kmodel0_inst_r2_axis0"/>
+				</bind>
+				<bind symbol="kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r2_axis0_value">
+					<param ref="robot0_motion/robot0_motion_robot0_kinematics_kmodel0_inst_r2_axis0_value"/>
+				</bind>
+				<bind symbol="kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r3_axis0">
+					<param ref="robot0_motion/robot0_motion_robot0_kinematics_kmodel0_inst_r3_axis0"/>
+				</bind>
+				<bind symbol="kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r3_axis0_value">
+					<param ref="robot0_motion/robot0_motion_robot0_kinematics_kmodel0_inst_r3_axis0_value"/>
+				</bind>
+				<bind symbol="kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r4_axis0">
+					<param ref="robot0_motion/robot0_motion_robot0_kinematics_kmodel0_inst_r4_axis0"/>
+				</bind>
+				<bind symbol="kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r4_axis0_value">
+					<param ref="robot0_motion/robot0_motion_robot0_kinematics_kmodel0_inst_r4_axis0_value"/>
+				</bind>
+				<bind symbol="kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r5_axis0">
+					<param ref="robot0_motion/robot0_motion_robot0_kinematics_kmodel0_inst_r5_axis0"/>
+				</bind>
+				<bind symbol="kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r5_axis0_value">
+					<param ref="robot0_motion/robot0_motion_robot0_kinematics_kmodel0_inst_r5_axis0_value"/>
+				</bind>
+			</instance_articulated_system>
+		</kinematics_scene>
+	</library_kinematics_scenes>
+	<library_physics_scenes id="pscenes">
+		<physics_scene id="pscene" name="URDF Physics Scene">
+			<instance_physics_model url="#pmodel0" sid="pmodel0_inst" parent="#visual0">
+				<instance_rigid_body body="rigid0" target="#vkmodel0_node0"/>
+				<instance_rigid_body body="rigid1" target="#vkmodel0_node1"/>
+				<instance_rigid_body body="rigid2" target="#vkmodel0_node2"/>
+				<instance_rigid_body body="rigid3" target="#vkmodel0_node3"/>
+				<instance_rigid_body body="rigid4" target="#vkmodel0_node4"/>
+				<instance_rigid_body body="rigid5" target="#vkmodel0_node5"/>
+			</instance_physics_model>
+			<technique_common>
+				<gravity>0 0 0</gravity>
+			</technique_common>
+		</physics_scene>
+	</library_physics_scenes>
+	<library_physics_models id="pmodels">
+		<physics_model id="pmodel0" name="right">
+			<rigid_body sid="rigid0" name="base_link">
+				<technique_common>
+					<dynamic>true</dynamic>
+					<mass>0.43756889593348</mass>
+					<mass_frame>
+						<translate>0.00033 -0.04901 0.10556</translate>
+						<rotate>-0.99238 -0.02806 0.12 13.64679</rotate>
+					</mass_frame>
+					<inertia>0.0007801272385006182 0.0008371445160870745 0.0006319281218013324</inertia>
+				</technique_common>
+			</rigid_body>
+			<rigid_body sid="rigid1" name="right_gripper">
+				<technique_common>
+					<dynamic>true</dynamic>
+					<mass>0.103299324219439</mass>
+					<mass_frame>
+						<translate>0.09351 0.07744 0.018</translate>
+						<rotate>0.01041 -0.99993 -0.00604 82.68577</rotate>
+					</mass_frame>
+					<inertia>2.092337719630537e-05 2.339244507617375e-05 1.893146887779078e-05</inertia>
+				</technique_common>
+			</rigid_body>
+			<rigid_body sid="rigid2" name="right_low_arm">
+				<technique_common>
+					<dynamic>true</dynamic>
+					<mass>0.18903364369622</mass>
+					<mass_frame>
+						<translate>0.0935 -0.00394 0.01366</translate>
+						<rotate>-0.69767 -0.02351 0.71603 177.35973</rotate>
+					</mass_frame>
+					<inertia>8.211543729308122e-05 7.695741438241306e-05 0.0001033405822755445</inertia>
+				</technique_common>
+			</rigid_body>
+			<rigid_body sid="rigid3" name="right_low_joint">
+				<technique_common>
+					<dynamic>true</dynamic>
+					<mass>0.0208133468453592</mass>
+					<mass_frame>
+						<translate>0.09336 -0.05206 0.02952</translate>
+						<rotate>-0.0 0.0 -1.0 179.99931</rotate>
+					</mass_frame>
+					<inertia>6.279749681506846e-06 1.114238002404732e-05 8.213552770059408e-06</inertia>
+				</technique_common>
+			</rigid_body>
+			<rigid_body sid="rigid4" name="right_up_arm">
+				<technique_common>
+					<dynamic>true</dynamic>
+					<mass>0.142004365290478</mass>
+					<mass_frame>
+						<translate>0.0933 -0.05647 0.09342</translate>
+						<rotate>-0.68515 -0.00062 0.72841 179.9532</rotate>
+					</mass_frame>
+					<inertia>3.184318734702643e-05 6.861174990063703e-05 6.164217371951034e-05</inertia>
+				</technique_common>
+			</rigid_body>
+			<rigid_body sid="rigid5" name="right_up_joint">
+				<technique_common>
+					<dynamic>true</dynamic>
+					<mass>0.0208133468453592</mass>
+					<mass_frame>
+						<translate>0.07765 -0.05106 0.13081</translate>
+						<rotate>-0.57735 -0.57735 0.57735 119.99991</rotate>
+					</mass_frame>
+					<inertia>6.279749681506837e-06 1.114238002404722e-05 8.213552770059398e-06</inertia>
+				</technique_common>
+			</rigid_body>
+		</physics_model>
+	</library_physics_models>
+	<scene>
+		<instance_physics_scene url="#pscene"/>
+		<instance_visual_scene url="#vscene"/>
+		<instance_kinematics_scene url="#kscene">
+			<bind_kinematics_model node="visual0/node0">
+				<param>kscene_kmodel0_inst</param>
+			</bind_kinematics_model>
+			<bind_joint_axis target="node5/node_r1_axis0">
+				<axis>
+					<param>kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r1_axis0</param>
+				</axis>
+				<value>
+					<param>kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r1_axis0_value</param>
+				</value>
+			</bind_joint_axis>
+			<bind_joint_axis target="node0/node4/node_r2_axis0">
+				<axis>
+					<param>kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r2_axis0</param>
+				</axis>
+				<value>
+					<param>kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r2_axis0_value</param>
+				</value>
+			</bind_joint_axis>
+			<bind_joint_axis target="node0/node5/node3/node_r3_axis0">
+				<axis>
+					<param>kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r3_axis0</param>
+				</axis>
+				<value>
+					<param>kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r3_axis0_value</param>
+				</value>
+			</bind_joint_axis>
+			<bind_joint_axis target="node0/node5/node4/node2/node_r4_axis0">
+				<axis>
+					<param>kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r4_axis0</param>
+				</axis>
+				<value>
+					<param>kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r4_axis0_value</param>
+				</value>
+			</bind_joint_axis>
+			<bind_joint_axis target="node0/node5/node4/node3/node1/node_r5_axis0">
+				<axis>
+					<param>kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r5_axis0</param>
+				</axis>
+				<value>
+					<param>kscene_kmodel0_inst_robot0_kinematics_kmodel0_inst_r5_axis0_value</param>
+				</value>
+			</bind_joint_axis>
+		</instance_kinematics_scene>
+	</scene>
+	<extra id="sensors" type="library_sensors">
+		<technique profile="OpenRAVE"/>
+	</extra>
+</COLLADA>

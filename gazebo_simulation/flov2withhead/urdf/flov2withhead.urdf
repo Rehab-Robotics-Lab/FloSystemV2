@@ -117,7 +117,7 @@
       lower="-3.14"
       upper="3.14"
       effort="100"
-      velocity="1" />
+      velocity="10" />
   </joint>
   <link
     name="right_up_arm">
@@ -175,7 +175,7 @@
       lower="-3.14"
       upper="3.14"
       effort="100"
-      velocity="1" />
+      velocity="10" />
   </joint>
   <link
     name="right_low_joint">
@@ -233,7 +233,7 @@
       lower="-3.14"
       upper="3.14"
       effort="100"
-      velocity="1" />
+      velocity="10" />
   </joint>
   <link
     name="right_low_arm">
@@ -291,7 +291,7 @@
       lower="-3.14"
       upper="3.14"
       effort="100"
-      velocity="1" />
+      velocity="10" />
   </joint>
   <link
     name="right_gripper">
@@ -402,7 +402,7 @@
       lower="-3.14"
       upper="3.14"
       effort="100"
-      velocity="1" />
+      velocity="10" />
   </joint>
   <link
     name="left_up_arm">
@@ -460,7 +460,7 @@
       lower="-3.14"
       upper="3.14"
       effort="100"
-      velocity="1" />
+      velocity="10" />
   </joint>
   <link
     name="left_low_joint">
@@ -507,7 +507,7 @@
     type="revolute">
     <origin
       xyz="0.117 0 -0.00100000000000006"
-      rpy="-1.5707963267949 0 -1.5707963267949" />
+      rpy="-1.57079632679491 0 -1.5707963267949" />
     <parent
       link="left_up_arm" />
     <child
@@ -518,7 +518,7 @@
       lower="-3.14"
       upper="3.14"
       effort="100"
-      velocity="1" />
+      velocity="10" />
   </joint>
   <link
     name="left_low_arm">
@@ -576,7 +576,7 @@
       lower="-3.14"
       upper="3.14"
       effort="100"
-      velocity="1" />
+      velocity="10" />
   </joint>
   <link
     name="left_gripper">

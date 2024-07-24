@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: flov2withhead
+    relative_path: urdf/flov2withhead.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/flov2withhead.srdf
+  CONFIG:
+    author_name: hao
+    author_email: h@mail.com
+    generated_timestamp: 1721099010
