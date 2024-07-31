@@ -50,6 +50,48 @@
         <joint name="r3" value="1.1857"/>
         <joint name="r4" value="0.5555"/>
     </group_state>
+    <group_state name="R_punch" group="R">
+        <joint name="r1" value="1.5025"/>
+        <joint name="r2" value="0.129"/>
+        <joint name="r3" value="-1.59649"/>
+        <joint name="r4" value="1.6131"/>
+    </group_state>
+    <group_state name="R_aise" group="R">
+        <joint name="r1" value="3.074"/>
+        <joint name="r2" value="0.4169"/>
+        <joint name="r3" value="0.033091"/>
+        <joint name="r4" value="1.6131"/>
+    </group_state>
+    <group_state name="R_wave" group="R">
+        <joint name="r1" value="0.1099"/>
+        <joint name="r2" value="1.5382"/>
+        <joint name="r3" value="0.0116"/>
+        <joint name="r4" value="0.3123"/>
+    </group_state>
+    <group_state name="R_wave_f" group="R">
+        <joint name="r1" value="1.544"/>
+        <joint name="r2" value="0.9194"/>
+        <joint name="r3" value="0.0453"/>
+        <joint name="r4" value="1.72522"/>
+    </group_state>
+    <group_state name="R_wave_b" group="R">
+        <joint name="r1" value="-0.9831"/>
+        <joint name="r2" value="1.3878"/>
+        <joint name="r3" value="-0.0058"/>
+        <joint name="r4" value="1.7522"/>
+    </group_state>
+    <group_state name="R_wave_m" group="R">
+        <joint name="r1" value="0.019967"/>
+        <joint name="r2" value="1.63307"/>
+        <joint name="r3" value="-0.289445"/>
+        <joint name="r4" value="-0.004189"/>
+    </group_state>
+    <group_state name="d_bell" group="R">
+        <joint name="r1" value="-0.113656"/>
+        <joint name="r2" value="2.72969"/>
+        <joint name="r3" value="1.7594"/>
+        <joint name="r4" value="1.02486"/>
+    </group_state>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="base" type="fixed" parent_frame="/world" child_link="base_link"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->

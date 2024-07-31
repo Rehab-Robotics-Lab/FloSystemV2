@@ -4,17 +4,20 @@
 import rospy, sys
 import moveit_commander
 from geometry_msgs.msg import PoseStamped
-from std_msgs.msg import Float64MultiArray, Int32
+from std_msgs.msg import Int32
 
 class MoveItIkDemo:
     def __init__(self):
+        self.mode = "0"
+
+
+
         # 初始化move_group的API
         moveit_commander.roscpp_initialize(sys.argv)
         
         # 初始化ROS节点
         rospy.init_node('moveit_ik_demo')
 
-        self.left_arm_joint_angles_pub = rospy.Publisher('/joint_angles', Float64MultiArray, queue_size=10)
         self.gripper_pub = rospy.Publisher('/gripper', Int32, queue_size=10)
 
 
@@ -38,33 +41,87 @@ class MoveItIkDemo:
         # 设置允许的最大速度和加速度
         self.arm.set_max_acceleration_scaling_factor(0.5)
         self.arm.set_max_velocity_scaling_factor(0.3)
+        
+        self.move(6,reference_frame)
+        # while True:
+
+        #     while self.mode == "0":
+        #         rospy.sleep(1)
+            
+        #     self.move(int(self.mode),reference_frame)
+
+        #     rospy.sleep(2)
+
+        #     self.mode = "0"    
+        
+       
+    
+
+        moveit_commander.roscpp_shutdown()
+        moveit_commander.os._exit(0)
+
+    def move(self,pose,reference_frame):
 
         # 控制机械臂先回到初始化位置
         self.arm.set_named_target('Rhome')
         self.arm.go()
 
-        self.arm.set_named_target('R_wave_start')
-        self.arm.go()
+        if pose == 1:
 
-        self.arm.set_named_target('R_wave_end')
-        self.arm.go()
+            for i in range(3):
 
-        self.arm.set_named_target('R_wave_start')
-        self.arm.go()
+                self.arm.set_named_target('R_wave_start')
+                self.arm.go()
 
-        self.arm.set_named_target('R_wave_end')
-        self.arm.go()
+                self.arm.set_named_target('R_wave_end')
+                self.arm.go()
 
-        self.arm.set_named_target('R_wave_start')
-        self.arm.go()
+            self.arm.set_named_target('Rhome')
+            self.arm.go()
 
-        self.arm.set_named_target('Rhome')
-        self.arm.go()
+
+        elif pose == 2:
+            for i in range(3):
+            
+                self.arm.set_named_target('R_punch')
+                self.arm.go()
+
+                self.arm.set_named_target('Rhome')
+                self.arm.go()
+
+        elif pose == 3:
+
+            for i in range(3):
+                self.arm.set_named_target('R_aise')
+                self.arm.go()
+
+                self.arm.set_named_target('Rhome')
+                self.arm.go()
+
+        elif pose == 4:
+            
+            for i in range(3):
+                self.arm.set_named_target('R_wave')
+                self.arm.go()
+
+                self.arm.set_named_target('Rhome')
+                self.arm.go()
         
-        """
-        
-        
-        
+        elif pose == 5:
+            self.arm.set_named_target('R_wave')
+            self.arm.go()           
+            for i in range(3):
+                self.arm.set_named_target('R_wave_f')
+                self.arm.go()
+
+                self.arm.set_named_target('R_wave_b')
+                self.arm.go()
+            self.arm.set_named_target('R_wave_f')
+            self.arm.go()
+            self.arm.set_named_target('Rhome')
+            self.arm.go()           
+        elif pose == 6:
+             self.arm.set_max_acceleration_scaling_factor(0.3)
         x = 0.09
         y = 0.17
         z = 1.03
@@ -77,11 +134,8 @@ class MoveItIkDemo:
         target_pose.pose.position.x = x
         target_pose.pose.position.y = y
         target_pose.pose.position.z = z
-        #target_pose.pose.orientation.x = current_pose.orientation
-        target_pose.pose.orientation.x = -0.50
-        target_pose.pose.orientation.y = -0.50
-        target_pose.pose.orientation.z = -0.50
-        target_pose.pose.orientation.w =  0.50
+        target_pose.pose.orientation = current_pose.orientation
+
 
         # 设置机器臂当前的状态作为运动初始状态
         self.arm.set_start_state_to_current_state()
@@ -92,31 +146,54 @@ class MoveItIkDemo:
         # 规划运动路径
         _, traj, _, _ = self.arm.plan()
 
-        joint_angles_pub = self.left_arm_joint_angles_pub
-
-        # 提取规划路径中的关节角度
-        joint_angle_sequences = []
-        for point in traj.joint_trajectory.points:
-            joint_angle_sequences.append(point.positions)
-
-        # 发布关节角度序列
-        joint_angle_array = Float64MultiArray()
-        for joint_angles in joint_angle_sequences:
-            joint_angle_array.data.extend(joint_angles)
-        joint_angles_pub.publish(joint_angle_array)
 
         # 按照规划的运动路径控制机械臂运动
         self.arm.execute(traj)
         rospy.sleep(1)
         self.print_current_pose()
-
         
-        gripper_angle = 3982  # 示例角度值，根据需求调整
+        gripper_angle = 2600  # 示例角度值，根据需求调整
         self.gripper_pub.publish(gripper_angle)
-        """
 
-        moveit_commander.roscpp_shutdown()
-        moveit_commander.os._exit(0)
+        rospy.sleep(3)
+
+        self.arm.set_named_target('R_wave_start')
+        self.arm.go()
+
+        self.arm.set_named_target('d_bell')
+        self.arm.go()
+
+        self.arm.set_named_target('R_wave_start')
+        self.arm.go()
+
+        self.arm.set_named_target('d_bell')
+        self.arm.go()
+
+        self.arm.set_named_target('R_wave_start')
+        self.arm.go()
+
+        self.arm.set_named_target('Rhome')
+        self.arm.go()
+
+                # 设置机器臂当前的状态作为运动初始状态
+        self.arm.set_start_state_to_current_state()
+        
+        # 设置机械臂终端运动的目标位姿
+        self.arm.set_joint_value_target(target_pose, self.end_effector_link, True)
+        
+        # 规划运动路径
+        _, traj, _, _ = self.arm.plan()
+
+        # 按照规划的运动路径控制机械臂运动
+        self.arm.execute(traj)
+        rospy.sleep(1)
+
+
+        gripper_angle = 114  # 示例角度值，根据需求调整
+        self.gripper_pub.publish(gripper_angle)
+        rospy.sleep(1)
+        self.arm.set_named_target('Rhome')
+        self.arm.go()
 
     def print_current_pose(self):
         current_pose = self.arm.get_current_pose(self.end_effector_link).pose
