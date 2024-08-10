@@ -6,14 +6,14 @@
     <arg name="arg_P" default="0.00" />
     <arg name="arg_Y" default="0.00" />
     
-    <!-- Urdf file path -->
+    <!-- Urdf file path for the main robot -->
     <param name="robot_description" textfile="$(find flov2tag)/urdf/flov2tag.urdf"/>
     
     <!-- Spawn an empty Gazebo world -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch" />
     <node name="tf_footprint_base" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 base_link base_footprint 40" />
     
-    <!-- Spawn robot model -->
+    <!-- Spawn main robot model -->
     <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-x $(arg arg_x) -y $(arg arg_y) -z $(arg arg_z) -Y $(arg arg_Y) -param robot_description -urdf -model flov2tag -J r1 0.0 -J r2 0.0 -J r3 0.0 -J r4 0.0 -J rt 0.0 -J lt 0.0" />
 
     <!-- Load and launch the joint trajectory controller -->
@@ -26,6 +26,18 @@
     <!-- Spawn AprilTag model -->
     <node name="spawn_apriltag" pkg="gazebo_ros" type="spawn_model" args="-sdf -file $(find flov2tag)/meshes/apriltag_model/model.sdf -model apriltag_model -x 1.0 -y 1.0 -z 0.5" />
 
+    <!-- Spawn camera model -->
+    <!-- <param name="camera_description" textfile="$(find camera)/urdf/camera.urdf"/>
+    <node name="spawn_camera" pkg="gazebo_ros" type="spawn_model" args="-param camera_description -urdf -model camera -x 0.0 -y 0.0 -z 1.2" /> -->
+
     <!-- Launch subscriber node for AprilTag detection -->
-    <node name="subscriber_apriltag" pkg="test_moveit" type="subscriber_apriltag" output="screen" />
+    <!-- <node name="subscriber_apriltag" pkg="test_moveit" type="subscriber_apriltag" output="screen" /> -->
+        <!-- Spawn camera model -->
+    <param name="camera_description" textfile="$(find camera)/urdf/camera.urdf"/>
+    <node
+    name="spawn_model"
+    pkg="gazebo_ros"
+    type="spawn_model"
+    args="-file $(find camera)/urdf/camera.urdf -urdf -model camera"
+    output="screen" />
 </launch>

@@ -1,10 +1,25 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import rospy
 from geometry_msgs.msg import Pose
 from std_msgs.msg import String
 from gazebo_msgs.srv import SpawnModel, SetModelState
 from gazebo_msgs.msg import ModelState
 import tf.transformations as tf_trans
+import paho.mqtt.client as mqtt
+import time
+# service mosquitto start
+# Define the broker address and port
+broker_address = "172.20.10.6"  # Change to your broker address
+broker_port = 1883
+
+# Create a client instance
+client = mqtt.Client("Publisher")
+
+# Connect to the broker
+client.connect(broker_address, broker_port)
+
+# Define the MQTT topic
+topic = "ros/mqtt/apriltag"
 
 def pose_callback(data):
     rospy.loginfo("Received Pose: position (x: {}, y: {}, z: {}), orientation (x: {}, y: {}, z: {}, w: {})".format(
@@ -68,6 +83,23 @@ def pose_callback(data):
         rospy.loginfo("AprilTag model state updated: {}".format(resp.status_message))
     except rospy.ServiceException as e:
         rospy.logerr("Service call failed: %s" % e)
+
+    # Publish to MQTT
+    pose_data = {
+        'position': {
+            'x': data.position.x,
+            'y': data.position.y,
+            'z': data.position.z
+        },
+        'orientation': {
+            'x': data.orientation.x,
+            'y': data.orientation.y,
+            'z': data.orientation.z,
+            'w': data.orientation.w
+        }
+    }
+    client.publish(topic, str(pose_data))
+    rospy.loginfo("Published to MQTT: {}".format(pose_data))
 
 def info_callback(data):
     rospy.loginfo("Received Info: {}".format(data.data))

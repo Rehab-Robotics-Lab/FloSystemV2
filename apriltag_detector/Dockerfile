@@ -1,6 +1,6 @@
 # FLOSYSTEMV2:Apriltag Detector Development Docker Container
 # Use ROS Melodic with Ubuntu Bionic as the base image
-# Author: Tian Tan,tiantan@seas.upenn.edu
+# Author: Tian Tan, tiantan@seas.upenn.edu
 FROM ros:melodic-ros-base-bionic
 
 # Install essential tools and dependencies
@@ -11,15 +11,22 @@ RUN apt-get update && apt-get install -y \
     python-wstool \
     build-essential \
     python-pip \
+    python3 \
+    python3-pip \
     git \
     vim \
     wget \
     tmux \
     ros-melodic-tf \
     ros-melodic-tf-conversions \
-    ros-melodic-tf2-geometry-msgs 
+    ros-melodic-tf2-geometry-msgs \
+    mosquitto \
+    mosquitto-clients
+
 # Install Python packages
 RUN pip install numpy
+RUN pip install paho-mqtt==1.5.1
+RUN pip3 install paho-mqtt==1.5.1
 
 # Install OpenCV and dependencies for image processing
 RUN apt-get update && apt-get install -y \
@@ -51,14 +58,6 @@ RUN /bin/bash -c '. /opt/ros/melodic/setup.bash; cd /catkin_ws; catkin_make'
 # Source the workspace
 RUN echo "source /catkin_ws/devel/setup.bash" >> ~/.bashrc
 
-# Setup the entrypoint
-COPY ./ros_entrypoint.sh /
-ENTRYPOINT ["/ros_entrypoint.sh"]
-CMD ["bash"]
-
-# Expose ports (if necessary, e.g., for web-based visualization tools)
-EXPOSE 11311
-
 # Additional dependencies for AprilTag and its Python bindings
 RUN pip install apriltag
 
@@ -66,5 +65,17 @@ RUN pip install apriltag
 COPY ros_entrypoint.sh /ros_entrypoint.sh
 RUN chmod +x /ros_entrypoint.sh
 
+# Expose the default ROS master port
+EXPOSE 11311
+
+# Expose the MQTT default port
+EXPOSE 1883
+
 # Ensure the user environment is setup
 RUN echo "source /catkin_ws/devel/setup.bash" >> /root/.bashrc
+
+# Setup the entrypoint
+ENTRYPOINT ["/ros_entrypoint.sh"]
+
+# Start Mosquitto and the main application
+CMD ["bash", "-c", "service mosquitto start && bash"]

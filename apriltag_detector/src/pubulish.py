@@ -16,6 +16,7 @@ class AprilTagDetector:
         self.image_sub = rospy.Subscriber("/usb_cam/image_raw", Image, self.image_callback)
         self.pose_pub = rospy.Publisher("/apriltag_poses", Pose, queue_size=10)
         self.info_pub = rospy.Publisher("/apriltag_info", String, queue_size=10)
+        self.video_pub = rospy.Publisher("/apriltag_detection_video", Image, queue_size=10)
         self.detector = self.__create_detector()
         self.tag_size = 3.4 / 100  # Tag size in meters
 
@@ -74,6 +75,12 @@ class AprilTagDetector:
 
             # Draw detections and pose on the image
             cv_image = self.__draw_around_apriltags(tag, cv_image, rvec, tvec)
+
+        # Publish the processed video
+        try:
+            self.video_pub.publish(self.bridge.cv2_to_imgmsg(cv_image, "bgr8"))
+        except CvBridgeError as e:
+            rospy.logerr(e)
 
         cv2.imshow("AprilTag Detection", cv_image)
         cv2.waitKey(3)
