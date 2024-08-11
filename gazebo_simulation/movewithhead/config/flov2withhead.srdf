@@ -25,6 +25,10 @@
         <joint name="l4"/>
         <joint name="l5"/>
     </group>
+    <group name="dual">
+        <group name="R"/>
+        <group name="L"/>
+    </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="Rhome" group="R">
         <joint name="r1" value="0"/>
@@ -38,11 +42,11 @@
         <joint name="l3" value="0"/>
         <joint name="l4" value="0"/>
     </group_state>
-    <group_state name="R_wave_start" group="R">
-        <joint name="r1" value="0.1489"/>
-        <joint name="r2" value="1.5167"/>
-        <joint name="r3" value="1.24184"/>
-        <joint name="r4" value="-0.082519"/>
+    <group_state name="L_wave_start" group="L">
+        <joint name="l1" value="-0.1489"/>
+        <joint name="l2" value="-1.5167"/>
+        <joint name="l3" value="-1.2418"/>
+        <joint name="l4" value="-0.0825"/>
     </group_state>
     <group_state name="R_wave_end" group="R">
         <joint name="r1" value="0.1489"/>
@@ -50,13 +54,13 @@
         <joint name="r3" value="1.1857"/>
         <joint name="r4" value="0.5555"/>
     </group_state>
-    <group_state name="R_punch" group="R">
-        <joint name="r1" value="1.5025"/>
-        <joint name="r2" value="0.129"/>
-        <joint name="r3" value="-1.59649"/>
-        <joint name="r4" value="1.6131"/>
+    <group_state name="L_punch" group="L">
+        <joint name="l1" value="-1.5025"/>
+        <joint name="l2" value="-0.129"/>
+        <joint name="l3" value="1.5964"/>
+        <joint name="l4" value="1.6131"/>
     </group_state>
-    <group_state name="R_aise" group="R">
+    <group_state name="R_raise" group="R">
         <joint name="r1" value="3.074"/>
         <joint name="r2" value="0.4169"/>
         <joint name="r3" value="0.033091"/>
@@ -80,17 +84,129 @@
         <joint name="r3" value="-0.0058"/>
         <joint name="r4" value="1.7522"/>
     </group_state>
-    <group_state name="R_wave_m" group="R">
-        <joint name="r1" value="0.019967"/>
-        <joint name="r2" value="1.63307"/>
-        <joint name="r3" value="-0.289445"/>
-        <joint name="r4" value="-0.004189"/>
-    </group_state>
-    <group_state name="d_bell" group="R">
+    <group_state name="R_d_bell" group="R">
         <joint name="r1" value="-0.113656"/>
         <joint name="r2" value="2.72969"/>
         <joint name="r3" value="1.7594"/>
         <joint name="r4" value="1.02486"/>
+    </group_state>
+    <group_state name="clap_close" group="dual">
+        <joint name="l1" value="-1.0353"/>
+        <joint name="l2" value="0"/>
+        <joint name="l3" value="0.32"/>
+        <joint name="l4" value="0"/>
+        <joint name="r1" value="1.0353"/>
+        <joint name="r2" value="0"/>
+        <joint name="r3" value="-0.32"/>
+        <joint name="r4" value="0"/>
+    </group_state>
+    <group_state name="clap" group="dual">
+        <joint name="l1" value="-1.0353"/>
+        <joint name="l2" value="0"/>
+        <joint name="l3" value="0"/>
+        <joint name="l4" value="0"/>
+        <joint name="r1" value="1.0353"/>
+        <joint name="r2" value="0"/>
+        <joint name="r3" value="0"/>
+        <joint name="r4" value="0"/>
+    </group_state>
+    <group_state name="clap_open" group="dual">
+        <joint name="l1" value="-1.0353"/>
+        <joint name="l2" value="-0.2"/>
+        <joint name="l3" value="-0.32"/>
+        <joint name="l4" value="0"/>
+        <joint name="r1" value="1.0353"/>
+        <joint name="r2" value="0.2"/>
+        <joint name="r3" value="0.32"/>
+        <joint name="r4" value="0"/>
+    </group_state>
+    <group_state name="D_home" group="dual">
+        <joint name="l1" value="0"/>
+        <joint name="l2" value="0"/>
+        <joint name="l3" value="0"/>
+        <joint name="l4" value="0"/>
+        <joint name="r1" value="0"/>
+        <joint name="r2" value="0"/>
+        <joint name="r3" value="0"/>
+        <joint name="r4" value="0"/>
+    </group_state>
+    <group_state name="R_punch" group="R">
+        <joint name="r1" value="1.5025"/>
+        <joint name="r2" value="0.129"/>
+        <joint name="r3" value="-1.5964"/>
+        <joint name="r4" value="1.6131"/>
+    </group_state>
+    <group_state name="L_raise" group="L">
+        <joint name="l1" value="-3.074"/>
+        <joint name="l2" value="-0.4169"/>
+        <joint name="l3" value="-0.033"/>
+        <joint name="l4" value="1.6131"/>
+    </group_state>
+    <group_state name="L_ready_punch" group="L">
+        <joint name="l1" value="-1.4973"/>
+        <joint name="l2" value="-1.3274"/>
+        <joint name="l3" value="1.3832"/>
+        <joint name="l4" value="0.1569"/>
+    </group_state>
+    <group_state name="R_ready_punch" group="R">
+        <joint name="r1" value="1.4973"/>
+        <joint name="r2" value="1.3274"/>
+        <joint name="r3" value="-1.3832"/>
+        <joint name="r4" value="-0.1569"/>
+    </group_state>
+    <group_state name="L_wave_end" group="L">
+        <joint name="l1" value="-0.1489"/>
+        <joint name="l2" value="-0.6593"/>
+        <joint name="l3" value="-1.1857"/>
+        <joint name="l4" value="0.5555"/>
+    </group_state>
+    <group_state name="R_wave_start" group="R">
+        <joint name="r1" value="0.1489"/>
+        <joint name="r2" value="1.5167"/>
+        <joint name="r3" value="1.2418"/>
+        <joint name="r4" value="-0.0825"/>
+    </group_state>
+    <group_state name="L_wave" group="L">
+        <joint name="l1" value="-0.1099"/>
+        <joint name="l2" value="-1.5382"/>
+        <joint name="l3" value="-0.0115"/>
+        <joint name="l4" value="0.0115"/>
+    </group_state>
+    <group_state name="L_wave_f" group="L">
+        <joint name="l1" value="-1.544"/>
+        <joint name="l2" value="-0.9194"/>
+        <joint name="l3" value="-0.0453"/>
+        <joint name="l4" value="1.7252"/>
+    </group_state>
+    <group_state name="L_wave_b" group="L">
+        <joint name="l1" value="0.9831"/>
+        <joint name="l2" value="-1.3878"/>
+        <joint name="l3" value="0.0057"/>
+        <joint name="l4" value="1.7522"/>
+    </group_state>
+    <group_state name="L_d_bell" group="L">
+        <joint name="l1" value="0.1136"/>
+        <joint name="l2" value="-2.7296"/>
+        <joint name="l3" value="-1.7594"/>
+        <joint name="l4" value="1.0248"/>
+    </group_state>
+    <group_state name="R_cup_up" group="R">
+        <joint name="r1" value="1.6863"/>
+        <joint name="r2" value="0.3738"/>
+        <joint name="r3" value="0"/>
+        <joint name="r4" value="0.8888"/>
+    </group_state>
+    <group_state name="R_cup_down" group="R">
+        <joint name="r1" value="0.609748"/>
+        <joint name="r2" value="-0.0456578"/>
+        <joint name="r3" value="-0.662667"/>
+        <joint name="r4" value="-0.0579449"/>
+    </group_state>
+    <group_state name="R_drink" group="R">
+        <joint name="r1" value="1.31165"/>
+        <joint name="r2" value="-0.056409"/>
+        <joint name="r3" value="-0.447642"/>
+        <joint name="r4" value="-0.0809833"/>
     </group_state>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="base" type="fixed" parent_frame="/world" child_link="base_link"/>

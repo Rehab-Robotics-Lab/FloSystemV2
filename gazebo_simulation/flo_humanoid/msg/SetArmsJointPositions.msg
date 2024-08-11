@@ -6,6 +6,7 @@ uint8 id5
 uint8 id6
 uint8 id7
 uint8 id8
+uint8 id9
 string item1
 string item2
 string item3
@@ -14,6 +15,7 @@ string item5
 string item6
 string item7
 string item8
+string item9
 int32 value1
 int32 value2
 int32 value3
@@ -22,4 +24,5 @@ int32 value5
 int32 value6
 int32 value7
 int32 value8
+int32 value9
 

@@ -22,6 +22,7 @@ install(PROGRAMS
   script/testnew.py
   script/sendJointValue.py
   script/getPosition.py
+  script/dualPosition.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
