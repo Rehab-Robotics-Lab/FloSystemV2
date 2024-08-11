@@ -10,7 +10,7 @@ import paho.mqtt.client as mqtt
 pygame.mixer.init()
 
 # Set up the serial connection (adjust the port to match your setup)
-serial_port = '/dev/ttyACM0'
+serial_port = 'COM5'
 ser = serial.Serial(serial_port, 9600)  # Open the serial port
 time.sleep(2)  # Wait for the serial connection to initialize
 

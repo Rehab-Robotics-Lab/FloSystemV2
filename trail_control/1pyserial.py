@@ -2,7 +2,7 @@ import serial
 import time
 
 # Set up the serial connection (adjust the port to match your setup)
-serial_port = '/dev/ttyACM0'  # Replace with your actual serial port
+serial_port = 'COM5'  # Replace with your actual serial port
 baud_rate = 9600
 
 try:
@@ -17,7 +17,7 @@ try:
 
     # Example usage
     send_command('4')  # Send '1' to turn on the LED
-    time.sleep(50)      # Keep the LED on for 5 seconds
+    time.sleep(2)      # Keep the LED on for 5 seconds
     send_command('0')  # Send '0' to turn off the LED
 
 except serial.SerialException as e:

@@ -4,7 +4,6 @@ import tkinter as tk
 from tkinter import StringVar
 import time
 import serial
-import paho.mqtt.client as mqtt
 
 # Initialize pygame mixer for audio playback
 pygame.mixer.init()
@@ -14,16 +13,8 @@ serial_port = 'COM5'
 ser = serial.Serial(serial_port, 9600)  # Open the serial port
 time.sleep(2)  # Wait for the serial connection to initialize
 
-# Initialize MQTT client
-broker_address = "172.20.10.6"  # Change to your broker address
-broker_port = 1883
-mqtt_client = mqtt.Client(client_id="MovementPublisher", protocol=mqtt.MQTTv5)  # Using MQTT version 5
-
-# Define the MQTT topic
+# Define the MQTT topic (this part will just print instead of using MQTT)
 movement_topic = "ros/mqtt/movement"
-
-# Connect to the MQTT broker
-mqtt_client.connect(broker_address, broker_port)
 
 # Initialize PsychoPy window
 win = visual.Window([800, 600], fullscr=False, monitor="testMonitor", units="deg")
@@ -53,6 +44,7 @@ root.title("Experiment Control")
 status_var = StringVar()
 status_var.set("Start")
 
+
 # Function to update the status label
 def update_status():
     if current_step == 0:
@@ -66,6 +58,7 @@ def update_status():
     elif current_step >= 3 + len(movements):
         status_var.set("End")
 
+
 # Function to play a sound
 def play_sound(file_path):
     pygame.mixer.music.load(file_path)
@@ -73,10 +66,12 @@ def play_sound(file_path):
     while pygame.mixer.music.get_busy():
         core.wait(0.1)
 
+
 # Function to send a command via serial
 def send_command(command):
     ser.write(command.encode())
     time.sleep(0.1)  # Small delay to ensure the command is processed
+
 
 # Function to proceed to the next step
 def next_step():
@@ -113,10 +108,9 @@ def next_step():
         core.wait(5.0)  # Wait 5 seconds before indicating movement
         print(movements[current_step - 3])
         add_marker(movements[current_step - 3])
-        
-        # Send the movement command via MQTT
-        mqtt_client.publish(movement_topic, str(current_step - 2))
-        print(f"Published Movement {current_step - 2} to MQTT")
+
+        # Instead of sending the movement command via MQTT, print it
+        print(f"Simulated publishing Movement {current_step - 2} to MQTT topic {movement_topic}")
 
     else:
         # End the experiment
@@ -131,10 +125,12 @@ def next_step():
     current_step += 1
     update_status()
 
+
 # Function to add markers for EEG data logging
 def add_marker(label):
     timestamp = time.time()
     print(f"Marker {label}: {timestamp}")
+
 
 # Create GUI elements
 status_label = tk.Label(root, textvariable=status_var, font=("Arial", 16))
