@@ -17,7 +17,7 @@ class AprilTagDetector:
         self.pose_pub = rospy.Publisher("/apriltag_poses", Pose, queue_size=10)
         self.info_pub = rospy.Publisher("/apriltag_info", String, queue_size=10)
         self.detector = self.__create_detector()
-        self.tag_size = 4 / 100  # Tag size in meters
+        self.tag_size = 4.0 / 100  # Tag size in meters
 
         # Updated camera matrix and distortion coefficients
         self.camera_matrix = np.array([
