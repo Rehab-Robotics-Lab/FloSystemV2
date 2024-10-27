@@ -1,150 +1,260 @@
 import pygame
-from psychopy import visual, core
 import tkinter as tk
 from tkinter import StringVar
 import time
 import serial
+import random
+from cortex import Cortex
+import threading
+import datetime
 import paho.mqtt.client as mqtt
 
-# Initialize pygame mixer for audio playback
-pygame.mixer.init()
+# Global
+marker_handler = None
 
-# Set up the serial connection (adjust the port to match your setup)
-serial_port = 'COM5'
-ser = serial.Serial(serial_port, 9600)  # Open the serial port
-time.sleep(2)  # Wait for the serial connection to initialize
+class MarkerHandler():
+    def __init__(self, app_client_id, app_client_secret, **kwargs):
+        self.c = Cortex(app_client_id, app_client_secret, debug_mode=True, **kwargs)
+        self.c.bind(create_session_done=self.on_create_session_done)
+        self.c.bind(create_record_done=self.on_create_record_done)
+        self.c.bind(stop_record_done=self.on_stop_record_done)
+        self.c.bind(warn_cortex_stop_all_sub=self.on_warn_cortex_stop_all_sub)
+        self.c.bind(inject_marker_done=self.on_inject_marker_done)
+        self.c.bind(export_record_done=self.on_export_record_done)
+        self.c.bind(inform_error=self.on_inform_error)
 
-# Initialize MQTT client
-broker_address = "172.20.10.6"  # Change to your broker address
-broker_port = 1883
-mqtt_client = mqtt.Client(client_id="MovementPublisher", protocol=mqtt.MQTTv5)  # Using MQTT version 5
+    def start(self, record_title, record_description, folder, stream_types, export_format, version, headsetId=''):
+        self.record_title = record_title
+        self.record_description = record_description
+        self.record_export_folder = folder
+        self.record_export_data_types = stream_types
+        self.record_export_format = export_format
+        self.record_export_version = version
 
-# Define the MQTT topic
-movement_topic = "ros/mqtt/movement"
+        if headsetId != '':
+            self.c.set_wanted_headset(headsetId)
 
-# Connect to the MQTT broker
-mqtt_client.connect(broker_address, broker_port)
+        # Start Cortex connection and initialization
+        self.c.open()
 
-# Initialize PsychoPy window
-win = visual.Window([800, 600], fullscr=False, monitor="testMonitor", units="deg")
+    def inject_marker(self, marker_value, marker_label):
+        marker_time = time.time() * 1000
+        self.c.inject_marker_request(marker_time, marker_value, marker_label, port='python_app')
 
-# Define the cross (not used for visual, but for marker)
-cross = visual.TextStim(win, text="+", pos=(0, 0), height=0.1, color='white')
+    def stop_record(self):
+        self.c.stop_record()
 
-# Instruction sound files
-instruction_sounds = [
-    'instruction1.mp3',  # Replace with actual file paths
-    'instruction2.mp3',
-    'instruction3.mp3',
-    'instruction4.mp3'
-]
+    # Callbacks
+    def on_create_session_done(self, *args, **kwargs):
+        print('on_create_session_done')
+        self.c.create_record(self.record_title, description=self.record_description)
 
-# Define movements (added Movement 6)
-movements = ['Movement 1', 'Movement 2', 'Movement 3', 'Movement 4', 'Movement 5', 'Movement 6']
+    def on_create_record_done(self, *args, **kwargs):
+        data = kwargs.get('data')
+        self.record_id = data['uuid']
+        start_time = data['startDatetime']
+        title = data['title']
+        print(f'on_create_record_done: recordId: {self.record_id}, title: {title}, startTime: {start_time}')
 
-# Current step index
-current_step = 0
+    def on_stop_record_done(self, *args, **kwargs):
+        data = kwargs.get('data')
+        record_id = data['uuid']
+        start_time = data['startDatetime']
+        end_time = data['endDatetime']
+        title = data['title']
+        print(f'on_stop_record_done: recordId: {record_id}, title: {title}, startTime: {start_time}, EndTime: {end_time}')
+        print('on_stop_record_done: Disconnect the headset to export record')
+        self.c.disconnect_headset()
 
-# Create the main GUI application window
-root = tk.Tk()
-root.title("Experiment Control")
+    def on_inject_marker_done(self, *args, **kwargs):
+        data = kwargs.get('data')
+        marker_id = data['uuid']
+        start_time = data['startDatetime']
+        marker_type = data['type']
+        print(f'on_inject_marker_done: markerId: {marker_id}, type: {marker_type}, startTime: {start_time}')
 
-# Status variable to display current process
-status_var = StringVar()
-status_var.set("Start")
+    def on_warn_cortex_stop_all_sub(self, *args, **kwargs):
+        print('on_warn_cortex_stop_all_sub')
+        time.sleep(3)
+        self.c.export_record(self.record_export_folder, self.record_export_data_types, self.record_export_format, [self.record_id], self.record_export_version)
 
-# Function to update the status label
-def update_status():
-    if current_step == 0:
-        status_var.set("Play Instruction 1-2")
-    elif current_step == 1:
-        status_var.set("Cross Sound and Display")
-    elif current_step == 2:
-        status_var.set("Play Instruction 3-4")
-    elif current_step >= 3 and current_step < 3 + len(movements):
-        status_var.set(f"{movements[current_step - 3]}")
-    elif current_step >= 3 + len(movements):
-        status_var.set("End")
+    def on_export_record_done(self, *args, **kwargs):
+        print('on_export_record_done')
+        data = kwargs.get('data')
+        print(data)
+        self.c.close()
 
-# Function to play a sound
-def play_sound(file_path):
-    pygame.mixer.music.load(file_path)
-    pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy():
-        core.wait(0.1)
+    def on_inform_error(self, *args, **kwargs):
+        error_data = kwargs.get('error_data')
+        print(error_data)
 
-# Function to send a command via serial
-def send_command(command):
-    ser.write(command.encode())
-    time.sleep(0.1)  # Small delay to ensure the command is processed
 
-# Function to proceed to the next step
-def next_step():
-    global current_step
-    if current_step == 0:
-        # Initially close the cross
-        send_command('0')
-        add_marker("Cross Initial Close 0")
+def start_recording():
+    global marker_handler
 
-        # Play instruction 1-2
-        play_sound(instruction_sounds[0])
-        play_sound(instruction_sounds[1])
-    elif current_step == 1:
-        # Play cross sound and display cross for 5 seconds
-        play_sound('cross_sound.mp3')  # Replace with the cross sound file
-        add_marker("Cross Sound End")
-        send_command('1')  # Turn on cross on the LED matrix
-        add_marker("Cross Open 1")
-        core.wait(5.0)  # Display cross for 5 seconds
-        send_command('0')  # Turn off cross on the LED matrix
-        add_marker("Cross Close 0")
-    elif current_step == 2:
-        # Play instruction 3-4
-        play_sound(instruction_sounds[2])
-        play_sound(instruction_sounds[3])
-        add_marker("Instruction 3-4 Played")
-    elif current_step >= 3 and current_step < 3 + len(movements):
-        # Show cross for 3 seconds, then indicate movement
-        send_command('1')  # Turn on cross on the LED matrix
-        add_marker(f"Cross for {movements[current_step - 3]} Open 1")
-        core.wait(3.0)  # Display cross for 3 seconds
-        send_command('0')  # Turn off cross on the LED matrix
-        add_marker(f"Cross for {movements[current_step - 3]} Close 0")
-        core.wait(5.0)  # Wait 5 seconds before indicating movement
-        print(movements[current_step - 3])
-        add_marker(movements[current_step - 3])
-        
-        # Send the movement command via MQTT
-        mqtt_client.publish(movement_topic, str(current_step - 2))
-        print(f"Published Movement {current_step - 2} to MQTT")
+    # Initialize the Marker handler
+    your_app_client_id = 'UKYzJ29onUzUizejl6jLZui5HdWplC4AGZyh7sqf'
+    your_app_client_secret = '8xXsb6e11kDpsHWmKCY7LsGgB28IXYo5HUwd82rvlrxZdwS70e9Pz4CmTTkKGJqKv6nivfo83lcwvaKXTNYtp45NlwcI26FNXaEgOry6oJ7JUn7hLND9CvQOJ1QOMH1Q'
+    current_time_str = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    marker_handler = MarkerHandler(your_app_client_id, your_app_client_secret)
+    marker_handler.start(
+        record_title=f'AO_{current_time_str}',
+        record_description='',
+        folder='D:\\Upenn\\OneDrive - PennO365\\robotics research\\LilFlo\\FloSystemV2\\trail_control\\cortex-example\\python\\record_data',
+        stream_types=['EEG', 'PM', 'BP'],
+        export_format='CSV',
+        version='V2'
+    )
 
-    else:
-        # End the experiment
-        status_var.set("End")
-        win.close()
-        core.quit()
-        pygame.quit()
-        root.quit()
-        return
+def send_movement_via_mqtt(movement_number, topic):
+    # 将movement_number转换为字符串
+    message = str(movement_number)
+    # 发布消息到指定主题
+    client.publish(topic, message)
+    print(f"Message sent to topic {topic}: {message}")
 
-    # Update current step
-    current_step += 1
+def main():
+    global marker_handler
+
+    # Initialize pygame mixer for audio playback
+    pygame.mixer.init()
+
+    # Set up the serial connection (adjust the port to match your setup)
+    serial_port = 'COM5'
+    ser = serial.Serial(serial_port, 9600)  # Open the serial port
+    time.sleep(2)  # Wait for the serial connection to initialize
+
+    # Define the MQTT topic
+    movement_topic = "ros/mqtt/movement"
+
+    # Instruction sound files
+    instruction_sounds = [
+        'mp3_AO/instruction1.mp3',  # Replace with actual file paths
+        'mp3_AO/instruction2.mp3',
+        'mp3_AO/instruction3.mp3',
+        'mp3_AO/instruction4.mp3'
+    ]
+
+    # Define movements
+    movements = ['Movement 1', 'Movement 2', 'Movement 3', 'Movement 4', 'Movement 5', 'Movement 6', 'Movement 7', 'Movement 8']
+    n_repeat = 2
+    # Randomize the movement sequence for two full rounds
+    randomized_movements = movements * n_repeat
+    random.shuffle(randomized_movements)
+
+    # Current step index
+    current_step = 0
+
+    # Create the main GUI application window
+    root = tk.Tk()
+    root.title("Experiment Control")
+
+    # Status variable to display current process
+    status_var = StringVar()
+    status_var.set("Initializing...")
+
+    # Function to update the status label
+    def update_status():
+        nonlocal current_step
+        if current_step == 0:
+            status_var.set("Play Instruction 1-2")
+        elif current_step == 1:
+            status_var.set("Cross Sound and Display")
+        elif current_step == 2:
+            status_var.set("Play Instruction 3-4")
+        elif current_step >= 3 and current_step < 3 + len(randomized_movements):
+            status_var.set(f"{randomized_movements[current_step - 3]}")
+        elif current_step >= 3 + len(randomized_movements):
+            status_var.set("End")
+
+    # Function to play a sound
+    def play_sound(file_path):
+        pygame.mixer.music.load(file_path)
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            time.sleep(0.1)
+
+    # Function to send a command via serial
+    def send_command(command):
+        ser.write(command.encode())
+
+    # Function to proceed to the next step
+    def next_step():
+        nonlocal current_step
+        if current_step == 0:
+            # Initially close the cross
+            send_command('0')
+            # Play instruction 1-2
+            play_sound(instruction_sounds[0])
+            play_sound(instruction_sounds[1])
+        elif current_step == 1:
+            # Play cross sound and simulate displaying cross for 5 seconds
+            play_sound('mp3_AO/cross_sound.mp3')  # Replace with the cross sound file
+            send_command('1')  # Turn on cross on the LED matrix
+            time.sleep(5.0)  # Simulate displaying cross for 5 seconds
+            send_command('0')  # Turn off cross on the LED matrix
+        elif current_step == 2:
+            # Play instruction 3-4
+            play_sound(instruction_sounds[2])
+            play_sound(instruction_sounds[3])
+        elif current_step >= 3 and current_step < 3 + len(randomized_movements):
+            # Simulate displaying cross for 3 seconds, then indicate movement
+            send_command('1')  # Turn on cross on the LED matrix
+            time.sleep(3.0)  # Simulate displaying cross for 3 seconds
+            send_command('0')  # Turn off cross on the LED matrix
+            movement_number = movements.index(randomized_movements[current_step - 3]) + 1
+            marker_handler.inject_marker("1000", "fixationCross")
+            time.sleep(1.0)
+            marker_handler.inject_marker("3000", "intertrial_interval")
+
+            # 通过MQTT发送movement_number
+            send_movement_via_mqtt(movement_number, movement_topic)
+            marker_handler.inject_marker(f"{movement_number}", randomized_movements[current_step - 3])
+
+        else:
+            # End the experiment
+            status_var.set("End")
+            marker_handler.stop_record()  # Stop the recording when the experiment ends
+            pygame.quit()
+            root.quit()
+            return
+
+        # Update current step
+        current_step += 1
+        update_status()
+
+    # Create GUI elements
+    status_label = tk.Label(root, textvariable=status_var, font=("Arial", 16))
+    status_label.pack(pady=10)
+
+    next_button = tk.Button(root, text="Next", command=next_step, font=("Arial", 16))
+    next_button.pack(pady=10)
+
+    # Initialize the status
     update_status()
 
-# Function to add markers for EEG data logging
-def add_marker(label):
-    timestamp = time.time()
-    print(f"Marker {label}: {timestamp}")
+    # Start the recording in a separate thread after the GUI is up
+    threading.Thread(target=start_recording).start()
 
-# Create GUI elements
-status_label = tk.Label(root, textvariable=status_var, font=("Arial", 16))
-status_label.pack(pady=10)
+    # Start the Tkinter main loop
+    root.mainloop()
 
-next_button = tk.Button(root, text="Next", command=next_step, font=("Arial", 16))
-next_button.pack(pady=10)
+    # 在程序结束时断开MQTT连接
+    client.disconnect()
 
-# Initialize the status
-update_status()
+if __name__ == '__main__':
+    # 设置MQTT Broker的IP地址
+    broker_ip = "169.254.131.1"  # 替换为Ubuntu机器的IP地址
 
-# Start the Tkinter main loop
-root.mainloop()
+    # 创建MQTT客户端
+    client = mqtt.Client()
+
+    # 尝试连接到Broker
+    try:
+        client.connect(broker_ip, 1883, 60)
+        print(f"Connected to MQTT Broker at {broker_ip}")
+    except Exception as e:
+        print(f"Failed to connect to MQTT Broker: {e}")
+        exit(1)
+
+    main()

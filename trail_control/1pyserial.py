@@ -17,7 +17,7 @@ try:
 
     # Example usage
     send_command('4')  # Send '1' to turn on the LED
-    time.sleep(2)      # Keep the LED on for 5 seconds
+    time.sleep(20)      # Keep the LED on for 5 seconds
     send_command('0')  # Send '0' to turn off the LED
 
 except serial.SerialException as e:
