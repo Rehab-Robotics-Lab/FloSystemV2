@@ -1,0 +1,33 @@
+controller_list:
+  - name: fake_R_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - r1
+      - r2
+      - r3
+      - r4
+  - name: fake_L_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - l1
+      - l2
+      - l3
+      - l4
+  - name: fake_dual_controller
+    type: $(arg fake_execution_type)
+    joints:
+      - l1
+      - l2
+      - l3
+      - l4
+      - r1
+      - r2
+      - r3
+      - r4
+initial:  # Define initial robot poses per group
+  - group: R
+    pose: Rhome
+  - group: L
+    pose: Lhome
+  - group: dual
+    pose: clap_close

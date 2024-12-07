@@ -1,0 +1,21 @@
+# fill this table with the joints you want to control in the humanoid robot and their configurations.
+# (dynamixel motor address and joint name for each motor)
+# set the min and max limits of the motor values in the dynamixel wizard after final assembly of the robot.
+# for all of the motors in this system to reduce jerky movements, set profile velocity to 15000 (maximum velocity 3435 rev/min) and profile acceleration to 50 (10728.85 rev/min^2).
+# On removing lower support this still leads to jerky movements.
+address    name                             type            neutral    min    max   inversion
+# eg:
+# 1        left_shoulder_flexionextension   <motortype>     765        10     500     1
+111        left_shoulder_flexionextension    XC-430-W240-T  306        141    345     1 
+112        left_shoulder_abductionadduction  XC-430-W240-T  263        176    270     1     
+121        left_elbow_flexionextension       XL-430-W250-T  185        90     270     0 
+122        left_elbow_rotation               XL-430-W250-T  185        95     190     1
+131        left_gripper                      XM-430-W350-T   0         0      0       0
+211        right_shoulder_flexionextension   XC-430-W240-T  100        65     270     0 
+212        right_shoulder_abductionadduction XC-430-W240-T  95         90     185     0     
+221        right_elbow_flexionextension      XL-430-W250-T  180        95     270     0 
+222        right_elbow_rotation              XL-430-W250-T  180        175    260     0
+13        right_gripper                     XM-430-W350-T   0                0     0
+
+# Updated June 18, 2024 
+

@@ -1,0 +1,8 @@
+prefix=/home/shzyh/catkin_ws/src/flov2withhead/build/devel
+
+Name: flov2withhead
+Description: Description of flov2withhead
+Version: 1.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
