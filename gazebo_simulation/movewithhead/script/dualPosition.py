@@ -9,8 +9,8 @@ def convert_to_dynamixel_position(angle):
     return int((angle / 360.0) * 4096.0)
 
 
-rgripper_position = 114 # open
-lgripper_position = 114 # open
+rgripper_position = 1300 # open
+lgripper_position = 1300 # open
 def joint_states_callback(msg, pub):
     global rgripper_position
     global lgripper_position

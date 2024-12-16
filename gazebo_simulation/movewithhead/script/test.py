@@ -21,9 +21,14 @@ class MoveItIkDemo:
         self.client.connect(self.broker_ip, 1883, 60)
         # 创建MQTT客户端
 
+        self.gripper_cup_r = 3410
+        self.gripper_cup_l = 3710
+        self.gripper_off_l = 3700
+        self.gripper_brush_l = 3710
+        self.gripper_brush_r = 3410
 
-        self.gripper_on = 114
-        self.gripper_off = 3785
+        self.gripper_on = 1300
+        self.gripper_off = 3410
 
 
         self.mode = "0"
@@ -39,6 +44,9 @@ class MoveItIkDemo:
 
         self.position_cx = 0   # cup 
         self.position_cy = 0
+
+        self.position_bx = 0   # brush 
+        self.position_by = 0
 
         self.position_rx = 0
         self.position_ry = 0
@@ -98,7 +106,7 @@ class MoveItIkDemo:
         self.arm_L.set_max_velocity_scaling_factor(0.5)
 
         self.arm_D.set_max_acceleration_scaling_factor(0.6)
-        self.arm_D.set_max_velocity_scaling_factor(0.5)
+        self.arm_D.set_max_velocity_scaling_factor(0.8)
         rospy.Subscriber("/apriltag_info", String, self.callback)
 
         #Start MQTT client in a separate thread
@@ -116,8 +124,8 @@ class MoveItIkDemo:
         # rospy.loginfo(f"Current Position: x={x}, y={y}, z={z}  ")
         # # rospy.loginfo(f"Current Position: x={self.position[0]}, y={self.position[1]}, z={self.position[2]}  ")
 
-        #rospy.sleep(10)
-        #self.move(17, reference_frame)
+        #rospy.sleep(5)
+        # self.move(17, reference_frame)
 
         while not rospy.is_shutdown():
             if self.mode != "0":
@@ -158,19 +166,21 @@ class MoveItIkDemo:
         # 解析数据为浮点数数组
         self.position = [x for x in cleaned_data.split()]
         
-        if self.position[0] == "5":
+        if self.position[0] == "0":
             self.position_dbx = float(self.position[1])
             self.position_dby = float(self.position[2])
-        elif self.position[0] == "1":
+        elif self.position[0] == "3":
             self.position_cx = float(self.position[1])
             self.position_cy = float(self.position[2])   
-        elif self.position[0] == "6":
+        elif self.position[0] == "2":
             self.position_rx = float(self.position[1])
             self.position_ry = float(self.position[2]) 
-        elif self.position[0] == "0":
+        elif self.position[0] == "5":
             self.position_lx = float(self.position[1])
             self.position_ly = float(self.position[2]) 
-
+        elif self.position[0] == "6":
+            self.position_bx = float(self.position[1])
+            self.position_by = float(self.position[2])   
 
     
     def move(self, pose, reference_frame):
@@ -221,18 +231,18 @@ class MoveItIkDemo:
 
 
         
-        elif pose == 5:
+        # elif pose == 5:
          
-            for i in range(3):
-                self.arm_R.set_named_target('R_wave_f')
-                self.arm_R.go()
+        #     for i in range(3):
+        #         self.arm_R.set_named_target('R_wave_f')
+        #         self.arm_R.go()
 
-                self.arm_R.set_named_target('R_wave_b')
-                self.arm_R.go()
-            self.arm_R.set_named_target('R_wave_f')
-            self.arm_R.go()
-            self.arm_R.set_named_target('Rhome')
-            self.arm_R.go()    
+        #         self.arm_R.set_named_target('R_wave_b')
+        #         self.arm_R.go()
+        #     self.arm_R.set_named_target('R_wave_f')
+        #     self.arm_R.go()
+        #     self.arm_R.set_named_target('Rhome')
+        #     self.arm_R.go()    
 
 
 
@@ -240,7 +250,8 @@ class MoveItIkDemo:
 
 
         elif pose == 6:
-            self.arm_R.set_max_acceleration_scaling_factor(0.6)
+            self.arm_R.set_max_acceleration_scaling_factor(1)
+            self.arm_R.set_max_velocity_scaling_factor(0.8)
 
             current_posea = self.arm_R.get_current_pose(self.end_effector_link_R).pose
 
@@ -289,13 +300,12 @@ class MoveItIkDemo:
 
             # 按照规划的运动路径控制机械臂运动
             self.arm_R.execute(traj)
-            rospy.sleep(1)
 
             
 
             self.rgripper_pub.publish(self.gripper_off)
 
-            rospy.sleep(3)
+            rospy.sleep(1)
 
             self.arm_R.set_named_target('R_wave_start')
             self.arm_R.go()
@@ -335,9 +345,112 @@ class MoveItIkDemo:
             self.arm_R.set_max_acceleration_scaling_factor(0.6)
         
 
-        elif pose == 7:
-            self.arm_R.set_max_acceleration_scaling_factor(0.6)
+        # elif pose == 7:
+        #     self.arm_R.set_max_acceleration_scaling_factor(0.6)
 
+        #     current_posea = self.arm_R.get_current_pose(self.end_effector_link_R).pose
+
+        #     # # # 提取位姿中的位置部分
+        #     # x = current_posea.position.x
+        #     # y = current_posea.position.y
+        #     # z = current_posea.position.z
+
+
+        #     # rospy.loginfo(f"Current Position: x={x}, y={y}, z={z}  ")
+
+        #     # # x = self.position_dbx
+        #     # # y = -self.position_dby
+        #     # # z = 1.03
+
+        #     x = current_posea.position.x + self.position_cx - self.position_rx
+        #     y = current_posea.position.y + (self.position_ry-self.position_cy)-0.05
+
+        #     #z = 1.03
+        #     joint_goal = self.arm_R.get_current_joint_values()
+        #     rospy.loginfo(f"{joint_goal[2]}")
+        #     joint_goal[2] += math.atan( (self.position_cx - self.position_rx ) / (self.position_ry-self.position_cy + 0.18-0.05))
+
+        #     rospy.loginfo(f"{joint_goal[2]}  ")
+
+        #     self.arm_R.go(joint_goal, wait=True) 
+
+        #     # current_posea = self.arm_R.get_current_pose(self.end_effector_link_R).pose
+
+        #     # # # # 提取位姿中的位置部分
+        #     # x = current_posea.position.x
+        #     # y = current_posea.position.y
+        #     # z = 1.03
+
+ 
+        #     current_pose = self.arm_R.get_current_pose(self.end_effector_link_R).pose
+        #     target_pose = PoseStamped()
+        #     target_pose.header.frame_id = reference_frame
+        #     target_pose.header.stamp = rospy.Time.now()     
+        #     target_pose.pose.position.x = x
+        #     target_pose.pose.position.y = y
+        #     target_pose.pose.position.z = 1.04
+        #     target_pose.pose.orientation = current_pose.orientation
+
+        #     # 设置机器臂当前的状态作为运动初始状态
+        #     self.arm_R.set_start_state_to_current_state()
+            
+        #     # 设置机械臂终端运动的目标位姿
+        #     self.arm_R.set_joint_value_target(target_pose, self.end_effector_link_R, True)
+            
+        #     # 规划运动路径
+        #     _, traj, _, _ = self.arm_R.plan()
+
+        #     # 按照规划的运动路径控制机械臂运动
+        #     self.arm_R.execute(traj)
+        #     rospy.sleep(1)
+
+            
+
+        #     self.rgripper_pub.publish(self.gripper_off)
+
+        #     rospy.sleep(3)
+
+        #     self.arm_R.set_named_target('R_cup_up')
+        #     self.arm_R.go()
+
+        #     self.arm_R.set_named_target('R_cup_down')
+        #     self.arm_R.go()
+
+        #     self.arm_R.set_named_target('R_cup_up')
+        #     self.arm_R.go()
+
+        #     self.arm_R.set_named_target('R_cup_down')
+        #     self.arm_R.go()
+
+        #     self.arm_R.set_named_target('R_cup_up')
+        #     self.arm_R.go()
+
+        #     self.arm_R.set_named_target('R_cup_down')
+        #     self.arm_R.go()
+
+        #     self.arm_R.set_named_target('R_drink')
+        #     self.arm_R.go()
+
+        #     # 设置机器臂当前的状态作为运动初始状态
+        #     self.arm_R.set_start_state_to_current_state()
+            
+        #     # 设置机械臂终端运动的目标位姿
+        #     self.arm_R.set_joint_value_target(target_pose, self.end_effector_link_R, True)
+            
+        #     # 规划运动路径
+        #     _, traj, _, _ = self.arm_R.plan()
+
+        #     # 按照规划的运动路径控制机械臂运动
+        #     self.arm_R.execute(traj)
+        #     rospy.sleep(1)
+
+
+        #     self.rgripper_pub.publish(self.gripper_on)
+        #     rospy.sleep(1)
+        #     self.arm_R.set_named_target('Rhome')
+        #     self.arm_R.go()
+        #     self.arm_R.set_max_acceleration_scaling_factor(0.6)
+        elif pose == 7:
             current_posea = self.arm_R.get_current_pose(self.end_effector_link_R).pose
 
             # # # 提取位姿中的位置部分
@@ -353,32 +466,29 @@ class MoveItIkDemo:
             # # z = 1.03
 
             x = current_posea.position.x + self.position_cx - self.position_rx
-            y = current_posea.position.y + (self.position_ry-self.position_cy)-0.05
+            y = current_posea.position.y + (self.position_ry-self.position_cy)-0.04
 
             #z = 1.03
             joint_goal = self.arm_R.get_current_joint_values()
             rospy.loginfo(f"{joint_goal[2]}")
-            joint_goal[2] += math.atan( (self.position_cx - self.position_rx ) / (self.position_ry-self.position_cy + 0.18-0.05))
+            joint_goal[2] += math.atan( (self.position_cx - self.position_rx ) / (self.position_cy-self.position_cy + 0.18-0.05))
 
             rospy.loginfo(f"{joint_goal[2]}  ")
 
+
+            joint_goal[3] += 0.042
+
+            rospy.loginfo(f"{joint_goal[3]}  ")
+
             self.arm_R.go(joint_goal, wait=True) 
 
-            # current_posea = self.arm_R.get_current_pose(self.end_effector_link_R).pose
-
-            # # # # 提取位姿中的位置部分
-            # x = current_posea.position.x
-            # y = current_posea.position.y
-            # z = 1.03
-
- 
             current_pose = self.arm_R.get_current_pose(self.end_effector_link_R).pose
             target_pose = PoseStamped()
             target_pose.header.frame_id = reference_frame
             target_pose.header.stamp = rospy.Time.now()     
             target_pose.pose.position.x = x
             target_pose.pose.position.y = y
-            target_pose.pose.position.z = 1.04
+            target_pose.pose.position.z = 1.03
             target_pose.pose.orientation = current_pose.orientation
 
             # 设置机器臂当前的状态作为运动初始状态
@@ -396,31 +506,127 @@ class MoveItIkDemo:
 
             
 
-            self.rgripper_pub.publish(self.gripper_off)
+            self.rgripper_pub.publish(self.gripper_cup_r)
 
-            rospy.sleep(3)
-
-            self.arm_R.set_named_target('R_cup_up')
-            self.arm_R.go()
-
-            self.arm_R.set_named_target('R_cup_down')
-            self.arm_R.go()
+            rospy.sleep(1)
 
             self.arm_R.set_named_target('R_cup_up')
             self.arm_R.go()
+            rospy.sleep(1)
+            # self.arm_R.set_named_target('R_cup_down')
+            # self.arm_R.go()
 
-            self.arm_R.set_named_target('R_cup_down')
-            self.arm_R.go()
+            # self.arm_R.set_named_target('R_cup_up')
+            # self.arm_R.go()
 
-            self.arm_R.set_named_target('R_cup_up')
-            self.arm_R.go()
+            # self.arm_R.set_named_target('R_cup_down')
+            # self.arm_R.go()
 
-            self.arm_R.set_named_target('R_cup_down')
-            self.arm_R.go()
+            # self.arm_R.set_named_target('R_cup_up')
+            # self.arm_R.go()
+
+            # self.arm_R.set_named_target('R_cup_down')
+            # self.arm_R.go()
 
             self.arm_R.set_named_target('R_drink')
             self.arm_R.go()
+            rospy.sleep(1)
+            self.arm_R.set_named_target('R_cup_up')
+            self.arm_R.go()
+            rospy.sleep(1)
+            
+            self.arm_R.set_start_state_to_current_state()
+            
 
+            self.arm_R.set_joint_value_target(target_pose, self.end_effector_link_R, True)
+            
+            # 规划运动路径
+            _, traj, _, _ = self.arm_R.plan()
+
+            # 按照规划的运动路径控制机械臂运动
+            self.arm_R.execute(traj)
+            rospy.sleep(1)
+
+
+            self.rgripper_pub.publish(self.gripper_on)
+            rospy.sleep(1)
+            self.arm_R.set_named_target('Rhome')
+            self.arm_R.go()
+            self.arm_R.set_max_acceleration_scaling_factor(0.6)
+
+        elif pose == 8:
+
+            self.arm_R.set_max_acceleration_scaling_factor(0.6)
+
+
+            current_posea = self.arm_R.get_current_pose(self.end_effector_link_R).pose
+
+            # # # 提取位姿中的位置部分
+            # x = current_posea.position.x
+            # y = current_posea.position.y
+            # z = current_posea.position.z
+
+
+            # rospy.loginfo(f"Current Position: x={x}, y={y}, z={z}  ")
+
+            # # x = self.position_dbx
+            # # y = -self.position_dby
+            # # z = 1.03
+
+            x = current_posea.position.x + self.position_bx - self.position_rx
+            y = current_posea.position.y + (self.position_ry-self.position_by)-0.04
+
+            #z = 1.03
+            joint_goal = self.arm_R.get_current_joint_values()
+            rospy.loginfo(f"{joint_goal[2]}")
+            joint_goal[2] += math.atan( (self.position_bx - self.position_rx ) / (self.position_ry-self.position_by + 0.18-0.05))
+
+            rospy.loginfo(f"{joint_goal[2]}  ")
+
+            self.arm_R.go(joint_goal, wait=True) 
+
+            current_pose = self.arm_R.get_current_pose(self.end_effector_link_R).pose
+            target_pose = PoseStamped()
+            target_pose.header.frame_id = reference_frame
+            target_pose.header.stamp = rospy.Time.now()     
+            target_pose.pose.position.x = x
+            target_pose.pose.position.y = y
+            target_pose.pose.position.z = 1.03
+            target_pose.pose.orientation = current_pose.orientation
+
+            # 设置机器臂当前的状态作为运动初始状态
+            self.arm_R.set_start_state_to_current_state()
+            
+            # 设置机械臂终端运动的目标位姿
+            self.arm_R.set_joint_value_target(target_pose, self.end_effector_link_R, True)
+            
+            # 规划运动路径
+            _, traj, _, _ = self.arm_R.plan()
+
+            # 按照规划的运动路径控制机械臂运动
+            self.arm_R.execute(traj)
+            rospy.sleep(1)
+
+            
+
+            self.rgripper_pub.publish(self.gripper_brush_r)
+
+            rospy.sleep(1)
+
+            self.arm_R.set_named_target('R_brush')
+            self.arm_R.go()
+            self.arm_R.set_named_target('R_brush2')
+            self.arm_R.go()
+            self.arm_R.set_named_target('R_brush')
+            self.arm_R.go()
+            self.arm_R.set_named_target('R_brush2')
+            self.arm_R.go()
+            self.arm_R.set_named_target('R_brush')
+            self.arm_R.go()    
+
+            # self.arm_L.set_named_target('R_drink')
+            # self.arm_L.go()
+            rospy.sleep(0.5)
             # 设置机器臂当前的状态作为运动初始状态
             self.arm_R.set_start_state_to_current_state()
             
@@ -441,10 +647,6 @@ class MoveItIkDemo:
             self.arm_R.go()
             self.arm_R.set_max_acceleration_scaling_factor(0.6)
 
-
-
-
-
     
         elif pose == 11:
             for i in range(3):
@@ -458,7 +660,7 @@ class MoveItIkDemo:
             self.arm_L.go()
 
         elif pose == 12:
-            self.lgripper_pub.publish(self.gripper_off)
+            self.lgripper_pub.publish(self.gripper_off_l)
             rospy.sleep(1)
             for i in range(3):
                 self.arm_L.set_named_target('L_punch')
@@ -487,26 +689,26 @@ class MoveItIkDemo:
             self.arm_L.set_named_target('Lhome')
             self.arm_L.go() 
 
-        elif pose == 15:
+        # elif pose == 15:
       
-            for i in range(3):
-                self.arm_L.set_named_target('L_wave_f')
-                self.arm_L.go()
+        #     for i in range(3):
+        #         self.arm_L.set_named_target('L_wave_f')
+        #         self.arm_L.go()
 
-                self.arm_L.set_named_target('L_wave_b')
-                self.arm_L.go()
-            self.arm_L.set_named_target('L_wave_f')
-            self.arm_L.go()
-            self.arm_L.set_named_target('Lhome')
-            self.arm_L.go()  
+        #         self.arm_L.set_named_target('L_wave_b')
+        #         self.arm_L.go()
+        #     self.arm_L.set_named_target('L_wave_f')
+        #     self.arm_L.go()
+        #     self.arm_L.set_named_target('Lhome')
+        #     self.arm_L.go()  
 
 
         elif pose == 16:
-            self.arm_L.set_max_acceleration_scaling_factor(0.3)
+            self.arm_L.set_max_acceleration_scaling_factor(1.0)
             z = 1.03
 
 
-            current_posea = self.arm_R.get_current_pose(self.end_effector_link_R).pose
+            current_posea = self.arm_L.get_current_pose(self.end_effector_link_L).pose
 
             # # # 提取位姿中的位置部分
             # x = current_posea.position.x
@@ -521,7 +723,7 @@ class MoveItIkDemo:
             # # z = 1.03
 
             x = current_posea.position.x + self.position_dbx - self.position_lx
-            y = current_posea.position.y + (self.position_ly-self.position_dby)-0.02
+            y = current_posea.position.y + (self.position_ly-self.position_dby)-0.03
 
             #z = 1.03
             joint_goal = self.arm_L.get_current_joint_values()
@@ -561,9 +763,9 @@ class MoveItIkDemo:
 
             
 
-            self.lgripper_pub.publish(self.gripper_off)
+            self.lgripper_pub.publish(self.gripper_off_l)
 
-            rospy.sleep(3)
+            rospy.sleep(1)
 
             self.arm_L.set_named_target('L_wave_start')
             self.arm_L.go()
@@ -603,8 +805,111 @@ class MoveItIkDemo:
             self.arm_L.go()
             self.arm_L.set_max_acceleration_scaling_factor(0.6)
 
+        # elif pose == 17:
+        #     self.arm_L.set_max_acceleration_scaling_factor(0.4)
+
+        #     current_posea = self.arm_L.get_current_pose(self.end_effector_link_L).pose
+
+        #     # # # 提取位姿中的位置部分
+        #     # x = current_posea.position.x
+        #     # y = current_posea.position.y
+        #     # z = current_posea.position.z
+
+
+        #     # rospy.loginfo(f"Current Position: x={x}, y={y}, z={z}  ")
+
+        #     # # x = self.position_dbx
+        #     # # y = -self.position_dby
+        #     # # z = 1.03
+
+        #     x = current_posea.position.x  + self.position_cx - self.position_lx
+        #     y = current_posea.position.y  + (self.position_ly-self.position_cy)-0.03
+
+        #     z = 1.03
+        #     joint_goal = self.arm_L.get_current_joint_values()
+        #     rospy.loginfo(f"{joint_goal[2]}")
+        #     joint_goal[2] += math.atan( (self.position_cx - self.position_lx ) / (self.position_ly-self.position_cy + 0.125))
+
+        #     rospy.loginfo(f"{joint_goal[2]}  ")
+
+        #     self.arm_L.go(joint_goal, wait=True) 
+
+
+
+ 
+        #     current_pose = self.arm_L.get_current_pose(self.end_effector_link_L).pose
+        #     target_pose = PoseStamped()
+        #     target_pose.header.frame_id = reference_frame
+        #     target_pose.header.stamp = rospy.Time.now()     
+        #     target_pose.pose.position.x = x
+        #     target_pose.pose.position.y = y
+        #     target_pose.pose.position.z = 1.04
+        #     target_pose.pose.orientation = current_pose.orientation
+
+        #     # 设置机器臂当前的状态作为运动初始状态
+        #     self.arm_L.set_start_state_to_current_state()
+            
+        #     # 设置机械臂终端运动的目标位姿
+        #     self.arm_L.set_joint_value_target(target_pose, self.end_effector_link_L, True)
+            
+        #     # 规划运动路径
+        #     _, traj, _, _ = self.arm_L.plan()
+
+        #     # 按照规划的运动路径控制机械臂运动
+        #     self.arm_L.execute(traj)
+        #     rospy.sleep(1)
+
+            
+
+        #     self.lgripper_pub.publish(self.gripper_off)
+
+        #     rospy.sleep(3)
+
+        #     self.arm_L.set_named_target('L_cup_up')
+        #     self.arm_L.go()
+
+        #     self.arm_L.set_named_target('L_cup_down')
+        #     self.arm_L.go()
+
+        #     self.arm_L.set_named_target('L_cup_up')
+        #     self.arm_L.go()
+
+        #     self.arm_L.set_named_target('L_cup_down')
+        #     self.arm_L.go()
+
+        #     self.arm_L.set_named_target('L_cup_up')
+        #     self.arm_L.go()
+
+        #     self.arm_L.set_named_target('L_cup_down')
+        #     self.arm_L.go()
+
+        #     self.arm_L.set_named_target('L_drink')
+        #     self.arm_L.go()
+
+        #     # 设置机器臂当前的状态作为运动初始状态
+        #     self.arm_L.set_start_state_to_current_state()
+            
+        #     # 设置机械臂终端运动的目标位姿
+        #     self.arm_L.set_joint_value_target(target_pose, self.end_effector_link_L, True)
+            
+        #     # 规划运动路径
+        #     _, traj, _, _ = self.arm_L.plan()
+
+        #     # 按照规划的运动路径控制机械臂运动
+        #     self.arm_L.execute(traj)
+        #     rospy.sleep(1)
+
+
+        #     self.lgripper_pub.publish(self.gripper_on)
+        #     rospy.sleep(1)
+        #     self.arm_L.set_named_target('Lhome')
+        #     self.arm_L.go()
+        #     self.arm_L.set_max_acceleration_scaling_factor(0.6)
         elif pose == 17:
-            self.arm_L.set_max_acceleration_scaling_factor(0.4)
+            self.arm_L.set_max_acceleration_scaling_factor(0.8)
+
+            z = 1.04
+
 
             current_posea = self.arm_L.get_current_pose(self.end_effector_link_L).pose
 
@@ -620,18 +925,23 @@ class MoveItIkDemo:
             # # y = -self.position_dby
             # # z = 1.03
 
-            x = current_posea.position.x  + self.position_cx - self.position_lx
-            y = current_posea.position.y  + (self.position_ly-self.position_cy)-0.03
+            x = current_posea.position.x + self.position_cx - self.position_lx
+            y = current_posea.position.y + (self.position_ly-self.position_cy)-0.03
 
-            z = 1.03
+            #z = 1.03
             joint_goal = self.arm_L.get_current_joint_values()
             rospy.loginfo(f"{joint_goal[2]}")
-            joint_goal[2] += math.atan( (self.position_cx - self.position_lx ) / (self.position_ly-self.position_cy + 0.125))
+            joint_goal[2] += math.atan( (self.position_cx - self.position_lx ) / (self.position_ly-self.position_cy + 0.18-0.055))
 
-            rospy.loginfo(f"{joint_goal[2]}  ")
+
+
+            
+            rospy.loginfo(f"{joint_goal[3]}")
+            joint_goal[3] += 0.08
+
+            rospy.loginfo(f"{joint_goal[3]}  ")
 
             self.arm_L.go(joint_goal, wait=True) 
-
 
 
  
@@ -641,7 +951,7 @@ class MoveItIkDemo:
             target_pose.header.stamp = rospy.Time.now()     
             target_pose.pose.position.x = x
             target_pose.pose.position.y = y
-            target_pose.pose.position.z = 1.04
+            target_pose.pose.position.z = z
             target_pose.pose.orientation = current_pose.orientation
 
             # 设置机器臂当前的状态作为运动初始状态
@@ -659,31 +969,35 @@ class MoveItIkDemo:
 
             
 
-            self.lgripper_pub.publish(self.gripper_off)
+            self.lgripper_pub.publish(self.gripper_cup_l)
 
             rospy.sleep(3)
 
             self.arm_L.set_named_target('L_cup_up')
             self.arm_L.go()
+            rospy.sleep(1)
+            # self.arm_L.set_named_target('L_cup_down')
+            # self.arm_L.go()
 
-            self.arm_L.set_named_target('L_cup_down')
-            self.arm_L.go()
+            # self.arm_L.set_named_target('L_cup_up')
+            # self.arm_L.go()
 
-            self.arm_L.set_named_target('L_cup_up')
-            self.arm_L.go()
+            # self.arm_L.set_named_target('L_cup_down')
+            # self.arm_L.go()
 
-            self.arm_L.set_named_target('L_cup_down')
-            self.arm_L.go()
+            # self.arm_L.set_named_target('L_cup_up')
+            # self.arm_L.go()
 
-            self.arm_L.set_named_target('L_cup_up')
-            self.arm_L.go()
-
-            self.arm_L.set_named_target('L_cup_down')
+            # self.arm_L.set_named_target('L_cup_down')
             self.arm_L.go()
 
             self.arm_L.set_named_target('L_drink')
             self.arm_L.go()
 
+            rospy.sleep(1)
+            self.arm_L.set_named_target('L_cup_up')
+            self.arm_L.go()
+            rospy.sleep(1)
             # 设置机器臂当前的状态作为运动初始状态
             self.arm_L.set_start_state_to_current_state()
             
@@ -704,6 +1018,100 @@ class MoveItIkDemo:
             self.arm_L.go()
             self.arm_L.set_max_acceleration_scaling_factor(0.6)
 
+        elif pose == 18:
+
+            self.arm_L.set_max_acceleration_scaling_factor(0.8)
+            z = 1.04
+
+
+            current_posea = self.arm_L.get_current_pose(self.end_effector_link_L).pose
+
+            # # # 提取位姿中的位置部分
+            # x = current_posea.position.x
+            # y = current_posea.position.y
+            # z = current_posea.position.z
+
+
+            # rospy.loginfo(f"Current Position: x={x}, y={y}, z={z}  ")
+
+            # # x = self.position_dbx
+            # # y = -self.position_dby
+            # # z = 1.03
+
+            x = current_posea.position.x + self.position_bx - self.position_lx
+            y = current_posea.position.y + (self.position_ly-self.position_by)-0.025
+
+            #z = 1.03
+            joint_goal = self.arm_L.get_current_joint_values()
+            rospy.loginfo(f"{joint_goal[2]}")
+            joint_goal[2] += math.atan( (self.position_bx - self.position_lx ) / (self.position_ly-self.position_by + 0.18-0.055))
+
+            rospy.loginfo(f"{joint_goal[2]}  ")
+            joint_goal[3] += 0.04
+            self.arm_L.go(joint_goal, wait=True) 
+
+
+            current_pose = self.arm_L.get_current_pose(self.end_effector_link_L).pose
+            target_pose = PoseStamped()
+            target_pose.header.frame_id = reference_frame
+            target_pose.header.stamp = rospy.Time.now()     
+            target_pose.pose.position.x = x
+            target_pose.pose.position.y = current_pose.position.y+0.01
+            target_pose.pose.position.z = z
+            target_pose.pose.orientation = current_pose.orientation
+
+            # 设置机器臂当前的状态作为运动初始状态
+            self.arm_L.set_start_state_to_current_state()
+            
+            # 设置机械臂终端运动的目标位姿
+            self.arm_L.set_joint_value_target(target_pose, self.end_effector_link_L, True)
+            
+            # 规划运动路径
+            _, traj, _, _ = self.arm_L.plan()
+
+            # 按照规划的运动路径控制机械臂运动
+            self.arm_L.execute(traj)
+            rospy.sleep(1)
+
+            
+
+            self.lgripper_pub.publish(self.gripper_brush_l)
+
+            rospy.sleep(1)
+
+            self.arm_L.set_named_target('L_brush')
+            self.arm_L.go()
+            self.arm_L.set_named_target('L_brush2')
+            self.arm_L.go()
+            self.arm_L.set_named_target('L_brush')
+            self.arm_L.go()
+            self.arm_L.set_named_target('L_brush2')
+            self.arm_L.go()
+            self.arm_L.set_named_target('L_brush')
+            self.arm_L.go()    
+
+            # self.arm_L.set_named_target('R_drink')
+            # self.arm_L.go()
+            rospy.sleep(0.5)
+            # 设置机器臂当前的状态作为运动初始状态
+            self.arm_L.set_start_state_to_current_state()
+            
+            # 设置机械臂终端运动的目标位姿
+            self.arm_L.set_joint_value_target(target_pose, self.end_effector_link_L, True)
+            
+            # 规划运动路径
+            _, traj, _, _ = self.arm_L.plan()
+
+            # 按照规划的运动路径控制机械臂运动
+            self.arm_L.execute(traj)
+            rospy.sleep(1)
+
+
+            self.lgripper_pub.publish(self.gripper_on)
+            rospy.sleep(1)
+            self.arm_L.set_named_target('Lhome')
+            self.arm_L.go()
+            self.arm_L.set_max_acceleration_scaling_factor(0.6)
 
 
         elif pose == 21:
@@ -722,7 +1130,7 @@ class MoveItIkDemo:
 
         elif pose == 22:
     
-            for i in range(3):
+            for i in range(2):
                 self.arm_D.set_named_target('D_up')
                 self.arm_D.go()
 
@@ -744,7 +1152,24 @@ class MoveItIkDemo:
 
             self.arm_D.set_named_target('D_home')
             self.arm_D.go()   
+        elif pose == 24: # 
+            self.rgripper_pub.publish(self.gripper_off)
+            self.lgripper_pub.publish(3780)
+            rospy.sleep(1.5)
 
+            for i in range(3):
+
+                self.arm_D.set_named_target('d_punch1')
+                self.arm_D.go()   
+                self.arm_D.set_named_target('d_punch2')
+                self.arm_D.go()               
+            
+            self.arm_D.set_named_target('D_home')
+            self.arm_D.go()            
+  
+            self.lgripper_pub.publish(self.gripper_on)
+            rospy.sleep(0.1)
+            self.rgripper_pub.publish(self.gripper_on)
 
 
 
