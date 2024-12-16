@@ -1,18 +1,23 @@
-# FLO Robot Simulation
+# Flo V2 Control Programs and Models Repository
 
-This repository contains simulation files for the FLO robot, including both MATLAB scripts and Gazebo simulation files.
+This repository contains control programs, simulation code, and model files for the Flo V2 robot.
 
-## Directory Structure
+## Repository Structure
 
-- `robot_arm_matlab_simulation/` - Contains MATLAB scripts for robotic kinematics and dynamics calculations.
-- `gazebo_simulation/` - Contains Gazebo simulation files for the FLO robot.
+```plaintext
+gazebo_simulation_and_control/
+robot_arm_matlab_simulation/
+SIM/
+README.md
+```
 
-## Usage
+## gazebo_simulation_and_control  
+This directory contains all files related to simulation and control of Flo V2. It includes code for testing and verifying the robot's movements in the Gazebo simulation environment.
 
-Refer to the README files in each subdirectory for detailed instructions:
+## robot_arm_matlab_simulation  
+This directory contains MATLAB scripts for verifying the DH parameters of the robotic arm.
 
-- [robot_arm_matlab_simulation/README.md](robot_arm_matlab_simulation/README.md)
-- [gazebo_simulation/README.md](gazebo_simulation/README.md)
+## SIM  
+This directory includes the model files for the Flo V2 robot,Also included here is a tutorial that will show you how to import the model into gazebo in its entirety!.
 
-
-
+---
