@@ -21,3 +21,12 @@ This directory contains MATLAB scripts for verifying the DH parameters of the ro
 This directory includes the model files for the Flo V2 robot,Also included here is a tutorial that will show you how to import the model into gazebo in its entirety!.
 
 ---
+
+
+## Installation:
+
+1. Create `catkin_ws` workspace and `catkin_ws/src` folder
+
+2. Inside `src`, clone this repo and `git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git`
+
+3. Install dependency: `sudo apt install ros-noetic-dynamixel-sdk ros-noetic-dynamixel-sdk-examples`
