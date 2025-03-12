@@ -25,8 +25,14 @@ This directory includes the model files for the Flo V2 robot,Also included here 
 
 ## Installation:
 
-1. Create `catkin_ws` workspace and `catkin_ws/src` folder
+1. Create `~/catkin_ws` workspace and `~/catkin_ws/src` folder
 
 2. Inside `src`, clone this repo and `git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git`
 
 3. Install dependency: `sudo apt install ros-noetic-dynamixel-sdk ros-noetic-dynamixel-sdk-examples`
+
+4. `cd ~/catkin_ws` then `catkin_make`. Make sure the packages are succesfully built.
+
+5. `source devel/setup.bash`
+
+6. `roslaunch movewithhead full_robot_arm_sim.launch`
