@@ -36,3 +36,5 @@ This directory includes the model files for the Flo V2 robot,Also included here 
 5. `source devel/setup.bash`
 
 6. `roslaunch movewithhead full_robot_arm_sim.launch`
+
+7. Open another terminal, run `source devel/setup.bash` then `rosrun flo_humanoid read_write_arms_node`
