@@ -22,6 +22,11 @@ This directory includes the model files for the Flo V2 robot,Also included here 
 
 ---
 
+## Prerequisites:
+
+```
+sudo apt install mosquitto mosquitto-clients
+```
 
 ## Installation:
 
@@ -37,4 +42,8 @@ This directory includes the model files for the Flo V2 robot,Also included here 
 
 6. `roslaunch movewithhead full_robot_arm_sim.launch`
 
-7. Open another terminal, run `source devel/setup.bash` then `rosrun flo_humanoid read_write_arms_node`
+7. Open another terminal, run `source devel/setup.bash` then `rosrun flo_humanoid read_write_arms_node`. You should see that the robot arms become stiff.
+
+8. Open new terminal and `source devel/setup.bash`. Run `chmod +x /home/anhtn/catkin_ws_2/src/FloSystemV2/gazebo_simulation_and_control/movewithhead/script/dualPosition.py` then run `rosrun movewithhead script/dualPosition.py`
+
+9. Open new terminal and `source devel/setup.bash`. Run `chmod +x /home/anhtn/catkin_ws_2/src/FloSystemV2/gazebo_simulation_and_control/movewithhead/script/test.py` then run
