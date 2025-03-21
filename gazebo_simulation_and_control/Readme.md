@@ -3,28 +3,33 @@
 ### 1. Build & Run Docker
 ---------------------
 Run the script to build the Docker image and start a new container:
- ```bash
-    ./run_docker.sh
+```bash
+ ./run_docker.sh
 ```
 This removes any old container named flo_v2_container, builds flo_v2_image, and runs it.
 
-2. Run a Demo Action
+### 2. Run a Demo Action
 --------------------
 Inside the Docker container, launch the robot demo with a specific action number:
-    ./run_a_demo.sh 
-
+ 
+```bash
+./run_a_demo.sh
+```
 It will ask you to enter the number.
 
 This starts all necessary ROS nodes and executes action #1.
 
-3. Run Additional Actions
+### 3. Run Additional Actions
 -------------------------
 If you’d like to run another action without restarting everything, just type:
-    rosrun movewithhead run_a_demo.py <action_number>
+```bash
+rosrun movewithhead run_a_demo.py <action_number>
+```
 
 Example:
-    rosrun movewithhead run_a_demo.py 2
-
+```bash
+rosrun movewithhead run_a_demo.py 2
+```
 This sends action #2 to the robot.
 
 Done!
