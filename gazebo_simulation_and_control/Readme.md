@@ -1,11 +1,11 @@
-Flo V2 Quickstart Instructions(Tian)
-==============================
+## Flo V2 Quickstart Instructions(Tian)
 
-1. Build & Run Docker
+### 1. Build & Run Docker
 ---------------------
 Run the script to build the Docker image and start a new container:
+ ```bash
     ./run_docker.sh
-
+```
 This removes any old container named flo_v2_container, builds flo_v2_image, and runs it.
 
 2. Run a Demo Action
