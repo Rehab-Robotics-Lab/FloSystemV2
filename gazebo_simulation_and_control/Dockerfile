@@ -2,7 +2,7 @@ FROM ros:noetic-ros-core
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-
+USER root
 
 
 
@@ -22,8 +22,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     software-properties-common \
     # ROS Controllers (for joint_state_controller, etc.)
     ros-noetic-ros-control \
-    ros-noetic-ros-controllers \
-    && rm -rf /var/lib/apt/lists/*
+    ros-noetic-ros-controllers 
+    # && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get install -y build-essential sudo terminator iproute2 gedit lsb-release lsb-core wget nano
 
@@ -87,3 +87,11 @@ RUN echo "source /catkin_ws/devel/setup.bash" >> /root/.bashrc
 
 # Default command
 CMD ["/bin/bash", "-c", "source /opt/ros/noetic/setup.bash && source /catkin_ws/devel/setup.bash && /bin/bash"]
+
+# User Defined
+RUN adduser user
+RUN adduser user sudo
+#remove password
+RUN passwd -d user
+
+USER user
