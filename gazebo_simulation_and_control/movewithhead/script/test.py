@@ -20,7 +20,7 @@ class MoveItIkDemo:
         """
         # ==================== MQTT Client Initialization ====================
         self.client = mqtt.Client()
-        self.broker_ip = "0.0.0.0"  # Broker listens on all available network interfaces
+        self.broker_ip = "localhost"  # Broker listens on all available network interfaces
         self.client.connect(self.broker_ip, 1883, 60)  # Connect to MQTT broker on port 1883
         # MQTT is used to receive motion commands and send feedback to external clients.
 

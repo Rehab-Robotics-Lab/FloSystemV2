@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 
 def main():
     # The broker IP and port should match what MoveItIkDemo or your MQTT setup uses
-    broker_ip = "0.0.0.0"    # or "localhost"
+    broker_ip = "localhost"    # or "localhost"
     broker_port = 1883       # default Mosquitto port
 
     # Retrieve the pose number from the command line (passed in by start_ros_tmux.sh)
