@@ -62,6 +62,11 @@ COPY camera           /catkin_ws/src/camera
 RUN echo "cmake_minimum_required(VERSION 3.0.2)\nproject(flo_v2_workspace)\nfind_package(catkin REQUIRED)\ncatkin_workspace()" > /catkin_ws/src/CMakeLists.txt
 COPY Readme.md        /catkin_ws/src/Readme.md
 COPY run_a_demo.sh /catkin_ws/run_a_demo.sh
+COPY run_a_demo_outside.sh /catkin_ws/run_a_demo_outside.sh
+
+# Convert all .sh and .py scripts to Unix line endings
+RUN find /catkin_ws -type f \( -name "*.sh" -o -name "*.py" \) -exec dos2unix {} \;
+
 
 # Install workspace dependencies
 WORKDIR /catkin_ws

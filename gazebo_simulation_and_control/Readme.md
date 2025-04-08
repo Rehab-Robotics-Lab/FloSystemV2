@@ -106,7 +106,7 @@ The code and packages are compatible with **ROS Noetic**.
 3. Open a terminal and type the following command. (Don't forget to change the name of the image you created)
 
    ```
-   docker run --name {your_container_name_created} --user=user --env=DISPLAY=host.docker.internal:0 --volume="C:\\:/mnt/c" --restart=no --runtime=runc --network=host -t -d {your_image_name}
+   docker run --name your_container_name --user=user --env DISPLAY=host.docker.internal:0 --env QT_X11_NO_MITSHM=1 --volume="C:/:/mnt/c" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --device=/dev/ttyACM0 --privileged --restart=no --runtime=runc -p 1883:1883 -t -d your_img_name
    ```
 4. If successed, you will see windows like:
 
@@ -122,6 +122,12 @@ The code and packages are compatible with **ROS Noetic**.
    ![1744069240840](image/Readme/1744069240840.png)
 8. You will see Linux terminal like this:
    ![1744071700343](image/Readme/1744071700343.png)
+
+## Test MQTT on 1 Windows PC
+
+1. After run the container, **in the container** directly run `$ . run_a_demo_outside.sh `, keep the container running
+2. **In the Windows,** go to \Flo_Project\FloSystemV2\cortex-example\python, run the `send_mqtt2docker.py`, enter the pose number you want (e.g. "1")
+3. Now you can see the container running the pose
 
 ## Notes
 
