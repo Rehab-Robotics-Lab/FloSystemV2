@@ -54,8 +54,8 @@ WORKDIR /catkin_ws/src
 
 # Copy your packages
 COPY flo_humanoid     /catkin_ws/src/flo_humanoid
-COPY flov2withhead    /catkin_ws/src/flov2withhead
-COPY movewithhead     /catkin_ws/src/movewithhead
+COPY flov2_robot_description    /catkin_ws/src/flov2_robot_description
+COPY dual_arm_visual_control     /catkin_ws/src/dual_arm_visual_control
 COPY camera           /catkin_ws/src/camera
 
 # Add top-level CMakeLists.txt
