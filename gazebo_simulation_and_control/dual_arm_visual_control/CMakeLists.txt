@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1.3)
-project(movewithhead)
+project(dual_arm_visual_control)
 
 ## 找到catkin的包
 find_package(catkin REQUIRED COMPONENTS

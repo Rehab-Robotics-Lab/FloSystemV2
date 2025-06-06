@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-project(flov2withhead)
+project(flov2_robot_description)
 
 find_package(catkin REQUIRED COMPONENTS
 	message_generation

@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <package format="2">
 
-  <name>movewithhead</name>
+  <name>dual_arm_visual_control</name>
   <version>0.3.0</version>
   <description>
     An automatically generated package with all the configuration and launch files 
-    for using flov2withhead with the MoveIt Motion Planning Framework.
+    for using flov2_robot_description with the MoveIt Motion Planning Framework.
   </description>
 
   <maintainer email="ppd6666667@gmail.com">Hao</maintainer>
@@ -47,7 +47,7 @@
   <exec_depend>rviz</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>xacro</exec_depend>
-  <!-- If you need flov2withhead at runtime: -->
-  <exec_depend>flov2withhead</exec_depend>
+  <!-- If you need flov2_robot_description at runtime: -->
+  <exec_depend>flov2_robot_description</exec_depend>
 
 </package>
