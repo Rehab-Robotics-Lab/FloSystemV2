@@ -4,7 +4,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 USER root
 
-
+# Fix ROS GPG key issue by removing and re-adding the repository
+RUN rm -f /etc/apt/sources.list.d/ros1-latest.list
+RUN apt-get update && apt-get install -y curl gnupg2
+RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
+RUN echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros-latest.list
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
