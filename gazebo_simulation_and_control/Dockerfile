@@ -4,7 +4,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 USER root
 
-
+# Fix ROS GPG key issue by removing and re-adding the repository
+RUN rm -f /etc/apt/sources.list.d/ros1-latest.list
+RUN apt-get update && apt-get install -y curl gnupg2
+RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add -
+RUN echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros-latest.list
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -91,13 +95,18 @@ RUN chmod +x /catkin_ws/src/*/script/*.py || true
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
 RUN echo "source /catkin_ws/devel/setup.bash" >> /root/.bashrc
 
-# Default command
-CMD ["/bin/bash", "-c", "source /opt/ros/noetic/setup.bash && source /catkin_ws/devel/setup.bash && /bin/bash"]
-
 # User Defined
 RUN adduser user
 RUN adduser user sudo
 #remove password
 RUN passwd -d user
 
+# Setup environment for user account
+RUN echo "source /opt/ros/noetic/setup.bash" >> /home/user/.bashrc
+RUN echo "source /catkin_ws/devel/setup.bash" >> /home/user/.bashrc
+RUN chown user:user /home/user/.bashrc
+
 USER user
+
+# Default command
+CMD ["/bin/bash", "-c", "source /opt/ros/noetic/setup.bash && source /catkin_ws/devel/setup.bash && /bin/bash"]
