@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="$(SolutionDir)../c-api/ColorReaderEvent/main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(SolutionDir)../common/key_handler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+ 
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{2C465070-1565-491E-B741-C69A51353325}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{B1CAB101-F6E4-470B-9082-CD6DBAE7657B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
