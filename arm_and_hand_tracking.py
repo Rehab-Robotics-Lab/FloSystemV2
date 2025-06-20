@@ -4,6 +4,7 @@ import numpy as np
 import argparse
 from openni import openni2
 import os
+from arm_tracker import ArmTracker
 
 mp_pose = mp.solutions.pose
 mp_hands = mp.solutions.hands
@@ -14,19 +15,6 @@ MIRROR_MODE = True
 # Threshold for hand open detection
 OPEN_THRESHOLD = 160
 THUMB_OPEN_THRESHOLD = 160
-left_angle_history = []
-right_angle_history = []
-left_shoulder_angle_history = []
-right_shoulder_angle_history = []
-left_wrist_depth_history = []
-right_wrist_depth_history = []
-left_elbow_depth_history = []
-right_elbow_depth_history = []
-history_length = 10
-angle_threshold = 80
-shoulder_angle_threshold = 60
-wrist_depth_threshold = 0.8
-elbow_depth_threshold = 0.3
 
 # ---------------------------------------------------------------------------- #
 #                             Joint Angle Functions                            #
@@ -64,206 +52,12 @@ def calculate_index_angle(hand_landmarks):
     )
     return index_angle
 
-def print_joints_depth(landmarks, image, side = 'left'):
-    if side == 'right':
-        shoulder_idx = mp_pose.PoseLandmark.LEFT_SHOULDER.value
-        elbow_idx = mp_pose.PoseLandmark.LEFT_ELBOW.value
-        wrist_idx = mp_pose.PoseLandmark.LEFT_WRIST.value
-        hip_idx = mp_pose.PoseLandmark.LEFT_HIP.value
-    else:
-        shoulder_idx = mp_pose.PoseLandmark.RIGHT_SHOULDER.value
-        elbow_idx = mp_pose.PoseLandmark.RIGHT_ELBOW.value
-        wrist_idx = mp_pose.PoseLandmark.RIGHT_WRIST.value
-        hip_idx = mp_pose.PoseLandmark.RIGHT_HIP.value
-    shoulder = [landmarks[shoulder_idx].x, landmarks[shoulder_idx].y, landmarks[shoulder_idx].z]
-    elbow = [landmarks[elbow_idx].x, landmarks[elbow_idx].y, landmarks[elbow_idx].z]
-    wrist = [landmarks[wrist_idx].x, landmarks[wrist_idx].y, landmarks[wrist_idx].z]
-    hip = [landmarks[hip_idx].x, landmarks[hip_idx].y, landmarks[hip_idx].z]
-    # print the depth of the shoulder, elbow, wrist, and hip on the image
-    cv2.putText(image, f'Shoulder depth: {shoulder[2]:.4f}', (10, 200), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-    cv2.putText(image, f'Elbow depth: {elbow[2]:.4f}', (10, 230), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-    cv2.putText(image, f'Wrist depth: {wrist[2]:.4f}', (10, 260), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-    cv2.putText(image, f'Hip depth: {hip[2]:.4f}', (10, 290), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+
 
 # ---------------------------------------------------------------------------- #
 #                                Arm Tracking Functions                         #
 # ---------------------------------------------------------------------------- #
-def get_arm_info(landmarks, side='left'):
-    """
-    Get the arm information
-    Args:
-        landmarks: The landmarks of the body
-        side: The side of the body
-    Returns:
-        shoulder: The shoulder landmark
-        elbow: The elbow landmark
-        wrist: The wrist landmark
-        elbow_angle: The angle between the shoulder, elbow, and wrist
-        shoulder_angle: The angle between the hip, shoulder, and elbow
-    """
-    if side == 'left':
-        shoulder_idx = mp_pose.PoseLandmark.LEFT_SHOULDER.value
-        elbow_idx = mp_pose.PoseLandmark.LEFT_ELBOW.value
-        wrist_idx = mp_pose.PoseLandmark.LEFT_WRIST.value
-        hip_idx = mp_pose.PoseLandmark.LEFT_HIP.value
-    else:
-        shoulder_idx = mp_pose.PoseLandmark.RIGHT_SHOULDER.value
-        elbow_idx = mp_pose.PoseLandmark.RIGHT_ELBOW.value
-        wrist_idx = mp_pose.PoseLandmark.RIGHT_WRIST.value
-        hip_idx = mp_pose.PoseLandmark.RIGHT_HIP.value
-    shoulder = [landmarks[shoulder_idx].x, landmarks[shoulder_idx].y, landmarks[shoulder_idx].z]
-    elbow = [landmarks[elbow_idx].x, landmarks[elbow_idx].y, landmarks[elbow_idx].z]
-    wrist = [landmarks[wrist_idx].x, landmarks[wrist_idx].y, landmarks[wrist_idx].z]
-    hip = [landmarks[hip_idx].x, landmarks[hip_idx].y, landmarks[hip_idx].z]
-    # Check if the coordinates are valid (only check x, y coordinates, not z)
-    if any(coord <= 0 for coord in shoulder[:2] + elbow[:2] + wrist[:2] + hip[:2]):
-        return None, None, None, None, None
-    
-    elbow_angle = calculate_angle(shoulder[:2], elbow[:2], wrist[:2])
-    shoulder_angle = calculate_angle(hip[:2], shoulder[:2], elbow[:2])
-    return shoulder, elbow, wrist, elbow_angle, shoulder_angle
-
-def is_arm_up(elbow, wrist):
-    # calculate the direction of the arm
-    direction = np.array(elbow) - np.array(wrist)
-    return direction[1] > 0
-
-def is_arm_wave(landmarks, image, pose_to_detect):
-    # if pose_to_detect != 'all' and pose_to_detect != 'wave':
-    #     return
-        
-    try:
-        # Get the arm information
-        left_shoulder, left_elbow, left_wrist, left_angle, _ = get_arm_info(landmarks, 'right')
-        right_shoulder, right_elbow, right_wrist, right_angle, _ = get_arm_info(landmarks, 'left')
-        
-        # Check if the arm is up
-        if left_shoulder is not None or right_shoulder is not None:
-            left_arm_up = is_arm_up(left_elbow, left_wrist)
-            right_arm_up = is_arm_up(right_elbow, right_wrist)
-            
-            # Record the angle history
-            if left_arm_up:
-                left_angle_history.append(left_angle)
-                if len(left_angle_history) > history_length:
-                    left_angle_history.pop(0)
-            if right_arm_up:
-                right_angle_history.append(right_angle)
-                if len(right_angle_history) > history_length:
-                    right_angle_history.pop(0)
-
-        # Check if the arm is waving
-        if len(left_angle_history) == history_length and max(left_angle_history) - min(left_angle_history) > angle_threshold:
-            cv2.putText(image, 'Left arm waving', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-        if len(right_angle_history) == history_length and max(right_angle_history) - min(right_angle_history) > angle_threshold:
-            cv2.putText(image, 'Right arm waving', (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-    except:
-        pass
-
-def is_arm_swing_lateral(landmarks, image):
-
-    try:
-        # Get the arm information
-        left_shoulder, left_elbow, left_wrist, left_angle, left_shoulder_angle = get_arm_info(landmarks, 'right')
-        right_shoulder, right_elbow, right_wrist, right_angle, right_shoulder_angle = get_arm_info(landmarks, 'left')
-        
-        # Check if the arm is swinging
-        if left_shoulder is not None or right_shoulder is not None:
-            # check if the shoulder angle is greater than 150 degrees
-            if left_angle > 150:
-                # record the shoulder angle history
-                left_shoulder_angle_history.append(left_shoulder_angle)
-                if len(left_shoulder_angle_history) > history_length:
-                    left_shoulder_angle_history.pop(0)
-            if right_angle > 150:
-                right_shoulder_angle_history.append(right_shoulder_angle)
-                if len(right_shoulder_angle_history) > history_length:
-                    right_shoulder_angle_history.pop(0)
-        
-        # Check if the shoulder is swinging
-        # Print the difference between the max and min of the shoulder angle history on img
-        cv2.putText(image, f'Left shoulder angle history: {left_shoulder_angle_history}', (10, 200), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-
-        if len(left_shoulder_angle_history) == history_length and abs(max(left_shoulder_angle_history) - min(left_shoulder_angle_history)) > shoulder_angle_threshold:
-            cv2.putText(image, 'Left shoulder swinging', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-        if len(right_shoulder_angle_history) == history_length and abs(max(right_shoulder_angle_history) - min(right_shoulder_angle_history)) > shoulder_angle_threshold:
-            cv2.putText(image, 'Right shoulder swinging', (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-
-    except:
-        pass
-
-def is_arm_swing_forward(landmarks, image):
-    try:
-        # Get the arm information
-        left_shoulder, left_elbow, left_wrist, left_elbow_angle, left_shoulder_angle = get_arm_info(landmarks, 'right')
-        right_shoulder, right_elbow, right_wrist, right_elbow_angle, right_shoulder_angle = get_arm_info(landmarks, 'left')
-        # Always display depth history regardless of shoulder angle
-       
-        # check if the shoulder angle is less than 30 degrees
-        if left_shoulder is not None or right_shoulder is not None:
-            if left_shoulder_angle < 30:
-                # record the wrist depth history
-                print(f'Left wrist depth: {left_wrist[2]}')
-                print(f'Left elbow depth: {left_elbow[2]}')
-                left_wrist_depth_history.append(left_wrist[2])
-                left_elbow_depth_history.append(left_elbow[2])
-                if len(left_wrist_depth_history) > history_length: 
-                    left_wrist_depth_history.pop(0)
-                if len(left_elbow_depth_history) > history_length:
-                    left_elbow_depth_history.pop(0)
-            # else:
-            #     left_wrist_depth_history = []
-            #     left_elbow_depth_history = []
-
-            if right_shoulder_angle < 30:
-                print(f'Right wrist depth: {right_wrist[2]}')
-                print(f'Right elbow depth: {right_elbow[2]}')
-                right_wrist_depth_history.append(right_wrist[2])
-                right_elbow_depth_history.append(right_elbow[2])
-                if len(right_wrist_depth_history) > history_length:
-                    right_wrist_depth_history.pop(0)
-                if len(right_elbow_depth_history) > history_length:
-                    right_elbow_depth_history.pop(0)
-            # else:
-            #     right_wrist_depth_history = []
-            #     right_elbow_depth_history = []
-                
-        
-         # print the difference between the max and min of the wrist depth history and elbow depth history on img
-        cv2.putText(image, f'Left wrist depth history: {left_wrist_depth_history}', (800, 200), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-        cv2.putText(image, f'Left elbow depth history: {left_elbow_depth_history}', (800, 230), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-        cv2.putText(image, f'Right wrist depth history: {right_wrist_depth_history}', (800, 260), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-        cv2.putText(image, f'Right elbow depth history: {right_elbow_depth_history}', (800, 290), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-        # Check for forward swinging motion
-        if len(left_wrist_depth_history) > 0 and len(left_elbow_depth_history) > 0:
-            if abs(max(left_wrist_depth_history) - min(left_wrist_depth_history)) > wrist_depth_threshold and abs(max(left_elbow_depth_history) - min(left_elbow_depth_history)) > elbow_depth_threshold:
-                cv2.putText(image, 'Left arm swinging forward', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-        
-        if len(right_wrist_depth_history) > 0 and len(right_elbow_depth_history) > 0:
-            if abs(max(right_wrist_depth_history) - min(right_wrist_depth_history)) > wrist_depth_threshold and abs(max(right_elbow_depth_history) - min(right_elbow_depth_history)) > elbow_depth_threshold:
-                cv2.putText(image, 'Right arm swinging forward', (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-        
-    except:
-        pass
-
-def is_arm_raise(landmarks, image):
-    # Temporarily for static pose detection
-    try:
-        # Get the arm information
-        left_shoulder, left_elbow, left_wrist, left_elbow_angle, left_shoulder_angle = get_arm_info(landmarks, 'right')
-        right_shoulder, right_elbow, right_wrist, right_elbow_angle, right_shoulder_angle = get_arm_info(landmarks, 'left')
-        
-        # Check if the elbow is raised
-        if left_shoulder is not None or right_shoulder is not None:
-            if left_elbow_angle > 165 and left_shoulder_angle > 165 and is_arm_up(left_elbow, left_wrist):
-                cv2.putText(image, 'Left arm raised', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-            if right_elbow_angle > 165 and right_shoulder_angle > 165 and is_arm_up(right_elbow, right_wrist):
-                cv2.putText(image, 'Right arm raised', (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-
-
-        
-    except:
-        pass
+# Arm tracking functions have been moved to arm_tracker.py
 
 
 # ---------------------------------------------------------------------------- #
@@ -375,7 +169,10 @@ def initialize_astra_camera():
 #                                 Main function                                #
 # ---------------------------------------------------------------------------- #
 def main():
-    pose_to_detect = input("Enter the pose to detect (e.g., all, handshake, wave): ")
+    pose_to_detect = input("Enter the pose to detect:\n 1. wave\n 2. swing_lateral\n 3. swing_forward\n 4. raise\n 5. reaching_head\n 6. reaching_to_the_side\n 7. reaching_mouth\n 8. all\n")
+
+    # Initialize arm tracker
+    arm_tracker = ArmTracker()
 
     # Initialize OpenNI2 for Orbbec Astra S
     use_astra, cap, color_stream, dev = initialize_astra_camera()
@@ -425,12 +222,12 @@ def main():
                         mp_pose.POSE_CONNECTIONS,
                         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style()
                     )
-                    landmarks = pose_results.pose_landmarks.landmark
+                    pose_landmarks = pose_results.pose_landmarks.landmark
 
                     try:
                         # Reverse the Left and Right as the camera is mirrored
-                        left_shoulder, left_elbow, left_wrist, left_angle, left_shoulder_angle = get_arm_info(landmarks, 'left')
-                        right_shoulder, right_elbow, right_wrist, right_angle, right_shoulder_angle = get_arm_info(landmarks, 'right')
+                        left_shoulder, left_elbow, left_wrist, left_angle, left_shoulder_angle = arm_tracker.get_arm_info(pose_landmarks, 'left')
+                        right_shoulder, right_elbow, right_wrist, right_angle, right_shoulder_angle = arm_tracker.get_arm_info(pose_landmarks, 'right')
 
                         if left_shoulder is not None or right_shoulder is not None:
                             # cv2.putText(image, f'Left Arm Angle: {int(left_angle)}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
@@ -443,17 +240,37 @@ def main():
                             cv2.putText(image, str(int(right_angle)), right_elbow_pixel, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
                             cv2.putText(image, str(int(left_shoulder_angle)), left_shoulder_pixel, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
                             cv2.putText(image, str(int(right_shoulder_angle)), right_shoulder_pixel, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-                            # print_joints_depth(landmarks, image, 'right')
+                            # arm_tracker.print_joints_depth(landmarks, image, 'right')
+                        
+
                         if pose_to_detect == 'all' or pose_to_detect == 'wave':
-                            is_arm_wave(landmarks, image, pose_to_detect)
+                            arm_tracker.is_arm_wave(pose_landmarks, image, pose_to_detect)
                         if pose_to_detect == 'all' or pose_to_detect == 'swing_lateral':
                             # donothing = 1
-                            is_arm_swing_lateral(landmarks, image)
+                            arm_tracker.is_arm_swing_lateral(pose_landmarks, image)
                         if pose_to_detect == 'all' or pose_to_detect == 'swing_forward':
-                            is_arm_swing_forward(landmarks, image)
+                            arm_tracker.is_arm_swing_forward(pose_landmarks, image)
                         if pose_to_detect == 'all' or pose_to_detect == 'raise':
-                            is_arm_raise(landmarks, image)
-
+                            arm_tracker.is_arm_raise(pose_landmarks, image)
+                        if pose_to_detect == 'all' or pose_to_detect == 'reaching_head':
+                            arm_tracker.is_reaching_head(pose_landmarks, hand_results.multi_hand_landmarks[0], image)
+                        if pose_to_detect == 'all' or pose_to_detect == 'reaching_to_the_side':
+                            arm_tracker.is_reaching_to_the_side(pose_landmarks, image)
+                        if pose_to_detect == 'all' or pose_to_detect == 'reaching_mouth':
+                            arm_tracker.is_reaching_mouth(pose_landmarks, hand_results.multi_hand_landmarks[0], image)
+                        if pose_to_detect == 'all' or pose_to_detect == 'static_pose':
+                            arm_tracker.is_static_pose(pose_landmarks, image)
+                            
+                        # Calculate the distance between the face and the mouth
+                        face_mouth_distance = arm_tracker.get_face_mouth_distance(pose_landmarks)
+                        cv2.putText(image, f'Face Mouth Distance: {face_mouth_distance:.4f}', (610, 130), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+                        
+                        # Display nose and mouth coordinates
+                        nose, right_mouth, left_mouth = arm_tracker.get_face_info(pose_landmarks)
+                        mid_mouth = [(right_mouth[0] + left_mouth[0]) / 2, (right_mouth[1] + left_mouth[1]) / 2, (right_mouth[2] + left_mouth[2]) / 2]
+                        
+                        cv2.putText(image, f'Nose: ({nose[0]:.3f}, {nose[1]:.3f}, {nose[2]:.3f})', (10, 320), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
+                        cv2.putText(image, f'Mouth Mid: ({mid_mouth[0]:.3f}, {mid_mouth[1]:.3f}, {mid_mouth[2]:.3f})', (10, 350), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
 
                     except Exception as e:
                         cv2.putText(image, 'Arm tracking failed', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
@@ -462,43 +279,52 @@ def main():
                 # ---------------------------------------------------------------------------- #
                 #                                Draw Hand Tracking                            #
                 # ---------------------------------------------------------------------------- #
-                # left_hand_open = False
-                # right_hand_open = False
-                # left_thumbs_up = False
-                # right_thumbs_up = False
-                # if hand_results.multi_hand_landmarks:
-                #     for hand_landmarks in hand_results.multi_hand_landmarks:
-
-                #         hand_side = detect_hand_side(hand_landmarks)
-                #         hand_open = is_open_hand(hand_landmarks)
-                #         thumbs_up = is_thumbs_up(hand_landmarks)
-                #         mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+                left_hand_open = False
+                right_hand_open = False
+                left_thumbs_up = False
+                right_thumbs_up = False
+                if hand_results.multi_hand_landmarks:
+                    for hand_landmarks in hand_results.multi_hand_landmarks:
                         
-                #         # Calculate thumb angle
-                #         thumb_angle = calculate_angle(
-                #             [hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_CMC].x,
-                #             hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_CMC].y],
-                #             [hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP].x,
-                #             hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP].y],
-                #             [hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].x,
-                #             hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].y]
-                #         )
+                        hand_side = detect_hand_side(hand_landmarks)
+                        hand_open = is_open_hand(hand_landmarks)
+                        thumbs_up = is_thumbs_up(hand_landmarks)
+                        mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
                         
-                #         # Display thumb angle on the video
-                #         thumb_angle_text = f'Thumb Angle: {int(thumb_angle)}'
-                #         if hand_side == "Left Hand":
-                #             cv2.putText(image, thumb_angle_text, (10, 130), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
-                #         else:
-                #             cv2.putText(image, thumb_angle_text, (10, 160), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+                        # Calculate thumb angle
+                        thumb_angle = calculate_angle(
+                            [hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_CMC].x,
+                            hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_CMC].y],
+                            [hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP].x,
+                            hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_MCP].y],
+                            [hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].x,
+                            hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].y]
+                        )
                         
-                #         if hand_open and hand_side == "Left Hand":
-                #             left_hand_open = True
-                #         if hand_open and hand_side == "Right Hand":
-                #             right_hand_open = True
-                #         if thumbs_up and hand_side == "Left Hand":
-                #             left_thumbs_up = True
-                #         if thumbs_up and hand_side == "Right Hand":
-                #             right_thumbs_up = True
+                        # # Display thumb angle on the video
+                        # thumb_angle_text = f'Thumb Angle: {int(thumb_angle)}'
+                        # if hand_side == "Left Hand":
+                        #     cv2.putText(image, thumb_angle_text, (10, 130), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+                        # else:
+                        #     cv2.putText(image, thumb_angle_text, (10, 160), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+                        
+                        # Calculate nose to pinky distance using both pose and hand landmarks
+                        if pose_results.pose_landmarks:
+                            nose_pinky_distance = arm_tracker.get_nose_pinky_distance(pose_landmarks, hand_landmarks)
+                            cv2.putText(image, f'Nose to Pinky: {nose_pinky_distance:.4f}', (610, 160), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+                            
+                            # Display pinky PIP coordinates
+                            pinky_pip, _ = arm_tracker.get_hand_info(hand_landmarks, 'left')
+                            cv2.putText(image, f'Pinky PIP: ({pinky_pip[0]:.3f}, {pinky_pip[1]:.3f}, {pinky_pip[2]:.3f})', (10, 380), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 255), 2)
+                        
+                        # if hand_open and hand_side == "Left Hand":
+                        #     left_hand_open = True
+                        # if hand_open and hand_side == "Right Hand":
+                        #     right_hand_open = True
+                        # if thumbs_up and hand_side == "Left Hand":
+                        #     left_thumbs_up = True
+                        # if thumbs_up and hand_side == "Right Hand":
+                        #     right_thumbs_up = True
 
                 # # Show hand status
                 # check_hand_status(image, left_thumbs_up, right_thumbs_up, left_hand_open, right_hand_open)
