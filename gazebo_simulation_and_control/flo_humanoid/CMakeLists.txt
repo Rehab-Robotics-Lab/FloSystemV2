@@ -63,11 +63,11 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(read_write_joint_node src/readWriteJoint.cpp)
+add_executable(read_write_joint_node src/test/readWriteJoint.cpp)
 add_dependencies(read_write_joint_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(read_write_joint_node ${catkin_LIBRARIES})
 
-add_executable(read_write_arm_node src/readWriteArm.cpp)
+add_executable(read_write_arm_node src/test/readWriteArm.cpp)
 add_dependencies(read_write_arm_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(read_write_arm_node ${catkin_LIBRARIES})
 
@@ -76,7 +76,7 @@ add_dependencies(read_write_arms_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 target_link_libraries(read_write_arms_node ${catkin_LIBRARIES})
 
 # Add the new executable for publishing motor positions
-add_executable(publish_motor_positions src/publish_motor_positions.cpp)
+add_executable(publish_motor_positions src/test/publish_motor_positions.cpp)
 add_dependencies(publish_motor_positions ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(publish_motor_positions ${catkin_LIBRARIES} ${dynamixel_sdk_LIBRARIES})
 
@@ -94,4 +94,8 @@ target_link_libraries(subscribe_motor_positions ${catkin_LIBRARIES})
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
 install(TARGETS read_write_arm_node read_write_joint_node read_write_arms_node publish_motor_positions subscribe_motor_positions
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(PROGRAMS scripts/joint_state_to_dual_arm_motors.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

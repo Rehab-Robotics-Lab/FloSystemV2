@@ -1,12 +1,15 @@
 // This code is based on the readWriteArm.cpp code; it has been expanded to control the 8 joint motors ofb both robot arms present in the FLO v2 humanoid robot.
 
+
 #include <ros/ros.h>
 #include "std_msgs/String.h"
 #include "flo_humanoid/GetArmsJointPositions.h"
 #include "flo_humanoid/SetArmsJointPositions.h"
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
+
 using namespace dynamixel;
+
 
 // Control table address
 #define ADDR_TORQUE_ENABLE    64
@@ -14,9 +17,16 @@ using namespace dynamixel;
 #define ADDR_PRESENT_POSITION 132
 #define ADDR_GOAL_POSITION    116
 #define ADDR_OPER_MODE        11
+#define ADDR_PROFILE_ACCELERATION 108
+#define ADDR_PROFILE_VELOCITY 112
+#define ADDR_POSITION_P_GAIN 84
+#define ADDR_POSITION_I_GAIN 82
+#define ADDR_POSITION_D_GAIN 80
+
 
 // Protocol version
 #define PROTOCOL_VERSION      2.0             // Default Protocol version of DYNAMIXEL X series.
+
 
 // Default setting
 // Modify the values below to fit the motor Id's assigned in the dynamixel wizard.
@@ -30,25 +40,38 @@ using namespace dynamixel;
 #define DXL7_ID              221               // DXL7 ID
 #define DXL8_ID              222               // DXL8 ID
 
+
 #define DXL9_ID               225               // DXL9 ID
 #define DXL10_ID              115               // DXL10 ID
 
 
 
+
+
+
 // BAUDRATE should be defined here.
-#define BAUDRATE             57600            // Default Baudrate of DYNAMIXEL X series
+#define BAUDRATE             1000000            // Default Baudrate of DYNAMIXEL X series
 //set up fixed mount point for the device, this is the same as the one set in the udev rules file.
 #define DEVICE_NAME          "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
-
+const uint32_t PROFILE_ACCEL      = 500;  // ≈107 k rev/min²
+const uint32_t PROFILE_VEL        = 10000;  // ≈45.8 rev/min
+const uint32_t P_GAIN_XM          = 144;  // Position P Gain
+const uint32_t D_GAIN_XM          = 24;    // Position I Gain
+const uint32_t P_GAIN_XL          = 81;     // Position D Gain
+const uint32_t D_GAIN_XL          = 18;     // Position D Gain
 // ensure that DXL1_ID, DXL2_ID, DXL3_ID, DXL4_ID are connected to the device labeled DEVICE_NAME1
 // and DXL5_ID, DXL6_ID, DXL7_ID, DXL8_ID are connected to the device labeled DEVICE_NAME2
+
+
 
 
 PortHandler * portHandler = PortHandler::getPortHandler(DEVICE_NAME);
 PacketHandler * packetHandler = PacketHandler::getPacketHandler(PROTOCOL_VERSION);
 
+
 GroupBulkRead groupBulkRead(portHandler, packetHandler);
 GroupBulkWrite groupBulkWrite(portHandler, packetHandler);
+
 
 //This function was fully modified to work with the 8 joint motors of the 2 arms of the robot.
 // based on dynamixelSDK issue #196, it not possible to set multiple parameters for the same motor in a single groupBulkWrite() command.
@@ -60,6 +83,7 @@ bool getArmsJointPositionsCallback(
   int dxl_comm_result = COMM_TX_FAIL;
   int dxl_addparam_result = false;
 
+
   // Position Value of X series is 4 byte data. For AX & MX(1.0) use 2 byte data(int16_t) for the Position Value.
   int32_t position1 = 0;
   int32_t position2 = 0;
@@ -70,8 +94,11 @@ bool getArmsJointPositionsCallback(
   int32_t position7 = 0;
   int32_t position8 = 0;
 
+
   int32_t position9 = 0;
   int32_t position10 = 0;
+
+
 
 
   // Read Present Position (length : 4 bytes) and Convert uint32 -> int32
@@ -86,6 +113,7 @@ bool getArmsJointPositionsCallback(
   int32_t position2 = 0;
   }
 
+
   if (req.item2 == "position") {
     dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id2, ADDR_PRESENT_POSITION, 4);
   } else if (req.item2 == "LED") {
@@ -95,6 +123,7 @@ bool getArmsJointPositionsCallback(
     ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id2);
     return 0;
   }
+
 
   if (req.item3 == "position") {
     dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id3, ADDR_PRESENT_POSITION, 4);
@@ -106,6 +135,7 @@ bool getArmsJointPositionsCallback(
     return 0;
   }
 
+
   if (req.item4 == "position") {
     dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
   } else if (req.item4 == "LED") {
@@ -116,6 +146,7 @@ bool getArmsJointPositionsCallback(
     return 0;
   }
 
+
    if (req.item5 == "position") {
     dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id5, ADDR_PRESENT_POSITION, 4);
   } else if (req.item5 == "LED") {
@@ -125,7 +156,7 @@ bool getArmsJointPositionsCallback(
     ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id5);
     return 0;
   }
-    
+   
   if (req.item6 == "position") {
     dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id6, ADDR_PRESENT_POSITION, 4);
   } else if (req.item6 == "LED") {
@@ -135,7 +166,7 @@ bool getArmsJointPositionsCallback(
     ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id6);
     return 0;
   }
-    
+   
   if (req.item7 == "position") {
     dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id7, ADDR_PRESENT_POSITION, 4);
   } else if (req.item7 == "LED") {
@@ -146,7 +177,8 @@ bool getArmsJointPositionsCallback(
     return 0;
   }
 
-    
+
+   
   if (req.item8 == "position") {
     dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id8, ADDR_PRESENT_POSITION, 4);
   } else if (req.item8 == "LED") {
@@ -156,6 +188,8 @@ bool getArmsJointPositionsCallback(
     ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id8);
     return 0;
   }
+
+
 
 
   if (req.item9 == "position") {
@@ -168,6 +202,7 @@ bool getArmsJointPositionsCallback(
     return 0;
   }
 
+
   if (req.item10 == "position") {
     dxl_addparam_result = groupBulkRead.addParam((uint8_t)req.id10, ADDR_PRESENT_POSITION, 4);
   } else if (req.item10 == "LED") {
@@ -177,6 +212,7 @@ bool getArmsJointPositionsCallback(
     ROS_ERROR("Failed to addparam to groupBulkRead for Dynamixel ID %d", req.id10);
     return 0;
   }
+
 
   uint32_t value1 = 0;
   uint32_t value2 = 0;
@@ -188,8 +224,10 @@ bool getArmsJointPositionsCallback(
   uint32_t value8 = 0;
   uint32_t value9 = 0;
   uint32_t value10 = 0;
+  const uint32_t PROFILE_ACCEL      = 500;  // ≈107 k rev/min²
+  const uint32_t PROFILE_VEL        = 200;  // ≈45.8 rev/min
+  dxl_comm_result = groupBulkRead.txRxPacket();
 
-  dxl_comm_result = groupBulkRead.txRxPacket(); 
 
   if (dxl_comm_result == COMM_SUCCESS) {
     //having some issues understanding why the if statements below are necessary, test without the if statements to check if they are necessary.
@@ -199,11 +237,13 @@ bool getArmsJointPositionsCallback(
       value1 = groupBulkRead.getData((uint8_t)req.id1, ADDR_PRESENT_POSITION, 4);
     }
 
+
     if (req.item1 == "position") {
       value2 = groupBulkRead.getData((uint8_t)req.id2, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
       value2 = groupBulkRead.getData((uint8_t)req.id2, ADDR_PRESENT_POSITION, 4);
     }
+
 
     if (req.item1 == "position") {
       value3 = groupBulkRead.getData((uint8_t)req.id3, ADDR_PRESENT_POSITION, 4);
@@ -211,11 +251,13 @@ bool getArmsJointPositionsCallback(
       value3 = groupBulkRead.getData((uint8_t)req.id3, ADDR_PRESENT_POSITION, 4);
     }
 
+
     if (req.item1 == "position") {
       value4 = groupBulkRead.getData((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
       value4 = groupBulkRead.getData((uint8_t)req.id4, ADDR_PRESENT_POSITION, 4);
     }
+
 
     if (req.item1 == "position") {
       value5 = groupBulkRead.getData((uint8_t)req.id5, ADDR_PRESENT_POSITION, 4);
@@ -223,11 +265,13 @@ bool getArmsJointPositionsCallback(
       value5 = groupBulkRead.getData((uint8_t)req.id5, ADDR_PRESENT_POSITION, 4);
     }
 
+
     if (req.item1 == "position") {
       value6 = groupBulkRead.getData((uint8_t)req.id6, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
       value6 = groupBulkRead.getData((uint8_t)req.id6, ADDR_PRESENT_POSITION, 4);
     }
+
 
     if (req.item1 == "position") {
       value7 = groupBulkRead.getData((uint8_t)req.id7, ADDR_PRESENT_POSITION, 4);
@@ -235,23 +279,28 @@ bool getArmsJointPositionsCallback(
       value7 = groupBulkRead.getData((uint8_t)req.id7, ADDR_PRESENT_POSITION, 4);
     }
 
+
     if (req.item1 == "position") {
       value8 = groupBulkRead.getData((uint8_t)req.id8, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
       value8 = groupBulkRead.getData((uint8_t)req.id8, ADDR_PRESENT_POSITION, 4);
     }
 
+
     if (req.item1 == "position") {
       value9 = groupBulkRead.getData((uint8_t)req.id9, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
       value9 = groupBulkRead.getData((uint8_t)req.id9, ADDR_PRESENT_POSITION, 4);
-    } 
+    }
+
 
     if (req.item1 == "position") {
       value10 = groupBulkRead.getData((uint8_t)req.id10, ADDR_PRESENT_POSITION, 4);
     } else if (req.item2 == "LED") {
       value10 = groupBulkRead.getData((uint8_t)req.id10, ADDR_PRESENT_POSITION, 4);
-    } 
+    }
+
+
 
 
     ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id1, req.item1.c_str(), value1);
@@ -265,6 +314,7 @@ bool getArmsJointPositionsCallback(
     ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id9, req.item9.c_str(), value9);
     ROS_INFO("getItem : [ID:%d] [%s: %d]", req.id10, req.item10.c_str(), value10);
 
+
     res.value1 = value1;
     res.value2 = value2;
     res.value3 = value3;
@@ -276,6 +326,7 @@ bool getArmsJointPositionsCallback(
     res.value9 = value9;
     res.value10 = value10;    
 
+
     groupBulkRead.clearParam();
     return true;
   } else {
@@ -284,6 +335,7 @@ bool getArmsJointPositionsCallback(
     return false;
   }
 }
+
 
 void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::ConstPtr & msg)
 {
@@ -294,6 +346,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
   uint8_t param_goal_led[10][1];
   uint8_t addr_goal_item[10];
   uint8_t len_goal_item[10];
+
 
   // Position Value of X series is 4 byte data. For AX & MX(1.0) use 2 byte data(uint16_t) for the Position Value.
   if (msg->item1 == "position") {
@@ -312,6 +365,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     len_goal_item[0] = 1;
   }
 
+
   if (msg->item2 == "position") {
     uint32_t position2 = (unsigned int)msg->value2; // Convert int32 -> uint32
     param_goal_position[1][0] = DXL_LOBYTE(DXL_LOWORD(position2));
@@ -327,6 +381,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     addr_goal_item[1] = ADDR_PRESENT_LED;
     len_goal_item[1] = 1;
   }
+
 
   if (msg->item3 == "position") {
     uint32_t position3 = (unsigned int)msg->value3; // Convert int32 -> uint32
@@ -344,6 +399,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     len_goal_item[2] = 1;
   }
 
+
   if (msg->item4 == "position") {
     uint32_t position4 = (unsigned int)msg->value4; // Convert int32 -> uint32
     param_goal_position[3][0] = DXL_LOBYTE(DXL_LOWORD(position4));
@@ -359,6 +415,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     addr_goal_item[3] = ADDR_PRESENT_LED;
     len_goal_item[3] = 1;
   }
+
 
   if (msg->item5 == "position") {
     uint32_t position5 = (unsigned int)msg->value5; // Convert int32 -> uint32
@@ -376,6 +433,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     len_goal_item[4] = 1;
   }
 
+
   if (msg->item6 == "position") {
     uint32_t position6 = (unsigned int)msg->value6; // Convert int32 -> uint32
     param_goal_position[5][0] = DXL_LOBYTE(DXL_LOWORD(position6));
@@ -391,6 +449,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     addr_goal_item[5] = ADDR_PRESENT_LED;
     len_goal_item[5] = 1;
   }
+
 
   if (msg->item7 == "position") {
     uint32_t position7 = (unsigned int)msg->value7; // Convert int32 -> uint32
@@ -408,6 +467,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     len_goal_item[6] = 1;
   }
 
+
   if (msg->item8 == "position") {
     uint32_t position8 = (unsigned int)msg->value8; // Convert int32 -> uint32
     param_goal_position[7][0] = DXL_LOBYTE(DXL_LOWORD(position8));
@@ -424,6 +484,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     len_goal_item[7] = 1;
   }
 
+
   if (msg->item9 == "position") {
     uint32_t position9 = (unsigned int)msg->value9; // Convert int32 -> uint32
     param_goal_position[8][0] = DXL_LOBYTE(DXL_LOWORD(position9));
@@ -439,6 +500,8 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     addr_goal_item[8] = ADDR_PRESENT_LED;
     len_goal_item[8] = 1;
   }
+
+
 
 
   if (msg->item10 == "position") {
@@ -458,6 +521,8 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
   }
 
 
+
+
   // Write Goal Position (length : 4 bytes)
   // When writing 2 byte data to AX / MX(1.0), use write2ByteTxRx() instead.
   if (msg->item1 == "position") {
@@ -469,6 +534,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id1);
   }
 
+
   if (msg->item2 == "position") {
     dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id2, addr_goal_item[1], len_goal_item[1], param_goal_position[1]);
   } else if (msg->item2 == "LED") {
@@ -477,6 +543,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
   if (dxl_addparam_result != true) {
     ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id2);
   }
+
 
   if (msg->item3 == "position") {
     dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id3, addr_goal_item[2], len_goal_item[2], param_goal_position[2]);
@@ -487,6 +554,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id3);
   }
 
+
   if (msg->item4 == "position") {
     dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id4, addr_goal_item[3], len_goal_item[3], param_goal_position[3]);
   } else if (msg->item4 == "LED") {
@@ -495,6 +563,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
   if (dxl_addparam_result != true) {
     ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id4);
   }
+
 
   if (msg->item5 == "position") {
     dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id5, addr_goal_item[4], len_goal_item[4], param_goal_position[4]);
@@ -505,6 +574,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id5);
   }
 
+
   if (msg->item6 == "position") {
       dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id6, addr_goal_item[5], len_goal_item[5], param_goal_position[5]);
   } else if (msg->item6 == "LED") {
@@ -513,6 +583,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
   if (dxl_addparam_result != true) {
       ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id6);
   }
+
 
   if (msg->item7 == "position") {
       dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id7, addr_goal_item[6], len_goal_item[6], param_goal_position[6]);
@@ -523,6 +594,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
       ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id7);
   }
 
+
   if (msg->item8 == "position") {
       dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id8, addr_goal_item[7], len_goal_item[7], param_goal_position[7]);
   } else if (msg->item8 == "LED") {
@@ -531,6 +603,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
   if (dxl_addparam_result != true) {
       ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id8);
   }
+
 
   if (msg->item9 == "position") {
       dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id9, addr_goal_item[8], len_goal_item[8], param_goal_position[8]);
@@ -541,6 +614,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
       ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id9);
   }
 
+
   if (msg->item10 == "position") {
       dxl_addparam_result = groupBulkWrite.addParam((uint8_t)msg->id10, addr_goal_item[9], len_goal_item[9], param_goal_position[9]);
   } else if (msg->item10 == "LED") {
@@ -549,6 +623,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
   if (dxl_addparam_result != true) {
       ROS_ERROR("Failed to addparam to groupBulkWrite for Dynamixel ID: %d", msg->id10);
   }
+
 
   dxl_comm_result = groupBulkWrite.txPacket();
   if (dxl_comm_result == COMM_SUCCESS) {
@@ -566,24 +641,30 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
     ROS_INFO("Failed to set position! Result: %d", dxl_comm_result);
   }
 
+
   groupBulkWrite.clearParam();
 }
 
+
 int main(int argc, char ** argv)
-{ 
+{
   uint8_t dxl_error = 0;
   int dxl_comm_result = COMM_TX_FAIL;
+
 
   if (!portHandler->openPort()) {
     ROS_ERROR("Failed to open the port!");
     return -1;
   }
 
+
   if (!portHandler->setBaudRate(BAUDRATE)) {
     ROS_ERROR("Failed to set the baudrate!");
     return -1;
   }
 
+
+  // Enable Torque
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL1_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
@@ -591,12 +672,54 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+
+  // Enable Position Control Mode
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL1_ID, ADDR_OPER_MODE, 3, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL1_ID);
     return -1;
   }
+
+
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL1_ID, ADDR_PROFILE_ACCELERATION, PROFILE_ACCEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Accel for Dynamixel ID %d", DXL1_ID);
+    return -1;
+  }
+ 
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL1_ID, ADDR_PROFILE_VELOCITY, PROFILE_VEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Vel for Dynamixel ID %d: ",DXL1_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL1_ID, ADDR_POSITION_P_GAIN, P_GAIN_XM, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set P GAIN for Dynamixel ID %d: ",DXL1_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL1_ID, ADDR_POSITION_D_GAIN, D_GAIN_XM, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set D GAIN for Dynamixel ID %d: ",DXL1_ID);
+    return -1;
+  }
+
+
+
+
+
+
+
+
+
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL2_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
@@ -605,12 +728,53 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL2_ID, ADDR_OPER_MODE, 3, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL2_ID);
     return -1;
   }
+
+
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL2_ID, ADDR_PROFILE_ACCELERATION, PROFILE_ACCEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Accel for Dynamixel ID %d", DXL2_ID);
+    return -1;
+  }
+ 
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL2_ID, ADDR_PROFILE_VELOCITY, PROFILE_VEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Vel for Dynamixel ID %d: ",DXL2_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL2_ID, ADDR_POSITION_P_GAIN, P_GAIN_XM, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set P GAIN for Dynamixel ID %d: ",DXL2_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL2_ID, ADDR_POSITION_D_GAIN, D_GAIN_XM, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set D GAIN for Dynamixel ID %d: ",DXL2_ID);
+    return -1;
+  }
+
+
+
+
+
+
+
+
+
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL3_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
@@ -619,12 +783,53 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL3_ID, ADDR_OPER_MODE, 3, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL3_ID);
     return -1;
   }
+
+
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL3_ID, ADDR_PROFILE_ACCELERATION, PROFILE_ACCEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Accel for Dynamixel ID %d", DXL3_ID);
+    return -1;
+  }
+ 
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL3_ID, ADDR_PROFILE_VELOCITY, PROFILE_VEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Vel for Dynamixel ID %d: ",DXL3_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL3_ID, ADDR_POSITION_P_GAIN, P_GAIN_XL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set P GAIN for Dynamixel ID %d: ",DXL3_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL3_ID, ADDR_POSITION_D_GAIN, D_GAIN_XL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set D GAIN for Dynamixel ID %d: ",DXL3_ID);
+    return -1;
+  }
+
+
+
+
+
+
+
+
+
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL4_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
@@ -633,6 +838,7 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL4_ID, ADDR_OPER_MODE, 3, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
@@ -640,19 +846,96 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+
+    dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL4_ID, ADDR_PROFILE_ACCELERATION, PROFILE_ACCEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Accel for Dynamixel ID %d", DXL4_ID);
+    return -1;
+  }
+ 
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL4_ID, ADDR_PROFILE_VELOCITY, PROFILE_VEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Vel for Dynamixel ID %d: ",DXL4_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL4_ID, ADDR_POSITION_P_GAIN, P_GAIN_XL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set P GAIN for Dynamixel ID %d: ",DXL4_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL4_ID, ADDR_POSITION_D_GAIN, D_GAIN_XL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set D GAIN for Dynamixel ID %d: ",DXL4_ID);
+    return -1;
+  }
+
+
+
+
+
+
+
+
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL5_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to enable torque for Dynamixel ID: %d", DXL5_ID);
     return -1;
   }
-
+ 
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL5_ID, ADDR_OPER_MODE, 3, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL5_ID);
     return -1;
   }
+
+
+    dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL5_ID, ADDR_PROFILE_ACCELERATION, PROFILE_ACCEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Accel for Dynamixel ID %d", DXL5_ID);
+    return -1;
+  }
+ 
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL5_ID, ADDR_PROFILE_VELOCITY, PROFILE_VEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Vel for Dynamixel ID %d: ",DXL5_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL5_ID, ADDR_POSITION_P_GAIN, P_GAIN_XM, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set P GAIN for Dynamixel ID %d: ",DXL5_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL5_ID, ADDR_POSITION_D_GAIN, D_GAIN_XM, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set D GAIN for Dynamixel ID %d: ",DXL5_ID);
+    return -1;
+  }
+
+
+
+
+
+
+
+
 
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
@@ -662,12 +945,58 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL6_ID, ADDR_OPER_MODE, 3, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL6_ID);
     return -1;
   }
+
+
+    dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL6_ID, ADDR_PROFILE_ACCELERATION, PROFILE_ACCEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Accel for Dynamixel ID %d", DXL6_ID);
+    return -1;
+  }
+ 
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL6_ID, ADDR_PROFILE_VELOCITY, PROFILE_VEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Vel for Dynamixel ID %d: ",DXL6_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL6_ID, ADDR_POSITION_P_GAIN, P_GAIN_XM, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set P GAIN for Dynamixel ID %d: ",DXL6_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL6_ID, ADDR_POSITION_D_GAIN, D_GAIN_XM, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set D GAIN for Dynamixel ID %d: ",DXL6_ID);
+    return -1;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
@@ -677,12 +1006,46 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL7_ID, ADDR_OPER_MODE, 3, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL7_ID);
     return -1;
   }
+
+
+    dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL7_ID, ADDR_PROFILE_ACCELERATION, PROFILE_ACCEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Accel for Dynamixel ID %d", DXL7_ID);
+    return -1;
+  }
+ 
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL7_ID, ADDR_PROFILE_VELOCITY, PROFILE_VEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Vel for Dynamixel ID %d: ",DXL7_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL7_ID, ADDR_POSITION_P_GAIN, P_GAIN_XL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set P GAIN for Dynamixel ID %d: ",DXL7_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL7_ID, ADDR_POSITION_D_GAIN, D_GAIN_XL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set D GAIN for Dynamixel ID %d: ",DXL7_ID);
+    return -1;
+  }
+
+
 
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
@@ -692,12 +1055,47 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL8_ID, ADDR_OPER_MODE, 3, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL8_ID);
     return -1;
   }
+
+
+
+
+    dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL8_ID, ADDR_PROFILE_ACCELERATION, PROFILE_ACCEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Accel for Dynamixel ID %d", DXL8_ID);
+    return -1;
+  }
+ 
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, DXL8_ID, ADDR_PROFILE_VELOCITY, PROFILE_VEL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set Profile Vel for Dynamixel ID %d: ",DXL8_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL8_ID, ADDR_POSITION_P_GAIN, P_GAIN_XL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set P GAIN for Dynamixel ID %d: ",DXL8_ID);
+    return -1;
+  }
+
+
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL8_ID, ADDR_POSITION_D_GAIN, D_GAIN_XL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set D GAIN for Dynamixel ID %d: ",DXL8_ID);
+    return -1;
+  }
+
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL9_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
@@ -706,12 +1104,14 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL9_ID, ADDR_OPER_MODE, 3, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL9_ID);
     return -1;
   }
+
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL10_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
@@ -720,6 +1120,7 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL10_ID, ADDR_OPER_MODE, 3, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
@@ -727,11 +1128,13 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+
   ros::init(argc, argv, "read_write_arms_node");
   ros::NodeHandle nh;
   ros::ServiceServer get_joint_positions_srv = nh.advertiseService("/get_arms_joint_positions", getArmsJointPositionsCallback);
   ros::Subscriber set_joint_positions_sub = nh.subscribe("/set_arms_joint_positions", 10, setArmsJointPositionsCallback);
   ros::spin();
+
 
   portHandler->closePort();
   return 0;

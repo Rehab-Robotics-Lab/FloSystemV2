@@ -9,6 +9,8 @@
   <depend>roscpp</depend>  
   <depend>std_msgs</depend>
   <depend>dynamixel_sdk</depend>
+  <depend>rospy</depend>
+  <depend>sensor_msgs</depend>
   <build_depend>message_generation</build_depend>
   <exec_depend>message_runtime</exec_depend>
   <export>
