@@ -1,5 +1,5 @@
 <package format="2">
-  <name>camera</name>
+  <name>flo_vision</name>
   <version>1.0.0</version>
   <description>
     <p>URDF Description package for camera</p>

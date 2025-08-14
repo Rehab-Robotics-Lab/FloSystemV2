@@ -11,7 +11,7 @@ tmux send-keys -t "my_ros_session:mqtt" "mosquitto" C-m
 
 # 2) Create a new window for full_robot_arm_sim.launch
 tmux new-window -t "my_ros_session" -n "sim"
-tmux send-keys -t "my_ros_session:sim" "source devel/setup.bash && roslaunch dual_arm_visual_control full_robot_arm_sim.launch" C-m
+tmux send-keys -t "my_ros_session:sim" "source devel/setup.bash && roslaunch flo_core full_robot_arm_sim.launch" C-m
 
 # 3) Create a new window for read_write_arms_node
 tmux new-window -t "my_ros_session" -n "read_arms"
@@ -19,14 +19,14 @@ tmux send-keys -t "my_ros_session:read_arms" "source devel/setup.bash && rosrun 
 
 # 4) Create a new window for dualPosition.py
 tmux new-window -t "my_ros_session" -n "dualPos"
-tmux send-keys -t "my_ros_session:dualPos" "source devel/setup.bash && rosrun dual_arm_visual_control joint_state_to_dual_arm_motors.py" C-m
+tmux send-keys -t "my_ros_session:dualPos" "source devel/setup.bash && rosrun flo_core joint_state_to_dual_arm_motors.py" C-m
 
 # 5) Wait 5 seconds before creating the next window
 sleep 5
 
 # 6) Create a new window for test.py
 tmux new-window -t "my_ros_session" -n "test"
-tmux send-keys -t "my_ros_session:test" "source devel/setup.bash && rosrun dual_arm_visual_control main_controller.py" C-m
+tmux send-keys -t "my_ros_session:test" "source devel/setup.bash && rosrun flo_core main_controller.py" C-m
 
 # # 7) Prompt the user for a pose number to pass into run_a_demo.py
 # read -p "Enter an action number: " poseNumber

@@ -59,8 +59,8 @@ WORKDIR /catkin_ws/src
 # Copy your packages
 COPY flo_humanoid     /catkin_ws/src/flo_humanoid
 COPY flov2_robot_description    /catkin_ws/src/flov2_robot_description
-COPY dual_arm_visual_control     /catkin_ws/src/dual_arm_visual_control
-COPY camera           /catkin_ws/src/camera
+COPY flo_core    /catkin_ws/src/flo_core
+COPY flo_vision          /catkin_ws/src/flo_vision
 
 # Add top-level CMakeLists.txt
 RUN echo "cmake_minimum_required(VERSION 3.0.2)\nproject(flo_v2_workspace)\nfind_package(catkin REQUIRED)\ncatkin_workspace()" > /catkin_ws/src/CMakeLists.txt
