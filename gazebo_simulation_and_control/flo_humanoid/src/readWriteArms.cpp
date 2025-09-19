@@ -935,9 +935,6 @@ int main(int argc, char ** argv)
 
 
 
-
-
-
   dxl_comm_result = packetHandler->write1ByteTxRx(
     portHandler, DXL6_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {

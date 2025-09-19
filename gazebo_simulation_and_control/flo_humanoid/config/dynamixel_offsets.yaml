@@ -1,0 +1,20 @@
+# Mechanical zero offsets (radians)
+# -------------------------------------------------
+# Positive values rotate CCW when viewed
+# from the motor’s back (Dynamixel convention).
+# Start with zeros; update after dial-in.
+
+offsets:
+  # -------------  LEFT ARM  -------------
+  l1:  159        # left_shoulder_flexionextension
+  l2:  136      # left_shoulder_abductionadduction
+  l3:  131       # left_elbow_rotation
+  l4:  88      # left_elbow_flexionextension
+
+
+  # -------------  RIGHT ARM -------------
+  r1:  152        # right_shoulder_flexionextension
+  r2:  227       # right_shoulder_abductionadduction
+  r3:  182       # right_elbow_rotation
+  r4:  281      # right_elbow_flexionextension
+
