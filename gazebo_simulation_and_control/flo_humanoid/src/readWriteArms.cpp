@@ -41,8 +41,8 @@ using namespace dynamixel;
 #define DXL8_ID              222               // DXL8 ID
 
 
-#define DXL9_ID               225               // DXL9 ID
-#define DXL10_ID              115               // DXL10 ID
+#define DXL9_ID               131               // DXL9 ID
+#define DXL10_ID              231               // DXL10 ID
 
 
 
@@ -54,11 +54,13 @@ using namespace dynamixel;
 //set up fixed mount point for the device, this is the same as the one set in the udev rules file.
 #define DEVICE_NAME          "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
 const uint32_t PROFILE_ACCEL      = 500;  // ≈107 k rev/min²
-const uint32_t PROFILE_VEL        = 10000;  // ≈45.8 rev/min
+const uint32_t PROFILE_VEL        = 200;  // ≈45.8 rev/min
 const uint32_t P_GAIN_XM          = 144;  // Position P Gain
+const uint32_t I_GAIN_XM          = 0;    // Position I Gain
 const uint32_t D_GAIN_XM          = 24;    // Position I Gain
-const uint32_t P_GAIN_XL          = 81;     // Position D Gain
-const uint32_t D_GAIN_XL          = 18;     // Position D Gain
+const uint32_t P_GAIN_XL          = 180;     // Position D Gain
+const uint32_t I_GAIN_XL          = 8;     // Position I Gain
+const uint32_t D_GAIN_XL          = 24;     // Position D Gain
 // ensure that DXL1_ID, DXL2_ID, DXL3_ID, DXL4_ID are connected to the device labeled DEVICE_NAME1
 // and DXL5_ID, DXL6_ID, DXL7_ID, DXL8_ID are connected to the device labeled DEVICE_NAME2
 
@@ -675,7 +677,7 @@ int main(int argc, char ** argv)
 
   // Enable Position Control Mode
   dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler, DXL1_ID, ADDR_OPER_MODE, 3, &dxl_error);
+    portHandler, DXL1_ID, ADDR_OPER_MODE, 4, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL1_ID);
     return -1;
@@ -730,7 +732,7 @@ int main(int argc, char ** argv)
 
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler, DXL2_ID, ADDR_OPER_MODE, 3, &dxl_error);
+    portHandler, DXL2_ID, ADDR_OPER_MODE, 4, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL2_ID);
     return -1;
@@ -785,7 +787,7 @@ int main(int argc, char ** argv)
 
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler, DXL3_ID, ADDR_OPER_MODE, 3, &dxl_error);
+    portHandler, DXL3_ID, ADDR_OPER_MODE, 4, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL3_ID);
     return -1;
@@ -814,6 +816,12 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL3_ID, ADDR_POSITION_I_GAIN, I_GAIN_XL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set I GAIN for Dynamixel ID %d: ",DXL3_ID);
+    return -1;
+  }
 
   dxl_comm_result = packetHandler->write2ByteTxRx(
     portHandler, DXL3_ID, ADDR_POSITION_D_GAIN, D_GAIN_XL, &dxl_error);
@@ -840,7 +848,7 @@ int main(int argc, char ** argv)
 
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler, DXL4_ID, ADDR_OPER_MODE, 3, &dxl_error);
+    portHandler, DXL4_ID, ADDR_OPER_MODE, 4, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL4_ID);
     return -1;
@@ -869,6 +877,12 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL4_ID, ADDR_POSITION_I_GAIN, I_GAIN_XL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set I GAIN for Dynamixel ID %d: ",DXL4_ID);
+    return -1;
+  }
 
   dxl_comm_result = packetHandler->write2ByteTxRx(
     portHandler, DXL4_ID, ADDR_POSITION_D_GAIN, D_GAIN_XL, &dxl_error);
@@ -892,7 +906,7 @@ int main(int argc, char ** argv)
   }
  
   dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler, DXL5_ID, ADDR_OPER_MODE, 3, &dxl_error);
+    portHandler, DXL5_ID, ADDR_OPER_MODE, 4, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL5_ID);
     return -1;
@@ -944,7 +958,7 @@ int main(int argc, char ** argv)
 
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler, DXL6_ID, ADDR_OPER_MODE, 3, &dxl_error);
+    portHandler, DXL6_ID, ADDR_OPER_MODE, 4, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL6_ID);
     return -1;
@@ -1005,7 +1019,7 @@ int main(int argc, char ** argv)
 
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler, DXL7_ID, ADDR_OPER_MODE, 3, &dxl_error);
+    portHandler, DXL7_ID, ADDR_OPER_MODE, 4, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL7_ID);
     return -1;
@@ -1034,6 +1048,12 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+  dxl_comm_result = packetHandler->write2ByteTxRx(
+    portHandler, DXL7_ID, ADDR_POSITION_I_GAIN, I_GAIN_XL, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
+    ROS_ERROR("Failed to set I GAIN for Dynamixel ID %d: ",DXL7_ID);
+    return -1;
+  }
 
   dxl_comm_result = packetHandler->write2ByteTxRx(
     portHandler, DXL7_ID, ADDR_POSITION_D_GAIN, D_GAIN_XL, &dxl_error);
@@ -1054,7 +1074,7 @@ int main(int argc, char ** argv)
 
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler, DXL8_ID, ADDR_OPER_MODE, 3, &dxl_error);
+    portHandler, DXL8_ID, ADDR_OPER_MODE, 4, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL8_ID);
     return -1;
@@ -1085,7 +1105,7 @@ int main(int argc, char ** argv)
     return -1;
   }
 
-
+  
   dxl_comm_result = packetHandler->write2ByteTxRx(
     portHandler, DXL8_ID, ADDR_POSITION_D_GAIN, D_GAIN_XL, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
@@ -1103,7 +1123,7 @@ int main(int argc, char ** argv)
 
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler, DXL9_ID, ADDR_OPER_MODE, 3, &dxl_error);
+    portHandler, DXL9_ID, ADDR_OPER_MODE, 4, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL9_ID);
     return -1;
@@ -1119,7 +1139,7 @@ int main(int argc, char ** argv)
 
 
   dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler, DXL10_ID, ADDR_OPER_MODE, 3, &dxl_error);
+    portHandler, DXL10_ID, ADDR_OPER_MODE, 4, &dxl_error);
   if (dxl_comm_result != COMM_SUCCESS) {
     ROS_ERROR("Failed to set position control mode for Dynamixel ID: %d", DXL10_ID);
     return -1;

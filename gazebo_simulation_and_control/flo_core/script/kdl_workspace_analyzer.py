@@ -71,14 +71,14 @@ def sample_workspace_with_collision_check():
 
     # 替换为你的 URDF 文件路径和链的起止节点
     urdf_file = "/home/shzyh/catkin_ws/src/flov2withhead/urdf/flov2withhead.urdf"
-    base_link = "base_link"  # 替换为你的起始节点
-    end_link = "right_gripper"  # 替换为你的末端执行器节点
+    base_link = "base_link"  # start link
+    end_link = "right_gripper"  # end link
     
     # 加载 KDL 链
     chain = load_kdl_chain(urdf_file, base_link, end_link)
     
     # 初始化 MoveIt
-    move_group = MoveGroupCommander("R")  # 替换为你的规划组名称
+    move_group = MoveGroupCommander("R")  # move group name
     state_validity_service = rospy.ServiceProxy('/check_state_validity', GetStateValidity)
 
     # 等待服务可用
@@ -114,14 +114,14 @@ def sample_workspace_with_collision_check():
 
 
 
-    base_link = "base_link"  # 替换为你的起始节点
-    end_link = "left_gripper"  # 替换为你的末端执行器节点
+    base_link = "base_link"  # start link
+    end_link = "left_gripper"  # end link
     
     # 加载 KDL 链
     chain = load_kdl_chain(urdf_file, base_link, end_link)
     
     # 初始化 MoveIt
-    move_group = MoveGroupCommander("L")  # 替换为你的规划组名称
+    move_group = MoveGroupCommander("L")  # move group name
     state_validity_service = rospy.ServiceProxy('/check_state_validity', GetStateValidity)
 
     # 等待服务可用
