@@ -26,17 +26,23 @@ class AprilTagDetector:
             [0.0,               0.0,                1.0]
         ], dtype=float)
 
-        self.dist_coeffs = np.array([-0.05156047847858019, 0.08763891251674999, -0.00020070062885718928, -0.005795063365968984, 0.0], dtype=float)
+        self.dist_coeffs = np.array([
+                        -0.05156047847858019, 
+                         0.08763891251674999, 
+                        -0.00020070062885718928, 
+                        -0.005795063365968984, 
+                        0.0],
+                        dtype=float)
 
         rospy.loginfo("AprilTagDetector initialized with custom camera parameters")
 
     def __create_detector(self):
-        # 使用 pupil_apriltags 的 Detector（推荐且API稳定）
-        return Detector(families='tag36h11',
-                        nthreads=4,
-                        quad_decimate=1.0,
-                        quad_sigma=2.0,
-                        refine_edges=True)
+        # use pupil_apriltags's Detector (recommended and stable API)
+        return Detector(families='tag36h11', # tag family (can be 'tag25h9', 'tag16h5', etc.)
+                        nthreads=4, # number of threads
+                        quad_decimate=1.0, # original image -> quad_decimate * original image
+                        quad_sigma=2.0, # noise reduction
+                        refine_edges=True) 
     
     def image_callback(self, data):
         rospy.loginfo("Received image")
@@ -57,7 +63,7 @@ class AprilTagDetector:
         rospy.loginfo("Detected {} AprilTags".format(len(detections)))
 
         for det in detections:
-            # pupil_apriltags已估计位姿：pose_R(3x3), pose_t(3x1)
+            # pupil_apriltags has estimated pose: pose_R(3x3), pose_t(3x1)
             R = det.pose_R
             t = det.pose_t  # shape (3,1)
             M = np.eye(4)
@@ -74,7 +80,7 @@ class AprilTagDetector:
             self.info_pub.publish(info_str)
 
             # Draw detections and pose on the image
-            # 由R计算rvec以便投影轴绘制
+            # calculate rvec from R for projection axis drawing
             rvec, _ = cv2.Rodrigues(R)
             cv_image = self.__draw_around_apriltags(det, cv_image, rvec, t)
 
@@ -86,14 +92,14 @@ class AprilTagDetector:
         cv2.polylines(image, [np.array([ptA, ptB, ptC, ptD], dtype=np.int32)], True, (0, 255, 0), 2)
         center = np.mean([ptA, ptB, ptC, ptD], axis=0)
         
-        # Convert distance from meters to centimeters
+        # convert distance from meters to centimeters
         distance_cm = np.linalg.norm(tvec) * 100  
 
         FONT = cv2.FONT_HERSHEY_SIMPLEX
         cv2.putText(image, "ID: {}, Dist: {:.2f} cm".format(tag.tag_id, distance_cm),
                     (int(center[0]), int(center[1])), FONT, 0.5, (0, 255, 0), 2)
         
-        # Optionally draw the pose axes
+        # optionally draw the pose axes
         draw_pose(image, center, rvec, tvec, self.camera_matrix, self.dist_coeffs)
 
         return image

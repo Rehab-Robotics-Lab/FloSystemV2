@@ -1,0 +1,15 @@
+<launch>
+  <!-- Launch file to test AprilTag pose subscriber -->
+  
+  <!-- Start the AprilTag pose subscriber -->
+  <node pkg="flo_vision" type="apriltag_pose_subscriber.py" name="apriltag_pose_subscriber" output="screen">
+    <param name="~debug" value="true"/>
+  </node>
+  
+  <!-- Optional: Also start the AprilTag detector if needed -->
+  <!-- Uncomment the following lines if you want to run both detector and subscriber together -->
+  <!--
+  <include file="$(find flo_vision)/launch/test_Apriltag_detection.launch"/>
+  -->
+  
+</launch>

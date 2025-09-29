@@ -1,15 +1,15 @@
 <launch>
-  <!-- 可调参数 -->
-  <arg name="video_device" default="/dev/video2"/>
+  <!-- parameters -->
+  <arg name="video_device" default="/dev/video0"/>
   <arg name="width"        default="1280"/>
   <arg name="height"       default="720"/>
   <arg name="framerate"    default="30"/>
   <arg name="pixel_format" default="mjpeg"/>
   <arg name="image_topic"  default="/usb_cam/image_raw"/>
 
-  <!-- 相机驱动（C920 常用 MJPEG 1280x720@30；若失败改为 yuyv + 640x480） -->
+  <!-- camera driver (1280x720@30; if failed, change to yuyv+640x480) -->
   <node pkg="usb_cam" type="usb_cam_node" name="usb_cam" output="screen">
-    <param name="video_device"  value="$(arg video_device)"/>
+    <param name="video_device"  value="$(arg video_device)"/> # /dev/video0
     <param name="image_width"   value="$(arg width)"/>
     <param name="image_height"  value="$(arg height)"/>
     <param name="framerate"     value="$(arg framerate)"/>
@@ -17,7 +17,7 @@
     <param name="io_method"     value="mmap"/>
   </node>
 
-  <!-- Apriltag 检测节点（默认订阅 /usb_cam/image_raw，可通过 remap 改） -->
+  <!-- Apriltag detection node (default subscribe /usb_cam/image_raw, can be remapped) -->
   <node pkg="flo_vision" type="Apriltag_detect.py" name="apriltag_detect" output="screen">
     <remap from="/usb_cam/image_raw" to="$(arg image_topic)"/>
   </node>
