@@ -102,7 +102,7 @@ class MoveItIkDemo:
 
         # ==================== ROS Subscriber for AprilTag Information ====================
         # Subscribe to the topic that provides AprilTag positional information
-        rospy.Subscriber("/apriltag_info", String, self.callback)
+        rospy.Subscriber("/apriltag_info", String, self.apriltag_callback)
 
         # ==================== Start MQTT Client in a Separate Thread ====================
         # Start the MQTT client in a background thread to listen for incoming messages
@@ -155,7 +155,7 @@ class MoveItIkDemo:
         self.client.loop_forever()  # Run the client in an infinite loop to wait for incoming messages
 
 
-    def callback(self, data):
+    def apriltag_callback(self, data):
         """
         Callback function to process position information received from the AprilTag detection topic.
         Updates the positions of detected objects (e.g., bell, cup, brush) based on the received data.
