@@ -196,8 +196,8 @@ class RobotMotionExecutor:
         current_posea = self.arm_R.get_current_pose(self.end_effector_link_R).pose
         
         # Calculate target position
-        x = current_posea.position.x + self.position_cx - self.position_rx
-        y = current_posea.position.y + (self.position_ry - self.position_cy) - 0.04
+        x = current_posea.position.x + self.position_cx - self.position_rx - 0.1
+        y = current_posea.position.y + (self.position_ry - self.position_cy) + 0.02
         
         # Adjust joint angles
         joint_goal = self.arm_R.get_current_joint_values()

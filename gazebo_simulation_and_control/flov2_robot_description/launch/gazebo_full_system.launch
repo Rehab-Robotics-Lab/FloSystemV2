@@ -7,7 +7,7 @@
 	<arg name="arg_Y" default="0.00" />
 	
 	<!--Urdf file path-->
-	<param name="robot_description" textfile="$(find flov2withhead)/urdf/flov2withhead.urdf"/>
+	<param name="robot_description" textfile="$(find flov2_robot_description)/urdf/flov2withhead.urdf"/>
 	
 	<!--Urdf file path-->
 	<param name="camera_description" textfile="$(find camera)/urdf/camera.urdf"/>
@@ -22,13 +22,13 @@
 	
 	
 	<!-- Spawn AprilTag model 
-	    <node name="spawn_apriltag" pkg="gazebo_ros" type="spawn_model" args="-sdf -file $(find flov2withhead)/meshes/apriltag_model/model.sdf -model apriltag_model -x 1.0 -y 1.0 -z 0.5" />-->
+	    <node name="spawn_apriltag" pkg="gazebo_ros" type="spawn_model" args="-sdf -file $(find flov2_robot_description)/meshes/apriltag_model/model.sdf -model apriltag_model -x 1.0 -y 1.0 -z 0.5" />-->
 	
         <!-- Spawn camera model -->
         <node name="spawn_camera" pkg="gazebo_ros" type="spawn_model" args="-param camera_description -urdf -model camera -x 0.0 -y 0.0 -z 0" /> -->
     
 	<!--Load and launch the joint trajectory controller-->
-	<rosparam file ="$(find flov2withhead)/config/joint_trajectory_controller.yaml" command="load"/>
+	<rosparam file ="$(find flov2_robot_description)/config/joint_trajectory_controller.yaml" command="load"/>
 	<node name= "controller_spawner" pkg= "controller_manager" type="spawner" respawn="false" output="screen" args="joint_state_controller robot_arm_controller hand_ee_controller"/>
 	
 	<!-- Launch subscriber node for AprilTag detection -->

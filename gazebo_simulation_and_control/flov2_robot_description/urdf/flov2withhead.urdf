@@ -43,7 +43,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/base_link.STL" />
+          filename="package://flov2_robot_description/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
@@ -57,7 +57,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/base_link.STL" />
+          filename="package://flov2_robot_description/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -83,7 +83,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/right_up_joint.STL" />
+          filename="package://flov2_robot_description/meshes/right_up_joint.STL" />
       </geometry>
       <material
         name="">
@@ -97,7 +97,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/right_up_joint.STL" />
+          filename="package://flov2_robot_description/meshes/right_up_joint.STL" />
       </geometry>
     </collision>
   </link>
@@ -141,7 +141,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/right_up_arm.STL" />
+          filename="package://flov2_robot_description/meshes/right_up_arm.STL" />
       </geometry>
       <material
         name="">
@@ -155,7 +155,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/right_up_arm.STL" />
+          filename="package://flov2_robot_description/meshes/right_up_arm.STL" />
       </geometry>
     </collision>
   </link>
@@ -199,7 +199,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/right_low_joint.STL" />
+          filename="package://flov2_robot_description/meshes/right_low_joint.STL" />
       </geometry>
       <material
         name="">
@@ -213,7 +213,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/right_low_joint.STL" />
+          filename="package://flov2_robot_description/meshes/right_low_joint.STL" />
       </geometry>
     </collision>
   </link>
@@ -257,7 +257,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/right_low_arm.STL" />
+          filename="package://flov2_robot_description/meshes/right_low_arm.STL" />
       </geometry>
       <material
         name="">
@@ -271,7 +271,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/right_low_arm.STL" />
+          filename="package://flov2_robot_description/meshes/right_low_arm.STL" />
       </geometry>
     </collision>
   </link>
@@ -315,7 +315,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/right_gripper.STL" />
+          filename="package://flov2_robot_description/meshes/right_gripper.STL" />
       </geometry>
       <material
         name="">
@@ -329,7 +329,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/right_gripper.STL" />
+            filename="package://flov2_robot_description/meshes/right_gripper.STL" />
       </geometry>
     </collision>
   </link>
@@ -368,7 +368,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/left_up_joint.STL" />
+          filename="package://flov2_robot_description/meshes/left_up_joint.STL" />
       </geometry>
       <material
         name="">
@@ -382,7 +382,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/left_up_joint.STL" />
+          filename="package://flov2_robot_description/meshes/left_up_joint.STL" />
       </geometry>
     </collision>
   </link>
@@ -426,7 +426,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/left_up_arm.STL" />
+          filename="package://flov2_robot_description/meshes/left_up_arm.STL" />
       </geometry>
       <material
         name="">
@@ -440,7 +440,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/left_up_arm.STL" />
+          filename="package://flov2_robot_description/meshes/left_up_arm.STL" />
       </geometry>
     </collision>
   </link>
@@ -484,7 +484,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/left_low_joint.STL" />
+          filename="package://flov2_robot_description/meshes/left_low_joint.STL" />
       </geometry>
       <material
         name="">
@@ -498,7 +498,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/left_low_joint.STL" />
+          filename="package://flov2_robot_description/meshes/left_low_joint.STL" />
       </geometry>
     </collision>
   </link>
@@ -542,7 +542,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/left_low_arm.STL" />
+          filename="package://flov2_robot_description/meshes/left_low_arm.STL" />
       </geometry>
       <material
         name="">
@@ -556,7 +556,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/left_low_arm.STL" />
+          filename="package://flov2_robot_description/meshes/left_low_arm.STL" />
       </geometry>
     </collision>
   </link>
@@ -600,7 +600,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/left_gripper.STL" />
+          filename="package://flov2_robot_description/meshes/left_gripper.STL" />
       </geometry>
       <material
         name="">
@@ -614,7 +614,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://flov2withhead/meshes/left_gripper.STL" />
+          filename="package://flov2_robot_description/meshes/left_gripper.STL" />
       </geometry>
     </collision>
   </link>

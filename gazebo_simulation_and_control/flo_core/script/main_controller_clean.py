@@ -27,6 +27,7 @@ class FloRobotController:
         self.mode = "0"  # Current motion command mode
         
         # AprilTag position tracking
+        
         self.apriltag_positions = {
             'position_dbx': 0, 'position_dby': 0,  # Down bell position
             'position_cx': 0, 'position_cy': 0,    # Cup position  

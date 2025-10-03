@@ -1,6 +1,6 @@
 <launch>
   <!-- parameters -->
-  <arg name="video_device" default="/dev/video0"/>
+  <arg name="video_device" default="/dev/video2"/>
   <arg name="width"        default="1280"/>
   <arg name="height"       default="720"/>
   <arg name="framerate"    default="30"/>
@@ -9,7 +9,7 @@
 
   <!-- camera driver (1280x720@30; if failed, change to yuyv+640x480) -->
   <node pkg="usb_cam" type="usb_cam_node" name="usb_cam" output="screen">
-    <param name="video_device"  value="$(arg video_device)"/> # /dev/video0
+    <param name="video_device"  value="$(arg video_device)"/> # /dev/video2
     <param name="image_width"   value="$(arg width)"/>
     <param name="image_height"  value="$(arg height)"/>
     <param name="framerate"     value="$(arg framerate)"/>

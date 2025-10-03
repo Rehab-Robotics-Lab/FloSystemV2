@@ -10,7 +10,7 @@
     name="spawn_model"
     pkg="gazebo_ros"
     type="spawn_model"
-    args="-file $(find flov2withhead)/urdf/flov2withhead.urdf -urdf -model flov2withhead"
+    args="-file $(find flov2_robot_description)/urdf/flov2withhead.urdf -urdf -model flov2withhead"
     output="screen" />
   <node
     name="fake_joint_calibration"

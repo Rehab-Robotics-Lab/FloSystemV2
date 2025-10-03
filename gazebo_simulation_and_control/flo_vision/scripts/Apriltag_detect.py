@@ -21,19 +21,19 @@ class AprilTagDetector:
 
         # Updated camera matrix and distortion coefficients
         self.camera_matrix = np.array([
-            [656.0585038691119, 0.0,                283.60941333082064],
-            [0.0,               658.7310068962696,  253.13426990177214],
+            [931.1700871091693, 0.0,                602.6532765838891],
+            [0.0,               926.3514505964894,  363.0477171515],
             [0.0,               0.0,                1.0]
         ], dtype=float)
 
-        self.dist_coeffs = np.array([
-                        -0.05156047847858019, 
-                         0.08763891251674999, 
-                        -0.00020070062885718928, 
-                        -0.005795063365968984, 
-                        0.0],
-                        dtype=float)
 
+        self.dist_coeffs = np.array([
+            0.005483709346010791,
+            -0.023663905275220904,
+            0.007881404389624416,
+            -0.014910731484592847,
+            0.0
+            ], dtype=float)
         rospy.loginfo("AprilTagDetector initialized with custom camera parameters")
 
     def __create_detector(self):
@@ -76,8 +76,10 @@ class AprilTagDetector:
             self.pose_pub.publish(pose_msg)
 
             # Publish tag information
-            info_str = "ID: {}, Position: {}, Orientation: {}".format(det.tag_id, t.flatten(), quaternion)
-            self.info_pub.publish(info_str)
+            # info_str = "ID: {}, Position: {}, Orientation: {}".format(det.tag_id, t.flatten(), quaternion)
+            # self.info_pub.publish(info_str)
+            vals = t.flatten()  # [x, y, z]
+            self.info_pub.publish(f"{det.tag_id} {vals[0]:.6f} {vals[1]:.6f}")
 
             # Draw detections and pose on the image
             # calculate rvec from R for projection axis drawing
