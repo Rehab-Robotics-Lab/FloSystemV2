@@ -24,7 +24,7 @@ class FloRobotController:
         self.client.connect(self.broker_ip, 1883, 60)
         
         # ==================== Control Variables ====================
-        self.mode = "0"  # Current motion command mode
+        self.mode = "25"  # Current motion command mode
         
         # AprilTag position tracking
         
@@ -110,7 +110,8 @@ class FloRobotController:
         
         for arm in arms:
             arm.allow_replanning(True)
-            arm.set_goal_position_tolerance(0.001)
+            arm.set_goal_joint_tolerance(0.02)
+            arm.set_goal_position_tolerance(0.005)
             arm.set_goal_orientation_tolerance(1)
             arm.set_max_acceleration_scaling_factor(0.6)
         

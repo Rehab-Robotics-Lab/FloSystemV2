@@ -104,6 +104,8 @@ class RobotMotionExecutor:
             self._execute_dual_alternate()
         elif pose == 24:
             self._execute_dual_punch()
+        elif pose == 25:
+            self._execute_dual_go_to_home()
         else:
             rospy.logwarn(f"Unknown pose: {pose}")
     
@@ -196,18 +198,18 @@ class RobotMotionExecutor:
         current_posea = self.arm_R.get_current_pose(self.end_effector_link_R).pose
         
         # Calculate target position
-        x = current_posea.position.x + self.position_cx - self.position_rx - 0.1
-        y = current_posea.position.y + (self.position_ry - self.position_cy) + 0.02
+        x = current_posea.position.x + self.position_cx - self.position_rx - 0.2 # more close to the cup
+        y = current_posea.position.y + (self.position_ry - self.position_cy) + 0.1
         
         # Adjust joint angles
         joint_goal = self.arm_R.get_current_joint_values()
         joint_goal[2] += math.atan((self.position_cx - self.position_rx) / 
-                                  (self.position_ry - self.position_cy + 0.18 - 0.05))
+                                  (self.position_ry - self.position_cy + 0.18 - 0.05)) 
         joint_goal[3] += 0.042
         self.arm_R.go(joint_goal, wait=True)
         
         # Execute motion planning
-        target_pose = self._create_target_pose(reference_frame, x, y, 1.03)
+        target_pose = self._create_target_pose(reference_frame, x, y, 0.8)
         self._execute_motion_plan(self.arm_R, target_pose, self.end_effector_link_R)
         rospy.sleep(1)
         
@@ -493,6 +495,11 @@ class RobotMotionExecutor:
         self.lgripper_pub.publish(self.gripper_on)
         rospy.sleep(0.1)
         self.rgripper_pub.publish(self.gripper_on)
+    
+    def _execute_dual_go_to_home(self):
+        """Pose 25: Dual arm go to home motion"""
+        self.arm_D.set_named_target('D_home')
+        self.arm_D.go()
     
     # ==================== Helper Methods ====================
     

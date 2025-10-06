@@ -1,6 +1,6 @@
 <launch>
   <!-- parameters -->
-  <arg name="video_device" default="/dev/video2"/>
+  <arg name="video_device" default="/dev/video0"/>
   <arg name="width"        default="1280"/>
   <arg name="height"       default="720"/>
   <arg name="framerate"    default="30"/>
