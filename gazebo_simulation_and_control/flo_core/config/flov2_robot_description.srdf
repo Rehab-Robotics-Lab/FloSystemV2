@@ -40,7 +40,7 @@
         <joint name="r1" value="0"/>
         <joint name="r2" value="0"/>
         <joint name="r3" value="0"/>
-        <joint name="r4" value="0.4"/>
+        <joint name="r4" value="0"/>
     </group_state>
     <group_state name="Lhome" group="L">
         <joint name="l1" value="0"/>

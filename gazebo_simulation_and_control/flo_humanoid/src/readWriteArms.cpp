@@ -53,7 +53,7 @@ const uint32_t PROFILE_VEL        = 200;  // ≈45.8 rev/min
 const uint32_t P_GAIN_XM          = 144;  // Position P Gain
 const uint32_t I_GAIN_XM          = 0;    // Position I Gain
 const uint32_t D_GAIN_XM          = 24;    // Position I Gain
-const uint32_t P_GAIN_XL          = 180;     // Position D Gain
+const uint32_t P_GAIN_XL          = 300;     // Position D Gain
 const uint32_t I_GAIN_XL          = 8;     // Position I Gain
 const uint32_t D_GAIN_XL          = 24;     // Position D Gain
 // ensure that DXL1_ID, DXL2_ID, DXL3_ID, DXL4_ID are connected to the device labeled DEVICE_NAME1
