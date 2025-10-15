@@ -2,7 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/trail_control/AO_human_v_robot_pilot" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/trail_control/cortex-example" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/experiment_control/AO_human_v_robot_pilot" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/experiment_control/cortex-example" vcs="Git" />
   </component>
 </project>
