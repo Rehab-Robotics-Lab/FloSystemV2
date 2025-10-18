@@ -8,9 +8,12 @@ from cortex import Cortex
 import threading
 import datetime
 import paho.mqtt.client as mqtt
+from cortex_module.config.emotiv_creds import CLIENT_ID, CLIENT_SECRET  
+import os
 
 # global
 marker_handler = None
+this_file_path = os.path.dirname(os.path.abspath(__file__))
 
 
 class MarkerHandler():
@@ -96,14 +99,14 @@ def start_recording():
     global marker_handler
 
     # Initialize the Marker handler
-    your_app_client_id = 'UKYzJ29onUzUizejl6jLZui5HdWplC4AGZyh7sqf'
-    your_app_client_secret = '8xXsb6e11kDpsHWmKCY7LsGgB28IXYo5HUwd82rvlrxZdwS70e9Pz4CmTTkKGJqKv6nivfo83lcwvaKXTNYtp45NlwcI26FNXaEgOry6oJ7JUn7hLND9CvQOJ1QOMH1Q'
+    your_app_client_id = CLIENT_ID
+    your_app_client_secret = CLIENT_SECRET
     current_time_str = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     marker_handler = MarkerHandler(your_app_client_id, your_app_client_secret)
     marker_handler.start(
         record_title=f'AOE_{current_time_str}',
         record_description='',
-        folder='D:\\Upenn\\OneDrive - PennO365\\robotics research\\LilFlo\\FloSystemV2\\trail_control\\cortex-example\\python\\record_data',
+        folder=os.path.join(this_file_path, 'record_data'),
         stream_types=['EEG', 'PM', 'BP'],
         export_format='CSV',
         version='V2'

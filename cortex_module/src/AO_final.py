@@ -8,10 +8,14 @@ from cortex import Cortex
 import threading
 import datetime
 import paho.mqtt.client as mqtt
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from config.emotiv_creds import CLIENT_ID, CLIENT_SECRET  
 
 # Global
 marker_handler = None
-
+this_file_path = os.path.dirname(os.path.abspath(__file__))
 
 class MarkerHandler():
     def __init__(self, app_client_id, app_client_secret, **kwargs):
@@ -96,14 +100,14 @@ def start_recording():
     global marker_handler
 
     # Initialize the Marker handler
-    your_app_client_id = 'UKYzJ29onUzUizejl6jLZui5HdWplC4AGZyh7sqf'
-    your_app_client_secret = '8xXsb6e11kDpsHWmKCY7LsGgB28IXYo5HUwd82rvlrxZdwS70e9Pz4CmTTkKGJqKv6nivfo83lcwvaKXTNYtp45NlwcI26FNXaEgOry6oJ7JUn7hLND9CvQOJ1QOMH1Q'
+    your_app_client_id = CLIENT_ID
+    your_app_client_secret = CLIENT_SECRET
     current_time_str = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     marker_handler = MarkerHandler(your_app_client_id, your_app_client_secret)
     marker_handler.start(
         record_title=f'AO_{current_time_str}',
         record_description='',
-        folder='D:\\Upenn\\OneDrive - PennO365\\robotics research\\LilFlo\\FloSystemV2\\trail_control\\cortex-example\\python\\record_data',
+        folder=os.path.join(this_file_path, 'record_data'),
         stream_types=['EEG', 'PM', 'BP'],
         export_format='CSV',
         version='V2'
@@ -126,7 +130,7 @@ def main():
 
     # Set up the serial connection (adjust the port to match your setup)
     serial_port = 'COM5'
-    ser = serial.Serial(serial_port, 9600)  # Open the serial port
+    # ser = serial.Serial(serial_port, 9600)  # Open the serial port
     time.sleep(2)  # Wait for the serial connection to initialize
 
     # Define the MQTT topic
@@ -189,25 +193,25 @@ def main():
         nonlocal current_step
         if current_step == 0:
             # Initially close the cross
-            send_command('0')
+            # send_command('0')
             # Play instruction 1-2
-            play_sound(instruction_sounds[0])
-            play_sound(instruction_sounds[1])
+            play_sound(os.path.join(this_file_path, instruction_sounds[0]))
+            play_sound(os.path.join(this_file_path, instruction_sounds[1]))
         elif current_step == 1:
             # Play cross sound and simulate displaying cross for 5 seconds
-            play_sound('mp3_AO/cross_sound.mp3')  # Replace with the cross sound file
-            send_command('1')  # Turn on cross on the LED matrix
+            play_sound(os.path.join(this_file_path, 'mp3_AO/cross_sound.mp3'))  # Replace with the cross sound file
+            # send_command('1')  # Turn on cross on the LED matrix
             time.sleep(5.0)  # Simulate displaying cross for 5 seconds
-            send_command('0')  # Turn off cross on the LED matrix
+            # send_command('0')  # Turn off cross on the LED matrix
         elif current_step == 2:
             # Play instruction 3-4
-            play_sound(instruction_sounds[2])
-            play_sound(instruction_sounds[3])
+            play_sound(os.path.join(this_file_path, instruction_sounds[2]))
+            play_sound(os.path.join(this_file_path, instruction_sounds[3]))
         elif current_step >= 3 and current_step < 3 + len(randomized_movements):
             # Simulate displaying cross for 3 seconds, then indicate movement
-            send_command('1')  # Turn on cross on the LED matrix
+            # send_command('1')  # Turn on cross on the LED matrix
             time.sleep(3.0)  # Simulate displaying cross for 3 seconds
-            send_command('0')  # Turn off cross on the LED matrix
+            # send_command('0')  # Turn off cross on the LED matrix
 
             # Get the actual movement number from the randomized movement list
             movement_label = randomized_movements[current_step - 3]
@@ -218,7 +222,7 @@ def main():
             marker_handler.inject_marker("3000", "intertrial_interval")
 
             # 通过MQTT发送movement_number
-            send_movement_via_mqtt(movement_number, movement_topic)
+            # send_movement_via_mqtt(movement_number, movement_topic)
             marker_handler.inject_marker(movement_number, movement_label)
 
         else:
@@ -250,22 +254,22 @@ def main():
     root.mainloop()
 
     # 在程序结束时断开MQTT连接
-    client.disconnect()
+    # client.disconnect()
 
 
 if __name__ == '__main__':
     # 设置MQTT Broker的IP地址
     broker_ip = "169.254.131.1"  # 替换为Ubuntu机器的IP地址
 
-    # 创建MQTT客户端
-    client = mqtt.Client()
+    # # 创建MQTT客户端
+    # client = mqtt.Client()
 
-    # 尝试连接到Broker
-    try:
-        client.connect(broker_ip, 1883, 60)
-        print(f"Connected to MQTT Broker at {broker_ip}")
-    except Exception as e:
-        print(f"Failed to connect to MQTT Broker: {e}")
-        exit(1)
+    # # 尝试连接到Broker
+    # try:
+    #     client.connect(broker_ip, 1883, 60)
+    #     print(f"Connected to MQTT Broker at {broker_ip}")
+    # except Exception as e:
+    #     print(f"Failed to connect to MQTT Broker: {e}")
+    #     exit(1)
 
     main()

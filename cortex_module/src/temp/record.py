@@ -153,8 +153,8 @@ class Record():
 def main():
     
     # Please fill your application clientId and clientSecret before running script
-    your_app_client_id = 'UKYzJ29onUzUizejl6jLZui5HdWplC4AGZyh7sqf'
-    your_app_client_secret = '8xXsb6e11kDpsHWmKCY7LsGgB28IXYo5HUwd82rvlrxZdwS70e9Pz4CmTTkKGJqKv6nivfo83lcwvaKXTNYtp45NlwcI26FNXaEgOry6oJ7JUn7hLND9CvQOJ1QOMH1Q'
+    your_app_client_id = 'Nht1aoK3CyeRE4m1MVqcwRQibQ6C7XlmacrgKeqR'
+    your_app_client_secret = 'rZCaS0EllTTrz4OShoWBRHjvtJ2cO4F5Z776fAL6Sc6AKQkRwbemvTqgMUJmN9dWJXjtiqlHQxL3GqScGkGxnL1pMliPnlvDAdw2pdXh8E0U8qaUyy16gmr7PJPTBoz7'
 
     r = Record(your_app_client_id, your_app_client_secret)
 
