@@ -82,6 +82,15 @@ RUN apt-get update && apt-get install -y \
     ros-noetic-joint-state-publisher-gui \
     && rm -rf /var/lib/apt/lists/*
 
+# Apriltag + camera tools
+RUN apt-get update && apt-get install -y \
+ros-noetic-usb-cam \
+ros-noetic-image-view \
+v4l-utils \
+ffmpeg \
+ros-noetic-apriltag-ros \
+&& rm -rf /var/lib/apt/lists/*
+
 # Install all dependencies
 RUN rosdep install --from-paths src --ignore-src -y --rosdistro noetic || true
 
