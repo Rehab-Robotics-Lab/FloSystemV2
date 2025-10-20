@@ -4,6 +4,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 USER root
 
+RUN apt-get update && apt-get install --reinstall ca-certificates
+
 # Fix ROS GPG key issue by removing and re-adding the repository
 RUN rm -f /etc/apt/sources.list.d/ros1-latest.list
 RUN apt-get update && apt-get install -y curl gnupg2
