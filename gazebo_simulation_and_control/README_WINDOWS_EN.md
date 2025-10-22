@@ -2,7 +2,33 @@
 
 ## Prerequisites
 
-##### 1. Install Docker Desktop
+##### 1. Install WSL2 + Ubuntu 24.04 LTS
+
+- Open PowerShell as Administrator and install WSL2:
+  ```powershell
+  wsl --install
+  wsl --set-default-version 2
+  ```
+- Install Ubuntu 24.04:
+  ```powershell
+  wsl --install -d Ubuntu-24.04
+  ```
+  Create your UNIX username/password on first launch.
+- (Recommended) Update WSL kernel:
+  ```powershell
+  wsl --update
+  ```
+- Verify in Windows:
+  ```powershell
+  wsl -l -v     # VERSION should be 2 for Ubuntu
+  ```
+  Verify in WSL:
+  ```bash
+  uname -r      # should contain "microsoft-standard-WSL2"
+  cat /etc/os-release  # should show Ubuntu 24.04
+  ```
+
+##### 2. Install Docker Desktop
 
 - Download: [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - Reboot after installation
@@ -14,7 +40,7 @@
 
   ![1761153329192](image/README_WINDOWS_EN/1761153329192.png)
 
-##### 2. Install usbipd-win (PowerShell as Admin)
+##### 3. Install usbipd-win (PowerShell as Admin)
 
 ```
 winget install --interactive --exact dorssel.usbipd-win   
@@ -29,7 +55,7 @@ sudo update-alternatives --install /usr/local/bin/usbip usbip /usr/lib/linux-too
 usbip version
 ```
 
-##### 3. Install VcXsrv (Windows X Server)
+##### 4. Install VcXsrv (Windows X Server)
 
 - Downloads：https://sourceforge.net/projects/vcxsrv/
 - Launch XLaunch，in configuration：
