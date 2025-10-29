@@ -5,23 +5,29 @@
 ##### 1. Install WSL2 + Ubuntu 24.04 LTS
 
 - Open PowerShell as Administrator and install WSL2:
+
   ```powershell
   wsl --install
   wsl --set-default-version 2
   ```
 - Install Ubuntu 24.04:
+
   ```powershell
   wsl --install -d Ubuntu-24.04
   ```
+
   Create your UNIX username/password on first launch.
 - (Recommended) Update WSL kernel:
+
   ```powershell
   wsl --update
   ```
 - Verify in Windows:
+
   ```powershell
   wsl -l -v     # VERSION should be 2 for Ubuntu
   ```
+
   Verify in WSL:
   ```bash
   uname -r      # should contain "microsoft-standard-WSL2"
@@ -108,11 +114,17 @@ Notes: If /dev/video0 is still missing, try toupdate WSL kernel (wsl --update) a
   ```
   export DISPLAY=$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0
   export QT_X11_NO_MITSHM=1
-  docker run -it --name flo_v2_container --privileged --network host \
-    -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1 \
-    -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-    --device=/dev/ttyUSB0:/dev/ttyUSB0 --device=/dev/video0:/dev/video0 \
-    flo_v2_image_test
+  docker run -it --name flo_v2 --privileged --device=/dev/ttyUSB0:/dev/ttyUSB0 --device=/dev/video0:/dev/video0 -e DISPLAY=host.docker.internal:0 -e QT_X11_NO_MITSHM=1 -e LIBGL_ALWAYS_INDIRECT=1 -p 1883:1883 -p 11311:11311 -p 8080:8080 flo_v2
+  ```
+* To enter exist and running docker container, run:
+
+  ```
+  docker exec -it <your container name> bash
+  ```
+* To enter exist but not running docker container, run:
+
+  ```
+  docker start -ai <your container name>
   ```
 
 ## Run motors and AprilTag (inside the container)
