@@ -40,8 +40,8 @@ using namespace dynamixel;
 #define DXL6_ID              212               // DXL6 ID
 #define DXL7_ID              221               // DXL7 ID
 #define DXL8_ID              222               // DXL8 ID
-#define DXL9_ID              131               // DXL9 ID
-#define DXL10_ID             231               // DXL10 ID
+// #define DXL9_ID              131               // DXL9 ID
+// #define DXL10_ID             231               // DXL10 ID
 
 
 // BAUDRATE should be defined here.
@@ -77,11 +77,11 @@ bool getArmsJointPositionsCallback(flo_humanoid::GetArmsJointPositions::Request 
     int dxl_comm_result = COMM_TX_FAIL;
     bool dxl_addparam_result = false;
 
-    std::array<std::string, 10> items = {req.item1, req.item2, req.item3, req.item4, req.item5, req.item6, req.item7, req.item8, req.item9, req.item10};
-    std::array<uint8_t, 10> ids = {req.id1, req.id2, req.id3, req.id4, req.id5, req.id6, req.id7, req.id8, req.id9, req.id10};
-    std::array<int32_t,10> values{};   
+    std::array<std::string, 8> items = {req.item1, req.item2, req.item3, req.item4, req.item5, req.item6, req.item7, req.item8};
+    std::array<uint8_t, 8> ids = {req.id1, req.id2, req.id3, req.id4, req.id5, req.id6, req.id7, req.id8 };
+    std::array<int32_t,8> values{};   
     
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 8; i++)
     {
       if (items[i] == "position")
       {
@@ -110,7 +110,7 @@ bool getArmsJointPositionsCallback(flo_humanoid::GetArmsJointPositions::Request 
     dxl_comm_result = groupBulkRead.txRxPacket();
     if (dxl_comm_result == COMM_SUCCESS)
     {
-      for (int i = 0; i < 10; i++)
+      for (int i = 0; i < 8; i++)
       {
         if(items[i] == "position")
         {
@@ -129,7 +129,7 @@ bool getArmsJointPositionsCallback(flo_humanoid::GetArmsJointPositions::Request 
       }
     
 
-    for (int i = 0; i < 10; i++){
+    for (int i = 0; i < 8; i++){
       ROS_INFO("getItem : [ID:%d] [%s: %d]", ids[i], items[i].c_str(), values[i]);
     }
  
@@ -143,8 +143,8 @@ bool getArmsJointPositionsCallback(flo_humanoid::GetArmsJointPositions::Request 
       res.value6 = values[5];
       res.value7 = values[6];
       res.value8 = values[7];
-      res.value9 = values[8];
-      res.value10 = values[9]; 
+      // res.value9 = values[8];
+      // res.value10 = values[9]; 
 
 
       groupBulkRead.clearParam();
@@ -164,16 +164,16 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
 {
   int dxl_comm_result = COMM_TX_FAIL;
   int dxl_addparam_result = false;
-  uint8_t param_goal_position[10][4];
-  uint8_t param_goal_led[10][1];
-  uint8_t addr_goal_item[10];
-  uint8_t len_goal_item[10];
-  std::array<std::string, 10> items = {msg->item1, msg->item2, msg->item3, msg->item4, msg->item5, msg->item6, msg->item7, msg->item8, msg->item9, msg->item10};
-  std::array<uint8_t, 10> ids = {msg->id1, msg->id2, msg->id3, msg->id4, msg->id5, msg->id6, msg->id7, msg->id8, msg->id9, msg->id10};
-  std::array<uint32_t, 10> values = {msg->value1, msg->value2, msg->value3, msg->value4, msg->value5, msg->value6, msg->value7, msg->value8, msg->value9, msg->value10};
+  uint8_t param_goal_position[8][4];
+  uint8_t param_goal_led[8][1];
+  uint8_t addr_goal_item[8];
+  uint8_t len_goal_item[8];
+  std::array<std::string, 8> items = {msg->item1, msg->item2, msg->item3, msg->item4, msg->item5, msg->item6, msg->item7, msg->item8};
+  std::array<uint8_t, 8> ids = {msg->id1, msg->id2, msg->id3, msg->id4, msg->id5, msg->id6, msg->id7, msg->id8};
+  std::array<uint32_t, 8> values = {msg->value1, msg->value2, msg->value3, msg->value4, msg->value5, msg->value6, msg->value7, msg->value8};
 
   // Position Value of X series is 4 byte data. For AX & MX(1.0) use 2 byte data(uint16_t) for the Position Value.
-  for (int i = 0; i < 10; i++){
+  for (int i = 0; i < 8; i++){
     if (items[i] == "position")
     {
       uint32_t position = (unsigned int)values[i]; // Convert int32 -> uint32
@@ -203,7 +203,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
   // Write Goal Position (length : 4 bytes)
   // When writing 2 byte data to AX / MX(1.0), use write2ByteTxRx() instead.
   groupBulkWrite.clearParam();
-  for (int i = 0; i < 10; i++){
+  for (int i = 0; i < 8; i++){
     if (items[i] == "position")
     {
       dxl_addparam_result = groupBulkWrite.addParam((uint8_t)ids[i], addr_goal_item[i], len_goal_item[i], param_goal_position[i]);
@@ -222,7 +222,7 @@ void setArmsJointPositionsCallback(const flo_humanoid::SetArmsJointPositions::Co
 
   dxl_comm_result = groupBulkWrite.txPacket();
   if (dxl_comm_result == COMM_SUCCESS) {
-    for (int i = 0; i < 10; i++){
+    for (int i = 0; i < 8; i++){
       ROS_INFO("setItem : [ID:%d] [%s:%d]", ids[i], items[i].c_str(), values[i]);
     }
   } else {
@@ -261,7 +261,7 @@ int main(int argc, char ** argv)
   // XM motors: DXL1, DXL2, DXL5, DXL6 - use P_GAIN_XM, D_GAIN_XM (no I gain)
   // XL motors: DXL3, DXL4, DXL7, DXL8 - use P_GAIN_XL, I_GAIN_XL, D_GAIN_XL
   // Basic motors: DXL9, DXL10 - only torque and mode, no profile/PID
-  std::array<MotorConfig, 10> motor_configs = {{
+  std::array<MotorConfig, 8> motor_configs = {{
     {DXL1_ID,  P_GAIN_XM, I_GAIN_XM, D_GAIN_XM},  // XM motor
     {DXL2_ID,  P_GAIN_XM, I_GAIN_XM, D_GAIN_XM},  // XM motor
     {DXL3_ID,  P_GAIN_XL, I_GAIN_XL, D_GAIN_XL},   // XL motor
@@ -270,8 +270,8 @@ int main(int argc, char ** argv)
     {DXL6_ID,  P_GAIN_XM, I_GAIN_XM, D_GAIN_XM},  // XM motor
     {DXL7_ID,  P_GAIN_XL, I_GAIN_XL, D_GAIN_XL},   // XL motor
     {DXL8_ID,  P_GAIN_XL, I_GAIN_XL, D_GAIN_XL},  // XL motor (no I gain in original)
-    {DXL9_ID,  0,         0,         0,       },  // Torque + Mode only
-    {DXL10_ID, 0,         0,         0,       }   // Torque + Mode only
+    // {DXL9_ID,  0,         0,         0,       },  // Torque + Mode only
+    // {DXL10_ID, 0,         0,         0,       }   // Torque + Mode only
   }};
 
   // Initialize all motors in a loop
@@ -349,7 +349,7 @@ int main(int argc, char ** argv)
   ros::init(argc, argv, "read_write_arms_node");
   ros::NodeHandle nh;
   ros::ServiceServer get_joint_positions_srv = nh.advertiseService("/get_arms_joint_positions", getArmsJointPositionsCallback);
-  ros::Subscriber set_joint_positions_sub = nh.subscribe("/set_arms_joint_positions", 10, setArmsJointPositionsCallback);
+  ros::Subscriber set_joint_positions_sub = nh.subscribe("/set_arms_joint_positions", 8, setArmsJointPositionsCallback);
   ros::spin();
 
 

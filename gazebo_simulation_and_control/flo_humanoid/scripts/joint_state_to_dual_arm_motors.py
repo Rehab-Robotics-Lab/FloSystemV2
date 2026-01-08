@@ -8,8 +8,8 @@ import math
 NODE_NAME = 'joint_state_to_dual_arm_motors'
 TOPIC_JOINT_STATES = '/joint_states'
 TOPIC_SET_POSITIONS = '/set_arms_joint_positions'
-rgripper_position = 1300 # open
-lgripper_position = 1300 # open
+# rgripper_position = 1300 # open
+# lgripper_position = 1300 # open
 class JointStateToDxlBridge:
     def __init__(self):
         rospy.init_node(NODE_NAME)
@@ -21,8 +21,8 @@ class JointStateToDxlBridge:
         self.set_arms_joint_positions_pub = rospy.Publisher(TOPIC_SET_POSITIONS, SetArmsJointPositions, queue_size=1)
         # Subscribers
         rospy.Subscriber(TOPIC_JOINT_STATES, JointState, self.joint_states_callback)
-        rospy.Subscriber('/rgripper', Int32, self.rgripper_callback)
-        rospy.Subscriber('/lgripper', Int32, self.lgripper_callback)
+        # rospy.Subscriber('/rgripper', Int32, self.rgripper_callback)
+        # rospy.Subscriber('/lgripper', Int32, self.lgripper_callback)
         # Log
         rospy.loginfo(f"[{NODE_NAME}] Bridging {TOPIC_JOINT_STATES} → {TOPIC_SET_POSITIONS}")
         
@@ -59,10 +59,10 @@ class JointStateToDxlBridge:
             self.joint_id_map['l3'], self.joint_id_map['l4'], 
             self.joint_id_map['r1'], self.joint_id_map['r2'], 
             self.joint_id_map['r3'], self.joint_id_map['r4'],
-            self.joint_id_map['lgripper'], self.joint_id_map['rgripper'],
+            # self.joint_id_map['lgripper'], self.joint_id_map['rgripper'],
 
-            'position', 'position', 'position', 'position', 'position',
-            'position', 'position', 'position', 'position', 'position',
+            'position', 'position', 'position', 'position', 
+            'position', 'position', 'position', 'position', 
 
             self.convert_to_dynamixel_position(l1_position), 
             self.convert_to_dynamixel_position(l2_position),
@@ -72,24 +72,24 @@ class JointStateToDxlBridge:
             self.convert_to_dynamixel_position(r2_position),
             self.convert_to_dynamixel_position(r3_position), 
             self.convert_to_dynamixel_position(r4_position),
-            lgripper_position,
-            rgripper_position
+            # lgripper_position,
+            # rgripper_position
         ))
 
         rospy.logdebug(
-            f"Published DXL positions: L[{l1_position:.1f},{l2_position:.1f},{l3_position:.1f},{l4_position:.1f}], "
+            f"Published DXL positions: L[{l1_position:.1f},{l2_position:.1f},{l3_position:.1f},{l4_position:.1f}]"
             f"R[{r1_position:.1f},{r2_position:.1f},{r3_position:.1f},{r4_position:.1f}]")
 
 
-    def rgripper_callback(self, msg):
-        global rgripper_position
-        rgripper_position = msg.data
-        rospy.loginfo(f"Received gripper position: {rgripper_position}")
+    # def rgripper_callback(self, msg):
+    #     global rgripper_position
+    #     rgripper_position = msg.data
+    #     rospy.loginfo(f"Received gripper position: {rgripper_position}")
 
-    def lgripper_callback(self, msg):
-        global lgripper_position
-        lgripper_position = msg.data
-        rospy.loginfo(f"Received gripper position: {lgripper_position}")
+    # def lgripper_callback(self, msg):
+    #     global lgripper_position
+    #     lgripper_position = msg.data
+    #     rospy.loginfo(f"Received gripper position: {lgripper_position}")
 
 
 if __name__ == '__main__':
