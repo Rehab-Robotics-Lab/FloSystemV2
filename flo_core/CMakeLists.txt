@@ -19,11 +19,11 @@ install(DIRECTORY config DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 ## 安装Python脚本
 install(PROGRAMS
-  script/test.py
-  script/testnew.py
-  script/sendJointValue.py
-  script/getPosition.py
-  script/dualPosition.py
+  scripts/test.py
+  scripts/testnew.py
+  scripts/sendJointValue.py
+  scripts/getPosition.py
+  scripts/dualPosition.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

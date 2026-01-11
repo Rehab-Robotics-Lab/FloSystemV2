@@ -193,7 +193,7 @@ docker stop flo_v2_container
 ## 下一步
 
 - 阅读主 README.md 了解动作编号
-- 查看 `flo_core/script/main_controller_clean.py` 了解控制逻辑
+- 查看 `flo_core/scripts/main_controller_clean.py` 了解控制逻辑
 - 使用 `rostopic pub` 手动测试动作
 
 ## 支持

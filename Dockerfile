@@ -100,7 +100,7 @@ RUN rosdep install --from-paths src --ignore-src -y --rosdistro noetic || true
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
 
 # Make Python scripts executable
-RUN chmod +x /catkin_ws/src/*/script/*.py || true
+RUN chmod +x /catkin_ws/src/*/scripts/*.py || true
 
 # Source environments
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
