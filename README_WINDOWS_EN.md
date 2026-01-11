@@ -1,12 +1,4 @@
-# Flo V2 (No grippers) Control Stack for Aim 1 Inperson Robot (IR) AO experiments
-
-This repo contains code to build and run a Docker container on a WSL environment (Ubuntu-24.04) on Windows machine. The ROS Docker container is used to run the control stack for the robot (no grippers) for the Aim 1 AO trials and control the chest LED. This control stack also communicate with a Python program running on Windows (outside Docker container) through MQTT, receiving commands (LED states and robot actions) to control the robot and the LED. This robot system doesnt have camera or computer vision components.
-
-## Repository Structure
-
-* flo_core
-* flo_humanoid
-* flov2_robot_description
+# Run FLO v2 ROS Environment on Windows
 
 ## Prerequisites
 
@@ -102,24 +94,28 @@ usbip version
 
   ```
   ls /dev/ttyUSB* /dev/video*
-  sudo chmod 666 /dev/ttyUSB0 
+  sudo chmod 666 /dev/ttyUSB0 /dev/video0
+  sudo apt install -y v4l-utils
+  v4l2-ctl -d /dev/video0 --list-formats-ext
   ```
+
+Notes: If /dev/video0 is still missing, try toupdate WSL kernel (wsl --update) and re-attach.
 
 ## Build and run Docker (WSL)
 
-* Clone this repo to `C:\Users\<username>\git
-* Build image at project root (with top-level Dockerfile) - **Replace the name of image with yours**
+* Build image at project root (with top-level Dockerfile):
+  **Replace the name of image with yours**
 
   ```
-  cd /mnt/c/Users/<path_to_repo>
-  docker build -t flo_v2_aim1 . 
+  cd /mnt/c/Users/17187/Desktop/Flo_Project/FloV2.1/FloSystemV2/gazebo_simulation_and_control
+  docker build -t flo_v2_image_test . 
   ```
 * Run container with devices and X11 (start VcXsrv on Windows first):
 
   ```
   export DISPLAY=$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0
   export QT_X11_NO_MITSHM=1
-  docker run -it --name flo_v2_aim1 --privileged --device=/dev/ttyUSB0:/dev/ttyUSB0 --device=/dev/video0:/dev/video0 -e DISPLAY=host.docker.internal:0 -e QT_X11_NO_MITSHM=1 -e LIBGL_ALWAYS_INDIRECT=1 -p 1883:1883 -p 11311:11311 -p 8080:8080 flo_v2_aim1
+  docker run -it --name flo_v2 --privileged --device=/dev/ttyUSB0:/dev/ttyUSB0 --device=/dev/video0:/dev/video0 -e DISPLAY=host.docker.internal:0 -e QT_X11_NO_MITSHM=1 -e LIBGL_ALWAYS_INDIRECT=1 -p 1883:1883 -p 11311:11311 -p 8080:8080 flo_v2
   ```
 * To enter exist and running docker container, run:
 
@@ -132,7 +128,9 @@ usbip version
   docker start -ai <your container name>
   ```
 
-## Test run motors (inside the container)
+## Run motors and AprilTag (inside the container)
+
+### Motors
 
 ```bash
 source /opt/ros/noetic/setup.bash
@@ -145,3 +143,66 @@ If you see "Failed to open the port!":
 - Ensure `/dev/ttyUSB0` exists in host and is mapped with `--device`.
 - Grant permission: `sudo chmod 666 /dev/ttyUSB0` (host WSL once per session).
 - If the host device is `/dev/ttyUSB1`, map it as `--device=/dev/ttyUSB1:/dev/ttyUSB0`.
+
+### AprilTag via flo_vision (camera + detection)
+
+```bash
+source /opt/ros/noetic/setup.bash
+source /catkin_ws/devel/setup.bash
+roslaunch flo_vision test_Apriltag_detection.launch \
+  video_device:=/dev/video0 width:=640 height:=480 pixel_format:=yuyv
+# Once stable, you can try 1280x720 + mjpeg
+```
+
+### AprilTag via apriltag_ros (alternative, robust)
+
+Your camera topic may be `/usb_cam/usb_cam/image_raw`.
+
+```bash
+source /opt/ros/noetic/setup.bash
+roslaunch apriltag_ros continuous_detection.launch \
+  camera_name:=usb_cam image_topic:=/usb_cam/usb_cam/image_raw
+```
+
+Verify topics and detections:
+
+```bash
+rostopic list | grep -E 'usb_cam|tag'
+rostopic hz /usb_cam/usb_cam/image_raw
+rostopic echo -n 5 /tag_detections
+```
+
+## Daily quick start
+
+1. Start Docker Desktop (and VcXsrv if you need GUI windows).
+2. PowerShell (Admin): run your attach script (usbipd auto-attach for U2D2/camera).
+3. In WSL:
+   ```bash
+   ls /dev/ttyUSB* /dev/video*
+   sudo chmod 666 /dev/ttyUSB0 /dev/video0
+   ```
+4. Start your container:
+   ```bash
+   docker start -ai flo_v2_container
+   ```
+5. Inside the container:
+   ```bash
+   source /opt/ros/noetic/setup.bash
+   source /catkin_ws/devel/setup.bash
+   # Motors
+   roslaunch flo_humanoid read_write_arms.launch
+   ```
+
+## Troubleshooting
+
+- Camera busy / no frames:
+  - Close Windows apps using camera (Camera/Zoom/Teams/Browser), then re-run `usbipd attach`.
+  - Try lower resolution + `yuyv` and `io_method:=read` for `usb_cam`.
+- Topic mismatch:
+  - Use `rostopic list` to get the exact image topic and pass it to `apriltag_ros` as `image_topic:=...`.
+- Serial port not opening:
+  - Ensure `/dev/ttyUSB0` exists and is mapped, `sudo chmod 666 /dev/ttyUSB0`, remap if the host device number changed.
+- BUSID changes across ports/PCs:
+  - Prefer `--hardware-id` with `--auto-attach` in `usbipd` instead of hardcoding BUSID.
+- GUI doesn’t show:
+  - Start VcXsrv (XLaunch), set `DISPLAY` and `QT_X11_NO_MITSHM`, mount `/tmp/.X11-unix` into the container.

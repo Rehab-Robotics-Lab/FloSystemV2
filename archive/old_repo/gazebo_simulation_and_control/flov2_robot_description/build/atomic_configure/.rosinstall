@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/shzyh/catkin_ws/src/flov2withhead/build/devel/setup.sh

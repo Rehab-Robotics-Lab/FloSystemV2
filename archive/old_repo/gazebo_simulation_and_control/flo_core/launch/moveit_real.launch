@@ -1,0 +1,8 @@
+<!-- flo_core/launch/moveit_real.launch -->
+<launch>
+  <!-- 启动 move_group -->
+  <include file="$(find flo_core)/launch/move_group.launch">
+    <arg name="moveit_controller_manager" value="real"/>
+    <arg name="use_gui" value="false"/>
+  </include>
+</launch>

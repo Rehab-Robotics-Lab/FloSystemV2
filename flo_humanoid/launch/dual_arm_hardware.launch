@@ -1,0 +1,11 @@
+<!-- File: flo_humanoid/launch/dual_arm_hardware.launch -->
+<launch>
+  <include file="$(find flo_humanoid)/launch/read_write_arms.launch"/>
+  <node pkg="flo_humanoid" type="joint_state_to_dual_arm_motors.py" name="joint_state_bridge"/>
+  <!-- Start MoveIt -->
+  <param name="robot_description" command="cat $(find flov2_robot_description)/urdf/flov2_robot_description.urdf" />
+  <!-- <include file="$(find flo_core)/launch/move_group.launch"/> -->
+
+    <!-- Finally, action server -->
+    <!-- <node pkg="flo_core" name="moveit_controller" type="moveit_controller.py"/> -->
+</launch>

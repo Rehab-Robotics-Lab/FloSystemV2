@@ -1,0 +1,16 @@
+<launch>
+	<!-- Launch Your robot arms launch file which loads the robot in Gazebo and spawns the controllers -->
+	<arg name="show_gz_gui" default="false"/>
+  	<include file="$(find flo_core)/launch/gazebo_full_system.launch" > 
+	    <arg name="gui" value="$(arg show_gz_gui)"/>
+	</include>
+  	
+  	<!-- Launch Moveit Move Group Node -->
+    <include file="$(find flo_core)/launch/move_group.launch" />
+  	
+  	<!-- Run Rviz and load the default configuration to see the state of the move_group node -->
+  	<arg name="use_rviz" default="false" />
+  	<include file="$(find flo_core)/launch/moveit_rviz.launch" if="$(arg use_rviz)">
+ 	 	<arg name="rviz_config" value="$(find flo_core)/launch/moveit.rviz"/>
+ 	</include>
+</launch>

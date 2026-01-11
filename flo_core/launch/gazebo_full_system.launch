@@ -1,0 +1,42 @@
+<launch>
+	<arg name="gui" default="false"/>
+	<arg name="arg_x" default="0.00" />
+	<arg name="arg_y" default="0.00" />
+	<arg name="arg_z" default="0.00" />
+	<arg name="arg_R" default="0.00" />
+	<arg name="arg_P" default="0.00" />
+	<arg name="arg_Y" default="0.00" />
+	
+	<!--Urdf file path-->
+	<param name="robot_description" textfile="$(find flov2_robot_description)/urdf/flov2_robot_description.urdf"/>
+	
+	<!--Urdf file path-->
+	<!-- <param name="camera_description" textfile="$(find camera)/urdf/camera.urdf"/> -->
+	
+	<!--spawn a empty gazebo world-->
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="gui" value="$(arg gui)" />
+	</include>
+	<node name="tf_footprint_base" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 base_link base_footprint 40" />
+	
+	
+	<!--spawn model-->
+	<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-x $(arg arg_x) -y $(arg arg_y) -z $(arg arg_z) -Y $(arg arg_Y) -param robot_description -urdf -model flov2_robot_description -J r1 0.0 -J r2 0.0 -J r3 0.0 -J r4 0.0 -J l1 0.0 -J l2 0.0 -J l3 0.0 -J l4 0.0 -J r5 0.0 -J l5 0.0" />
+	
+	
+	<!-- Spawn AprilTag model 
+	    <node name="spawn_apriltag" pkg="gazebo_ros" type="spawn_model" args="-sdf -file $(find flov2_robot_description)/meshes/apriltag_model/model.sdf -model apriltag_model -x 1.0 -y 1.0 -z 0.5" />-->
+	
+        <!-- Spawn camera model -->
+        <!-- <node name="spawn_camera" pkg="gazebo_ros" type="spawn_model" args="-param camera_description -urdf -model camera -x 0.0 -y 0.0 -z 0" /> -->
+    
+	<!--Load and launch the joint trajectory controller-->
+	<rosparam file ="$(find flo_core)/config/joint_trajectory_controllers.yaml" command="load"/>
+	<node name= "controller_spawner" pkg= "controller_manager" type="spawner" respawn="false" output="screen" args="joint_state_controller right_arm_controller left_arm_controller"/>
+	
+	<!-- Launch subscriber node for AprilTag detection -->
+    <!-- <node name="subscriber_apriltag" pkg="movewihhead" type="subscriber_apriltag" output="screen" /> -->
+    
+	<!-- Robot State Publisher for TF of each joint: publishes all the current states of the joint, then RViz can visualize -->
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
+</launch>
