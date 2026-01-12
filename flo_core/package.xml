@@ -1,16 +1,11 @@
 <?xml version="1.0"?>
 <package format="2">
-
   <name>flo_core</name>
-  <version>0.3.0</version>
-  <description>
-    An automatically generated package with all the configuration and launch files 
-    for using flov2_robot_description with the MoveIt Motion Planning Framework.
-  </description>
+  <version>0.1.0</version>
+  <description>Core package for the Flo humanoid system, including configuration, launch files, and scripts for simulation and control.</description>
 
-  <maintainer email="ppd6666667@gmail.com">Hao</maintainer>
-  <author email="ppd6666667@gmail.com">Hao</author>
-  <license>BSD</license>
+  <maintainer email="your.email@example.com">Your Name</maintainer>
+  <license>MIT</license>
 
   <url type="website">http://moveit.ros.org/</url>
   <url type="bugtracker">https://github.com/moveit/moveit/issues</url>
@@ -23,6 +18,7 @@
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
+  <build_depend>flo_humanoid</build_depend>
   <!-- For moveit_commander usage at build time, typically: -->
   <build_depend>moveit_ros_planning_interface</build_depend>
 
@@ -35,6 +31,7 @@
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>flo_humanoid</exec_depend>
   <!-- For Python-based MoveIt usage (moveit_commander, etc.): -->
   <exec_depend>moveit_ros_planning_interface</exec_depend>
 
@@ -52,7 +49,16 @@
   <exec_depend>rviz</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>xacro</exec_depend>
+
+  <exec_depend>moveit_ros_warehouse</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>joy</exec_depend>
+  <exec_depend>moveit_ros_benchmarks</exec_depend>
+  <exec_depend>warehouse_ros_mongo</exec_depend>
+
   <!-- If you need flov2_robot_description at runtime: -->
   <exec_depend>flov2_robot_description</exec_depend>
+
 
 </package>
