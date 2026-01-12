@@ -9,27 +9,16 @@ class RobotMotionExecutor:
     Separates motion planning and execution from the main controller.
     """
     
-    def __init__(self, arm_R, arm_L, arm_D, rgripper_pub, lgripper_pub, end_effector_link_R, end_effector_link_L, end_effector_link_D):
+    def __init__(self, arm_R, arm_L, arm_D, end_effector_link_R, end_effector_link_L, end_effector_link_D):
         """
         Initialize the motion executor with MoveIt groups and publishers
         """
         self.arm_R = arm_R
         self.arm_L = arm_L
         self.arm_D = arm_D
-        self.rgripper_pub = rgripper_pub
-        self.lgripper_pub = lgripper_pub
         self.end_effector_link_R = end_effector_link_R
         self.end_effector_link_L = end_effector_link_L
         self.end_effector_link_D = end_effector_link_D
-        
-        # Gripper control values
-        self.gripper_cup_r = 3410
-        self.gripper_cup_l = 3710
-        self.gripper_off_l = 3700
-        self.gripper_brush_l = 3710
-        self.gripper_brush_r = 3410
-        self.gripper_on = 1300
-        self.gripper_off = 3410
         
     
     def execute_pose(self, pose):
@@ -93,15 +82,11 @@ class RobotMotionExecutor:
     
     def _execute_right_punch(self):
         """Pose 2: Right arm punching motion"""
-        self.rgripper_pub.publish(self.gripper_off)
-        rospy.sleep(1)
         for i in range(3):
             self.arm_R.set_named_target('R_punch')
             self.arm_R.go()
             self.arm_R.set_named_target('Rhome')
             self.arm_R.go()
-        self.rgripper_pub.publish(self.gripper_on)
-        rospy.sleep(1)
     
     def _execute_right_raise(self):
         """Pose 3: Right arm raising motion"""
@@ -135,15 +120,11 @@ class RobotMotionExecutor:
     
     def _execute_left_punch(self):
         """Pose 12: Left arm punching motion"""
-        self.lgripper_pub.publish(self.gripper_off_l)
-        rospy.sleep(1)
         for i in range(3):
             self.arm_L.set_named_target('L_punch')
             self.arm_L.go()
             self.arm_L.set_named_target('Lhome')
             self.arm_L.go()
-        self.lgripper_pub.publish(self.gripper_on)
-        rospy.sleep(1)
     
     def _execute_left_raise(self):
         """Pose 13: Left arm raising motion"""
@@ -203,10 +184,6 @@ class RobotMotionExecutor:
     
     def _execute_dual_punch(self):
         """Pose 24: Dual arm punch motion"""
-        self.rgripper_pub.publish(self.gripper_off)
-        self.lgripper_pub.publish(3780)
-        rospy.sleep(1.5)
-        
         for i in range(3):
             self.arm_D.set_named_target('d_punch1')
             self.arm_D.go()
@@ -215,10 +192,6 @@ class RobotMotionExecutor:
         
         self.arm_D.set_named_target('D_home')
         self.arm_D.go()
-        
-        self.lgripper_pub.publish(self.gripper_on)
-        rospy.sleep(0.1)
-        self.rgripper_pub.publish(self.gripper_on)
     
     def _execute_dual_go_to_home(self):
         """Pose 25: Dual arm go to home motion"""

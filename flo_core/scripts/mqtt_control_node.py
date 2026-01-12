@@ -8,7 +8,6 @@ import threading
 import moveit_commander
 import paho.mqtt.client as mqtt
 import rospy
-from std_msgs.msg import Int32
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SRC_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, "..", "src"))
@@ -42,10 +41,6 @@ class FloRobotController:
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node('flo_robot_controller')
         
-        # Initialize gripper publishers
-        self.rgripper_pub = rospy.Publisher('/rgripper', Int32, queue_size=10)
-        self.lgripper_pub = rospy.Publisher('/lgripper', Int32, queue_size=10)
-        
         # Initialize MoveIt groups
         self.arm_R = moveit_commander.MoveGroupCommander('R')
         self.arm_L = moveit_commander.MoveGroupCommander('L') 
@@ -68,7 +63,6 @@ class FloRobotController:
         # ==================== Initialize Motion Executor ====================
         self.motion_executor = RobotMotionExecutor(
             self.arm_R, self.arm_L, self.arm_D,
-            self.rgripper_pub, self.lgripper_pub,
             self.end_effector_link_R, self.end_effector_link_L, self.end_effector_link_D
         )
         self.led_controller = LedController()
