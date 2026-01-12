@@ -21,12 +21,15 @@ for flov2_robot_description robot</p>
   <build_depend>xacro</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>message_generation</build_depend>
+  <build_depend>robot_state_publisher</build_depend>
+  <build_depend>joint_state_publisher</build_depend>
+  <build_depend>joint_state_publisher_gui</build_depend>
+  <build_depend>rviz</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>controller_manager</build_depend>
+  <build_depend>gazebo_ros</build_depend>
   
   <depend>roslaunch</depend>
-  <depend>robot_state_publisher</depend>
-  <depend>rviz</depend>
-  <depend>joint_state_publisher</depend>
-  <depend>joint_state_publisher_gui</depend>
   <depend>gazebo</depend>
   
   <build_export_depend>roscpp</build_export_depend>
@@ -35,6 +38,10 @@ for flov2_robot_description robot</p>
   <build_export_depend>geometry_msgs</build_export_depend>
   <build_export_depend>urdf</build_export_depend>
   <build_export_depend>xacro</build_export_depend>
+  <build_export_depend>robot_state_publisher</build_export_depend>
+  <build_export_depend>joint_state_publisher</build_export_depend>
+  <build_export_depend>joint_state_publisher_gui</build_export_depend>
+  <build_export_depend>rviz</build_export_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
@@ -42,9 +49,14 @@ for flov2_robot_description robot</p>
   <exec_depend>urdf</exec_depend>
   <exec_depend>xacro</exec_depend>
   <exec_depend>message_runtime</exec_depend>
-  
-  
-  
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>tf</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher_gui</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rviz</exec_depend>
+
   <export>
     <architecture_independent />
   </export>

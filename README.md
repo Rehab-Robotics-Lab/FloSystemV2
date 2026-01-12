@@ -132,6 +132,11 @@ usbip version
   docker start -ai <your container name>
   ```
 
+**Tips:** 
+
+* to change to root user, run `sudo -i`
+* to copy files/folders from local repo (host) to docker container, run `docker cp <host_file_path> <container_name>:<container_path>` or `docker cp ./mylocalfolder mycontainer:/path/within/container/`
+
 ## Test run motors (inside the container)
 
 ```bash
