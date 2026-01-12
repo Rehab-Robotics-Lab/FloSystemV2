@@ -1,18 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import rospy, sys
-import moveit_commander
-import paho.mqtt.client as mqtt
-from std_msgs.msg import Int32, String
+import os
+import sys
 import threading
 
-# Import our motion executor
-from robot_motion_executor import RobotMotionExecutor
+import moveit_commander
+import paho.mqtt.client as mqtt
+import rospy
+from std_msgs.msg import Int32
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SRC_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, "..", "src"))
+if SRC_DIR not in sys.path:
+    sys.path.insert(0, SRC_DIR)
+
+from flo_core.led_controller import LedController
+from flo_core.motion_executor import RobotMotionExecutor
 
 class FloRobotController:
     """
-    Main robot controller - handles MQTT communication, AprilTag data, and delegates motion execution
+    Main robot controller - handles MQTT communication and delegates motion execution
     """
     
     def __init__(self):
@@ -25,8 +33,9 @@ class FloRobotController:
         
         # ==================== Control Variables ====================
         self.mode = "25"  # Current motion command mode
-        
-        # AprilTag position tracking
+        self.topic_movement = "ros/mqtt/movement"
+        self.topic_led = "ros/mqtt/led"
+        self.topic_feedback = "ros/mqtt/feedback"
         
         
         # ==================== ROS and MoveIt Initialization ====================
@@ -62,6 +71,7 @@ class FloRobotController:
             self.rgripper_pub, self.lgripper_pub,
             self.end_effector_link_R, self.end_effector_link_L, self.end_effector_link_D
         )
+        self.led_controller = LedController()
         
         
         # ==================== Start MQTT Client ====================
@@ -77,12 +87,12 @@ class FloRobotController:
                 
                 # Execute the motion
                 try:
-                    self.motion_executor.execute_pose(int(self.mode), reference_frame)
+                    self.motion_executor.execute_pose(int(self.mode))
                     rospy.loginfo(f"Motion {self.mode} completed successfully")
-                    self.client.publish("ros/mqtt/feedback", "A")  # Success feedback
+                    self.client.publish(self.topic_feedback, "A")  # Success feedback
                 except Exception as e:
                     rospy.logerr(f"Motion execution failed: {e}")
-                    self.client.publish("ros/mqtt/feedback", "E")  # Error feedback
+                    self.client.publish(self.topic_feedback, "E")  # Error feedback
                 
                 self.mode = "0"  # Reset to idle
             
@@ -114,8 +124,14 @@ class FloRobotController:
         def on_message(client, userdata, message):
             """Handle incoming MQTT messages"""
             command = message.payload.decode().strip()
-            rospy.loginfo(f"Received MQTT command: {command}")
-            self.mode = command
+            if message.topic == self.topic_movement:
+                rospy.loginfo(f"Received motion command: {command}")
+                self.mode = command
+            elif message.topic == self.topic_led:
+                rospy.loginfo(f"Received LED command: {command}")
+                self.led_controller.set_led_state(command)
+            else:
+                rospy.logwarn(f"Ignoring message from unknown topic: {message.topic}")
         
         def on_connect(client, userdata, flags, rc):
             """Handle MQTT connection"""
@@ -133,8 +149,8 @@ class FloRobotController:
         self.client.on_connect = on_connect
         self.client.on_disconnect = on_disconnect
         
-        # Subscribe to movement commands
-        self.client.subscribe("ros/mqtt/movement")
+        # Subscribe to movement and LED commands
+        self.client.subscribe([(self.topic_movement, 0), (self.topic_led, 0)])
         
         rospy.loginfo("MQTT client started. Waiting for movement commands...")
         self.client.loop_forever()
