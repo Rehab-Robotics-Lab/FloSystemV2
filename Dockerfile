@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     dos2unix
     # && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install -y build-essential sudo terminator iproute2 gedit lsb-release lsb-core wget nano
+RUN apt-get install -y build-essential sudo terminator iproute2 gedit lsb-release lsb-core wget nano iputils-ping
 
 # Enable universe and multiverse repositories
 RUN add-apt-repository universe

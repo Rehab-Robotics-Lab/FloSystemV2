@@ -27,7 +27,7 @@ class FloRobotController:
         
         # ==================== MQTT Client Initialization ====================
         self.client = mqtt.Client()
-        self.broker_ip = "localhost"
+        self.broker_ip = os.environ.get("MQTT_BROKER_HOST", "host.docker.internal")
         self.client.connect(self.broker_ip, 1883, 60)
         
         # ==================== Control Variables ====================
@@ -35,6 +35,7 @@ class FloRobotController:
         self.topic_movement = "ros/mqtt/movement"
         self.topic_led = "ros/mqtt/led"
         self.topic_feedback = "ros/mqtt/feedback"
+        self.topic_action_done = "ros/mqtt/action_done"
         
         
         # ==================== ROS and MoveIt Initialization ====================
@@ -84,9 +85,11 @@ class FloRobotController:
                     self.motion_executor.execute_pose(int(self.mode))
                     rospy.loginfo(f"Motion {self.mode} completed successfully")
                     self.client.publish(self.topic_feedback, "A")  # Success feedback
+                    self.client.publish(self.topic_action_done, f"done:{self.mode}")
                 except Exception as e:
                     rospy.logerr(f"Motion execution failed: {e}")
                     self.client.publish(self.topic_feedback, "E")  # Error feedback
+                    self.client.publish(self.topic_action_done, f"error:{self.mode}")
                 
                 self.mode = "0"  # Reset to idle
             
