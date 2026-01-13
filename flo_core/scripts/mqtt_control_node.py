@@ -26,9 +26,10 @@ class FloRobotController:
         """Initialize the robot controller system"""
         
         # ==================== MQTT Client Initialization ====================
-        self.client = mqtt.Client()
-        self.broker_ip = os.environ.get("MQTT_BROKER_HOST", "host.docker.internal")
-        self.client.connect(self.broker_ip, 1883, 60)
+        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+        self.broker_host = os.environ.get("MQTT_BROKER_HOST", "host.docker.internal")
+        self.broker_port = int(os.environ.get("MQTT_BROKER_PORT", "1883"))
+        self.client.connect(self.broker_host, self.broker_port, 60)
         
         # ==================== Control Variables ====================
         self.mode = "25"  # Current motion command mode
@@ -130,14 +131,14 @@ class FloRobotController:
             else:
                 rospy.logwarn(f"Ignoring message from unknown topic: {message.topic}")
         
-        def on_connect(client, userdata, flags, rc):
+        def on_connect(client, userdata, flags, reason_code, properties):
             """Handle MQTT connection"""
-            if rc == 0:
+            if reason_code == 0:
                 rospy.loginfo("Connected to MQTT broker successfully")
             else:
-                rospy.logerr(f"Failed to connect to MQTT broker: {rc}")
+                rospy.logerr(f"Failed to connect to MQTT broker: {reason_code}")
         
-        def on_disconnect(client, userdata, rc):
+        def on_disconnect(client, userdata, reason_code, properties):
             """Handle MQTT disconnection"""
             rospy.logwarn("Disconnected from MQTT broker")
         
