@@ -101,9 +101,16 @@ usbip version
 * In WSL, verify devices:
 
   ```
-  ls /dev/ttyUSB* /dev/video*
-  sudo chmod 666 /dev/ttyUSB0 
+  ls /dev/ttyUSB* /dev/ttyACM*
+  sudo chmod 666 /dev/ttyUSB0 /dev/ttyACM0
   ```
+
+  Expected binding results:
+
+```
+/dev/ttyACM0 is idVendor==16c0 and idProduct==0483 (Teensyduino / USB Serial device).
+/dev/ttyUSB0 is idVendor==0403 and idProduct==6014 (FTDI / USB Serial Converter).
+```
 
 ## Build and run Docker (WSL)
 
@@ -119,7 +126,7 @@ usbip version
   ```
   export DISPLAY=$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0
   export QT_X11_NO_MITSHM=1
-  docker run -it --name flo_v2_aim1 --privileged --device=/dev/ttyUSB0:/dev/ttyUSB0 --device=/dev/video0:/dev/video0 -e DISPLAY=host.docker.internal:0 -e QT_X11_NO_MITSHM=1 -e LIBGL_ALWAYS_INDIRECT=1 -p 1883:1883 -p 11311:11311 -p 8080:8080 flo_v2_aim1
+  docker run -it --name flo_v2_aim1 --privileged --device=/dev/ttyUSB0:/dev/ttyUSB0 --device=/dev/ttyACM0:/dev/ttyACM0 -e DISPLAY=host.docker.internal:0 -e QT_X11_NO_MITSHM=1 -e LIBGL_ALWAYS_INDIRECT=1 -p 1883:1883 -p 11311:11311 -p 8080:8080 flo_v2_image_aim1
   ```
 * To enter exist and running docker container, run:
 
@@ -132,7 +139,7 @@ usbip version
   docker start -ai <your container name>
   ```
 
-**Tips:** 
+**Tips:**
 
 * to change to root user, run `sudo -i`
 * to copy files/folders from local repo (host) to docker container, run `docker cp <host_file_path> <container_name>:<container_path>` or `docker cp ./mylocalfolder mycontainer:/path/within/container/`
@@ -150,3 +157,9 @@ If you see "Failed to open the port!":
 - Ensure `/dev/ttyUSB0` exists in host and is mapped with `--device`.
 - Grant permission: `sudo chmod 666 /dev/ttyUSB0` (host WSL once per session).
 - If the host device is `/dev/ttyUSB1`, map it as `--device=/dev/ttyUSB1:/dev/ttyUSB0`.
+
+## MQTT
+
+* To initiate MQTT broker which runs inside the Docker container: `docker exec -u 0 -it flo_v2_aim1 bash -lc "mosquitto -v -p 1883"`
+* Use scripts in `flo_core\scripts\test` to test MQTT communication between Windows and Docker container
+*

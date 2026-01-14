@@ -1,0 +1,38 @@
+import serial
+import time
+
+# Set up the serial connection (adjust the port to match your setup)
+serial_port = "/dev/ttyACM0"  # Replace with your actual serial port
+baud_rate = 9600
+
+try:
+    print(f"Connecting to {serial_port} at {baud_rate} baud...")
+    # Open the serial port
+    ser = serial.Serial(serial_port, baud_rate)
+    time.sleep(2)  # Wait for the serial connection to initialize
+
+    def send_command(command):
+        """Send a command to the serial device."""
+        ser.write(command.encode())
+        time.sleep(0.1)  # Small delay to ensure the command is processed
+
+    # Example usage
+    print("Testing different LED shapes...")
+    send_command('1')  # Send '1' to turn on the LED
+    time.sleep(2)      # Keep the LED on for 5 seconds
+    send_command('2')  # Send '1' to turn on the LED
+    time.sleep(2)      # Keep the LED on for 5 seconds
+    send_command('3')  # Send '1' to turn on the LED
+    time.sleep(2)      # Keep the LED on for 5 seconds
+    send_command('4')  # Send '1' to turn on the LED
+    time.sleep(2)      # Keep the LED on for 5 seconds
+    print("Turning off the LED...")
+    send_command('0')  # Send '0' to turn off the LED
+
+except serial.SerialException as e:
+    print(f"Error opening serial port {serial_port}: {e}")
+
+finally:
+    # Close the serial connection
+    if ser.is_open:
+        ser.close()
