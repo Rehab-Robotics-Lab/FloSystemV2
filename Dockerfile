@@ -49,7 +49,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-RUN pip3 install paho-mqtt
+RUN pip3 install paho-mqtt serial numpy 
 
 # Ensure /usr/bin/python exists
 RUN ln -s /usr/bin/python3 /usr/bin/python
