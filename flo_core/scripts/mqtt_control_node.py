@@ -68,6 +68,7 @@ class FloRobotController:
             self.end_effector_link_R, self.end_effector_link_L, self.end_effector_link_D
         )
         self.led_controller = LedController()
+        rospy.on_shutdown(self._shutdown)
         
         
         # ==================== Start MQTT Client ====================
@@ -127,7 +128,8 @@ class FloRobotController:
                 self.mode = command
             elif message.topic == self.topic_led:
                 rospy.loginfo(f"Received LED command: {command}")
-                self.led_controller.set_led_state(command)
+                if not self.led_controller.set_led_state(command):
+                    rospy.logwarn("LED controller unavailable; ignoring LED command.")
             else:
                 rospy.logwarn(f"Ignoring message from unknown topic: {message.topic}")
         
@@ -152,6 +154,10 @@ class FloRobotController:
         
         rospy.loginfo("MQTT client started. Waiting for movement commands...")
         self.client.loop_forever()
+
+    def _shutdown(self):
+        """Cleanup resources on shutdown."""
+        self.led_controller.close()
 
 def main():
     """Main entry point"""
