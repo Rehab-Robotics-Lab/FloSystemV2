@@ -30,13 +30,13 @@ class RobotMotionExecutor:
         rospy.loginfo(f"Executing pose: {pose}")
         
         # Return to home position first (except for dual arm poses)
-        if pose < 21:
-            if pose <= 10:  # Right arm poses
-                self.arm_R.set_named_target('Rhome')
-                self.arm_R.go()
-            else:  # Left arm poses
-                self.arm_L.set_named_target('Lhome')
-                self.arm_L.go()
+        # if pose < 25:
+        #     if pose < 20:  # Right arm poses
+        #         self.arm_L.set_named_target('Rhome')
+        #         self.arm_L.go()
+        #     else:  # Left arm poses
+        #         self.arm_R.set_named_target('Lhome')
+        #         self.arm_R.go()
         
         # Execute specific pose
         # if pose == 1:
@@ -93,7 +93,7 @@ class RobotMotionExecutor:
     # ==================== Right Arm Motions ====================
     
     def _execute_right_wave(self):
-        """Pose 1: Right arm waving motion"""
+        """Right arm waving motion"""
         for i in range(3):
             self.arm_R.set_named_target('R_wave_start')
             self.arm_R.go()
@@ -103,7 +103,7 @@ class RobotMotionExecutor:
         self.arm_R.go()
     
     def _execute_right_punch(self):
-        """Pose 2: Right arm punching motion"""
+        """Right arm punching motion"""
         for i in range(3):
             self.arm_R.set_named_target('R_punch')
             self.arm_R.go()
@@ -111,7 +111,7 @@ class RobotMotionExecutor:
             self.arm_R.go()
     
     def _execute_right_raise(self):
-        """Pose 3: Right arm raising motion"""
+        """Right arm raising motion"""
         for i in range(3):
             self.arm_R.set_named_target('R_raise')
             self.arm_R.go()
@@ -119,7 +119,7 @@ class RobotMotionExecutor:
             self.arm_R.go()
     
     def _execute_right_wave_bell(self):
-        """Pose 4: Right arm waving with bell interaction"""
+        """Right arm waving with bell interaction"""
         for i in range(3):
             self.arm_R.set_named_target('R_waveb')
             self.arm_R.go()
@@ -131,7 +131,7 @@ class RobotMotionExecutor:
     # ==================== Left Arm Motions ====================
     
     def _execute_left_wave(self):
-        """Pose 11: Left arm waving motion"""
+        """Left arm waving motion"""
         for i in range(3):
             self.arm_L.set_named_target('L_wave_start')
             self.arm_L.go()
@@ -141,7 +141,7 @@ class RobotMotionExecutor:
         self.arm_L.go()
     
     def _execute_left_punch(self):
-        """Pose 12: Left arm punching motion"""
+        """Left arm punching motion"""
         for i in range(3):
             self.arm_L.set_named_target('L_punch')
             self.arm_L.go()
@@ -149,7 +149,7 @@ class RobotMotionExecutor:
             self.arm_L.go()
     
     def _execute_left_raise(self):
-        """Pose 13: Left arm raising motion"""
+        """Left arm raising motion"""
         for i in range(3):
             self.arm_L.set_named_target('L_raise')
             self.arm_L.go()
@@ -157,7 +157,7 @@ class RobotMotionExecutor:
             self.arm_L.go()
     
     def _execute_left_wave_bell(self):
-        """Pose 14: Left arm waving with bell interaction"""
+        """Left arm waving with bell interaction"""
         for i in range(3):
             self.arm_L.set_named_target('L_waveb')
             self.arm_L.go()
@@ -169,7 +169,7 @@ class RobotMotionExecutor:
     # ==================== Dual Arm Motions ====================
     
     def _execute_dual_clap(self):
-        """Pose 21: Dual arm clapping motion"""
+        """Dual arm clapping motion"""
         self.arm_D.set_named_target('clap')
         self.arm_D.go()
         for i in range(3):
@@ -183,7 +183,7 @@ class RobotMotionExecutor:
         self.arm_D.go()
     
     def _execute_dual_up_down(self):
-        """Pose 22: Dual arm up-down motion"""
+        """Dual arm up-down motion"""
         for i in range(2):
             self.arm_D.set_named_target('D_up')
             self.arm_D.go()
@@ -195,7 +195,7 @@ class RobotMotionExecutor:
         self.arm_D.go()
     
     def _execute_dual_alternate(self):
-        """Pose 23: Dual arm alternate motion"""
+        """Dual arm alternate motion"""
         for i in range(3):
             self.arm_D.set_named_target('L_down_R_up')
             self.arm_D.go()
@@ -205,7 +205,7 @@ class RobotMotionExecutor:
         self.arm_D.go()
     
     def _execute_dual_punch(self):
-        """Pose 24: Dual arm punch motion"""
+        """Dual arm punch motion"""
         for i in range(3):
             self.arm_D.set_named_target('d_punch1')
             self.arm_D.go()
@@ -216,7 +216,7 @@ class RobotMotionExecutor:
         self.arm_D.go()
     
     def _execute_dual_go_to_home(self):
-        """Pose 25: Dual arm go to home motion"""
+        """Dual arm go to home motion"""
         self.arm_D.set_named_target('D_home')
         self.arm_D.go()
         

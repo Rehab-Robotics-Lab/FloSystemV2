@@ -276,13 +276,13 @@ int main(int argc, char ** argv)
 
   // Initialize all motors in a loop
   for (size_t i = 0; i < motor_configs.size(); ++i) {
-    const MotorConfig& cfg = motor_configs[i];//get the motor configuration，can't be modified
-    
-    // 1. Enable Torque
+    const MotorConfig& cfg = motor_configs[i]; // Fixed config for this motor
+
+    // 1. Disable torque before changing modes or profiles
     dxl_comm_result = packetHandler->write1ByteTxRx(
-      portHandler, cfg.id, ADDR_TORQUE_ENABLE, 1, &dxl_error);
+      portHandler, cfg.id, ADDR_TORQUE_ENABLE, 0, &dxl_error);
     if (dxl_comm_result != COMM_SUCCESS) {
-      ROS_ERROR("Failed to enable torque for Dynamixel ID: %d", cfg.id);
+      ROS_ERROR("Failed to disable torque for Dynamixel ID: %d", cfg.id);
       return -1;
     }
 
@@ -301,16 +301,14 @@ int main(int argc, char ** argv)
     dxl_comm_result = packetHandler->write4ByteTxRx(
       portHandler, cfg.id, ADDR_PROFILE_ACCELERATION, PROFILE_ACCEL, &dxl_error);
     if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
-      ROS_ERROR("Failed to set Profile Accel for Dynamixel ID %d", cfg.id);
-      return -1;
+      ROS_WARN("Failed to set Profile Accel for Dynamixel ID %d", cfg.id);
     }
  
     // 4. Set Profile Velocity
     dxl_comm_result = packetHandler->write4ByteTxRx(
       portHandler, cfg.id, ADDR_PROFILE_VELOCITY, PROFILE_VEL, &dxl_error);
     if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
-      ROS_ERROR("Failed to set Profile Vel for Dynamixel ID %d", cfg.id);
-      return -1;
+      ROS_WARN("Failed to set Profile Vel for Dynamixel ID %d", cfg.id);
     }
 
     // 5. Set P Gain
@@ -318,8 +316,7 @@ int main(int argc, char ** argv)
       dxl_comm_result = packetHandler->write2ByteTxRx(
         portHandler, cfg.id, ADDR_POSITION_P_GAIN, cfg.p_gain, &dxl_error);
       if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
-        ROS_ERROR("Failed to set P GAIN for Dynamixel ID %d", cfg.id);
-        return -1;
+        ROS_WARN("Failed to set P GAIN for Dynamixel ID %d", cfg.id);
       }
     }
 
@@ -328,22 +325,27 @@ int main(int argc, char ** argv)
       dxl_comm_result = packetHandler->write2ByteTxRx(
         portHandler, cfg.id, ADDR_POSITION_I_GAIN, cfg.i_gain, &dxl_error);
       if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
-        ROS_ERROR("Failed to set I GAIN for Dynamixel ID %d", cfg.id);
-        return -1;
+        ROS_WARN("Failed to set I GAIN for Dynamixel ID %d", cfg.id);
       }
     }
 
     // 7. Set D Gain
-    if (cfg.d_gain > 0) { 
+    if (cfg.d_gain > 0) {
       dxl_comm_result = packetHandler->write2ByteTxRx(
         portHandler, cfg.id, ADDR_POSITION_D_GAIN, cfg.d_gain, &dxl_error);
       if (dxl_comm_result != COMM_SUCCESS || dxl_error != 0) {
-        ROS_ERROR("Failed to set D GAIN for Dynamixel ID %d", cfg.id);
-        return -1;
+        ROS_WARN("Failed to set D GAIN for Dynamixel ID %d", cfg.id);
       }
     }
-  }
 
+    // 8. Enable Torque after configuration
+    dxl_comm_result = packetHandler->write1ByteTxRx(
+      portHandler, cfg.id, ADDR_TORQUE_ENABLE, 1, &dxl_error);
+    if (dxl_comm_result != COMM_SUCCESS) {
+      ROS_ERROR("Failed to enable torque for Dynamixel ID: %d", cfg.id);
+      return -1;
+    }
+  }
   ROS_INFO("All motors initialized successfully!");
 
   ros::init(argc, argv, "read_write_arms_node");

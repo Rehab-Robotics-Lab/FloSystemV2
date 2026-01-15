@@ -10,15 +10,12 @@ joint_id_map:
   l2: 112          # left_shoulder_abductionadduction
   l3: 122          # left_elbow_rotation
   l4: 121         # left_elbow_flexionextension
-  # lgripper: 131
   # -------------  RIGHT ARM -------------
   r1: 211          # right_shoulder_flexionextension
   r2: 212          # right_shoulder_abductionadduction
   r3: 222          # left_elbow_rotation
   r4: 221          # left_elbow_flexionextension
-  # rgripper: 231
+
 # Convenience lists (optional but handy)
 left_arm_ids:  [111, 112, 122, 121]
 right_arm_ids: [211, 212, 222, 221]
-# left_gripper_id: 131
-# right_gripper_id: 231
