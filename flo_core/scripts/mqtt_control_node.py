@@ -32,7 +32,7 @@ class FloRobotController:
         self.client.connect(self.broker_host, self.broker_port, 60)
         
         # ==================== Control Variables ====================
-        self.mode = "25"  # Current motion command mode
+        self.mode = "0"  # Current motion command mode
         self.topic_movement = "ros/mqtt/movement"
         self.topic_led = "ros/mqtt/led"
         self.topic_feedback = "ros/mqtt/feedback"

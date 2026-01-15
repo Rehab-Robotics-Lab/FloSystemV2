@@ -39,31 +39,53 @@ class RobotMotionExecutor:
                 self.arm_L.go()
         
         # Execute specific pose
-        if pose == 1:
-            self._execute_right_wave()
-        elif pose == 2:
-            self._execute_right_punch()
-        elif pose == 3:
-            self._execute_right_raise()
-        elif pose == 4:
-            self._execute_right_wave_bell()
-        elif pose == 11:
-            self._execute_left_wave()
-        elif pose == 12:
+        # if pose == 1:
+        #     self._execute_right_wave()
+        # elif pose == 2:
+        #     self._execute_right_punch()
+        # elif pose == 3:
+        #     self._execute_right_raise()
+        # elif pose == 4:
+        #     self._execute_right_wave_bell()
+        # elif pose == 11:
+        #     self._execute_left_wave()
+        # elif pose == 12:
+        #     self._execute_left_punch()
+        # elif pose == 13:
+        #     self._execute_left_raise()
+        # elif pose == 14:
+        #     self._execute_left_wave_bell()
+        # elif pose == 21:
+        #     self._execute_dual_clap()
+        # elif pose == 22:
+        #     self._execute_dual_up_down()
+        # elif pose == 23:
+        #     self._execute_dual_alternate()
+        # elif pose == 24:
+        #     self._execute_dual_punch()
+        # elif pose == 25:
+        #     self._execute_dual_go_to_home()
+        if pose == 10:
             self._execute_left_punch()
+        elif pose == 11:
+            self._execute_left_swing_forward()
+        elif pose == 12:
+            self._execute_left_swing_lateral()
         elif pose == 13:
             self._execute_left_raise()
         elif pose == 14:
-            self._execute_left_wave_bell()
+            self._execute_left_wave()
+        elif pose == 20:
+            self._execute_right_punch()
         elif pose == 21:
-            self._execute_dual_clap()
+            self._execute_right_swing_forward()
         elif pose == 22:
-            self._execute_dual_up_down()
+            self._execute_right_swing_lateral()
         elif pose == 23:
-            self._execute_dual_alternate()
+            self._execute_right_raise()
         elif pose == 24:
-            self._execute_dual_punch()
-        elif pose == 25:
+            self._execute_right_wave()
+        elif pose == 0:
             self._execute_dual_go_to_home()
         else:
             rospy.logwarn(f"Unknown pose: {pose}")
@@ -197,3 +219,34 @@ class RobotMotionExecutor:
         """Pose 25: Dual arm go to home motion"""
         self.arm_D.set_named_target('D_home')
         self.arm_D.go()
+    # ==================== Swing Motions ====================
+    def _execute_right_swing_lateral(self):
+        for _ in range(3):
+            self.arm_R.set_named_target(f"R_waveb")
+            self.arm_R.go()
+            rospy.sleep(2.0)
+            self.arm_R.set_named_target(f"R_d_bell")
+            self.arm_R.go()
+    
+    def _execute_left_swing_lateral(self):
+        for _ in range(3):
+            self.arm_L.set_named_target(f"L_waveb")
+            self.arm_L.go()
+            rospy.sleep(2.0)
+            self.arm_L.set_named_target(f"L_d_bell")
+            self.arm_L.go()
+    
+    def _execute_left_swing_forward(self):
+        for _ in range(3):
+            self.arm_L.set_named_target(f"L_swing_fwd")
+            self.arm_L.go()
+            self.arm_L.set_named_target(f"L_swing_bwd")
+            self.arm_L.go()
+    
+    def _execute_right_swing_forward(self):
+        # placeholder: forward/backward swing implementation
+        for _ in range(3):
+            self.arm_R.set_named_target(f"R_swing_fwd")
+            self.arm_R.go()
+            self.arm_R.set_named_target(f"R_swing_bwd")
+            self.arm_R.go()
