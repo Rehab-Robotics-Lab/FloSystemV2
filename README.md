@@ -162,3 +162,14 @@ If you see "Failed to open the port!":
 
 * To initiate MQTT broker which runs inside the Docker container: `docker exec -u 0 -it flo_v2_aim1 bash -lc "mosquitto -v -p 1883"`
 * Use scripts in `flo_core\scripts\test` to test MQTT communication between Windows and Docker container
+
+## Commands
+
+```
+roscore
+mosquitto
+roslaunch flo_core full_robot_arm_sim.launch
+roslaunch flo_humanoid dual_arm_hardware.launch
+rosrun flo_core mqtt_control_node.py
+mosquitto_pub -h localhost -t ros/mqtt/movement -m "0"
+```
