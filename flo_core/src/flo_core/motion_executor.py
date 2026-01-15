@@ -219,6 +219,7 @@ class RobotMotionExecutor:
         """Pose 25: Dual arm go to home motion"""
         self.arm_D.set_named_target('D_home')
         self.arm_D.go()
+        
     # ==================== Swing Motions ====================
     def _execute_right_swing_lateral(self):
         for _ in range(3):

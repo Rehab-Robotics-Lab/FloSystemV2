@@ -1,0 +1,30 @@
+#This is a movit contoller connecting follow_joint_trajectory controller with JointTrajectoryController
+controller_list:
+  - name: right_arm_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+    - r1
+    - r2
+    - r3
+    - r4
+ 
+  - name: left_arm_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    joints:
+    - l1
+    - l2
+    - l3
+    - l4
+
+  # - name: dual_arm_controller
+  #   action_ns: follow_joint_trajectory
+  #   type: FollowJointTrajectory
+  #   joints: [l1,l2,l3,l4,r1,r2,r3,r4]
+
+trajectory_execution:
+  allowed_execution_duration_scaling: 1.5
+  allowed_goal_duration_margin: 0.3
+  allowed_start_tolerance: 0.01

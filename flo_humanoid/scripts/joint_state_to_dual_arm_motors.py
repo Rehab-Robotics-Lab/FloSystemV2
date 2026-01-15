@@ -60,10 +60,10 @@ class JointStateToDxlBridge:
             self.joint_id_map['r1'], self.joint_id_map['r2'], 
             self.joint_id_map['r3'], self.joint_id_map['r4'],
             # self.joint_id_map['lgripper'], self.joint_id_map['rgripper'],
-
+            # Command type for each: all 'position'
             'position', 'position', 'position', 'position', 
             'position', 'position', 'position', 'position', 
-
+            # Values: convert angles to DXL ticks
             self.convert_to_dynamixel_position(l1_position), 
             self.convert_to_dynamixel_position(l2_position),
             self.convert_to_dynamixel_position(l3_position), 

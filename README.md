@@ -114,12 +114,12 @@ usbip version
 
 ## Build and run Docker (WSL)
 
-* Clone this repo to `C:\Users\<username>\git
+* Clone this repo to `C:\Users\<username>\git`
 * Build image at project root (with top-level Dockerfile) - **Replace the name of image with yours**
 
   ```
   cd /mnt/c/Users/<path_to_repo>
-  docker build -t flo_v2_aim1 . 
+  docker build -t flo_v2_image_aim1 . 
   ```
 * Run container with devices and X11 (start VcXsrv on Windows first):
 
@@ -162,4 +162,3 @@ If you see "Failed to open the port!":
 
 * To initiate MQTT broker which runs inside the Docker container: `docker exec -u 0 -it flo_v2_aim1 bash -lc "mosquitto -v -p 1883"`
 * Use scripts in `flo_core\scripts\test` to test MQTT communication between Windows and Docker container
-*
