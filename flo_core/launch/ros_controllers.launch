@@ -2,10 +2,11 @@
 <launch>
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
-  <rosparam file="$(find flo_core)/config/ros_controllers.yaml" command="load"/>
+  <rosparam file="$(find flo_core)/config/joint_trajectory_controllers.yaml" command="load"/>
 
   <!-- Load the controllers -->
-  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" args=""/>
+    <node pkg="controller_manager" type="spawner" name="spawn_arm_ctrls"
+        args="right_arm_controller left_arm_controller 
+              --controller-manager /controller_manager"/>
 
 </launch>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- ──────────────────────────────────────────────────────────────────
+       Parameter bundle for the Simon-Says executive
+       Loads   flo_core/config/game_params.yaml   into  /game_runner/*
+       ────────────────────────────────────────────────────────────────── -->
+       <!-- Need testing on simulation -->
+  <rosparam command="load"
+            file="$(find flo_core)/config/simonsays_game_params.yaml"
+            ns="game_runner"/>
+
+  <!-- Dynamixel moveit_controller server -->
+  <node pkg="flo_core" type="moveit_controller.py" name="moveit_controller"/>
+
+  <!-- Vision pose-score publisher (replace with real node when ready) -->
+      <!-- example: subscribe to a USB-cam topic -->
+  <!-- <node pkg="flo_vision" type="arm_hand_tracker_node.py"
+        name="arm_hand_tracker" output="screen"> 
+        <param name="image" value="/carmera/color/image_raw"/>
+    <param name="preview" value="false"/>
+  </node> -->
+
+  <!-- Dual-arm Simon-Says executive -->
+  <node pkg="flo_core" type="game_runner.py" name="game_runner" output="screen"/>
+
+  <!-- Optional: smach viewer for debugging -->
+  <!-- <node pkg="smach_viewer" type="smach_viewer.py" name="smach_viewer" /> -->
+
+  <!-- ──────────────────────────────────────────────────────────────────
+       Simon-Says GUI
+       ────────────────────────────────────────────────────────────────── -->
+  <!-- This GUI is used to display the Simon-Says game state and actions -->
+  <node pkg="flo_core" type="simon_says_gui.py"
+        name="simon_gui" output="screen">
+
+    <rosparam command="load"
+              file="$(find flo_core)/config/simonsays_game_params.yaml"
+              ns="~"/>
+  </node>
+
+
+</launch>

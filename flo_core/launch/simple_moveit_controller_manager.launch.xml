@@ -4,5 +4,5 @@
 
   <!-- Load controller list to the parameter server -->
 
-  <rosparam file="$(find flo_core)/config/new_ros_controllers.yaml" />
+  <rosparam file="$(find flo_core)/config/moveit_controllers.yaml" />
 </launch>
