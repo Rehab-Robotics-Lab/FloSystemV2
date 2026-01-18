@@ -247,6 +247,8 @@ class RobotMotionExecutor:
             self.arm_L.go()
             self.arm_L.set_named_target(f"L_swing_bwd")
             self.arm_L.go()
+        self.arm_L.set_named_target('Lhome')
+        self.arm_L.go()
     
     def _execute_right_swing_forward(self):
         # placeholder: forward/backward swing implementation
@@ -255,6 +257,8 @@ class RobotMotionExecutor:
             self.arm_R.go()
             self.arm_R.set_named_target(f"R_swing_bwd")
             self.arm_R.go()
+        self.arm_L.set_named_target('Rhome')
+        self.arm_L.go()
 
 
     def _execute_left_reach_side(self):

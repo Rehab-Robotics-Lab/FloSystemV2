@@ -38,7 +38,7 @@ class JointStateToDxlBridge:
             l1_position = math.degrees(js['l1']) + self.offsets['l1']
             l2_position = math.degrees(js['l2']) + self.offsets['l2']
             l3_position = math.degrees(js['l3']) + self.offsets['l3']
-            l4_position = math.degrees(js['l4']) + self.offsets['l4'] # 180 - l4_position ?
+            l4_position = - math.degrees(js['l4']) + self.offsets['l4'] # 180 - l4_position ?
 
             r1_position = math.degrees(js['r1']) + self.offsets['r1']
             r2_position = math.degrees(js['r2']) + self.offsets['r2']

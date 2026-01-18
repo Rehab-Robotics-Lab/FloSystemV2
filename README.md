@@ -168,8 +168,11 @@ If you see "Failed to open the port!":
 ```
 roscore
 mosquitto
-roslaunch flo_core full_robot_arm_sim.launch
+roslaunch flo_core full_robot_arm_sim.launch --
 roslaunch flo_humanoid dual_arm_hardware.launch
 rosrun flo_core mqtt_control_node.py
 mosquitto_pub -h localhost -t ros/mqtt/movement -m "0"
+
+if meet with error "Name or service not know" 
+instead run MQTT_BROKER_HOST=localhost rosrun flo_core mqtt_control_node.py 
 ```
