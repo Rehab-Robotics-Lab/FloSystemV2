@@ -75,6 +75,8 @@ class RobotMotionExecutor:
             self._execute_left_raise()
         elif pose == 14:
             self._execute_left_wave()
+        elif pose == 15:
+            self._execute_left_reach_side()
         elif pose == 20:
             self._execute_right_punch()
         elif pose == 21:
@@ -85,6 +87,8 @@ class RobotMotionExecutor:
             self._execute_right_raise()
         elif pose == 24:
             self._execute_right_wave()
+        elif pose == 25:
+            self._execute_right_reach_side()
         elif pose == 0:
             self._execute_dual_go_to_home()
         else:
@@ -251,3 +255,18 @@ class RobotMotionExecutor:
             self.arm_R.go()
             self.arm_R.set_named_target(f"R_swing_bwd")
             self.arm_R.go()
+
+
+    def _execute_left_reach_side(self):
+        for _ in range(3):
+            self.arm_L.set_named_target('L_reach_side')
+            self.arm_L.go()
+            self.arm_L.set_named_target('Lhome')
+            self.arm_L.go()
+
+    def _execute_right_reach_side(self):
+        for _ in range(3):
+            self.arm_L.set_named_target('R_reach_side')
+            self.arm_L.go()
+            self.arm_L.set_named_target('Rhome')
+            self.arm_L.go()
