@@ -1,6 +1,7 @@
 <launch>
   <!-- User arguments -->
   <arg name="baudrate" default="1000000"/>
+  <arg name="publish_joint_states" default="true"/>
 
   <!-- Load IDs and mechanical offsets to parameter server -->
   <rosparam file="$(find flo_humanoid)/config/dynamixel_ids.yaml" command="load"/>
@@ -29,8 +30,8 @@
   <!-- publishes aggregated /joint_states so MoveIt sees hardware   -->
   <node pkg="joint_state_publisher"
         type="joint_state_publisher"
-        name="joint_state_publisher">
+        name="joint_state_publisher"
+        if="$(arg publish_joint_states)">
     <param name="use_gui" value="false"/>
   </node>
 </launch>
-

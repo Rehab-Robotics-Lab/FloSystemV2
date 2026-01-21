@@ -165,14 +165,39 @@ If you see "Failed to open the port!":
 
 ## Commands
 
-```
-roscore
-mosquitto
-roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=true use_rviz:=true
-roslaunch flo_humanoid dual_arm_hardware.launch
-rosrun flo_core mqtt_control_node.py
-mosquitto_pub -h localhost -t ros/mqtt/movement -m "0"
+- Start ROS master:
 
-if meet with error "Name or service not know" 
-instead run MQTT_BROKER_HOST=localhost rosrun flo_core mqtt_control_node.py 
+  ```
+  roscore
+  ```
+- Start the MQTT broker inside the container (keep this running):
+
+  ```
+  mosquitto -v -p 1883
+  ```
+- Launch the Gazebo sim + MoveIt + RViz:
+
+  ```
+  roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=false show_rviz_gui:=false
+  ```
+- Launch the hardware bridge, but disable joint_state_publisher when Gazebo is running:
+
+  ```
+  roslaunch flo_humanoid dual_arm_hardware.launch publish_joint_states:=false
+  ```
+- Start the MQTT control node (connects to the broker):
+
+  ```
+  rosrun flo_core mqtt_control_node.py
+  ```
+- Send a test movement command:
+
+  ```
+  mosquitto_pub -h localhost -t ros/mqtt/movement -m "0"
+  ```
+
+If you meet error "Name or service not know", run:
+
+```
+MQTT_BROKER_HOST=localhost rosrun flo_core mqtt_control_node.py
 ```
