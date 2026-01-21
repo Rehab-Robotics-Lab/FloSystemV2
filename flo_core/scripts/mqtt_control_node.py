@@ -108,14 +108,14 @@ class FloRobotController:
         
         for arm in arms:
             arm.allow_replanning(True)
-            arm.set_goal_joint_tolerance(0.02)
-            arm.set_goal_position_tolerance(0.005)
-            arm.set_goal_orientation_tolerance(1)
+            arm.set_goal_joint_tolerance(0.1)
+            arm.set_goal_position_tolerance(0.1)
+            arm.set_goal_orientation_tolerance(0.1)
             arm.set_max_acceleration_scaling_factor(0.6)
         
         # Set specific velocity scaling
-        self.arm_R.set_max_velocity_scaling_factor(0.5)
-        self.arm_L.set_max_velocity_scaling_factor(0.5)
+        self.arm_R.set_max_velocity_scaling_factor(1.0)
+        self.arm_L.set_max_velocity_scaling_factor(1.0)
         self.arm_D.set_max_velocity_scaling_factor(0.8)
     
     def start_mqtt_client(self):

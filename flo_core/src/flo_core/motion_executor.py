@@ -22,7 +22,7 @@ class RobotMotionExecutor:
         self.end_effector_link_D = end_effector_link_D
         self._last_joint_state_stamp = None
         
-    def _sync_start_state(self, group, timeout=2.0, retries=3):
+    def _sync_start_state(self, group, timeout=0.2, retries=2):
         """
         Ensure the planning start state matches the latest joint state.
         """

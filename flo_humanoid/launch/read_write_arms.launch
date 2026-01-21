@@ -1,6 +1,6 @@
 <launch>
   <!-- User arguments -->
-  <arg name="baudrate" default="1000000"/>
+  <arg name="baudrate" default="3000000"/>
   <arg name="publish_joint_states" default="true"/>
 
   <!-- Load IDs and mechanical offsets to parameter server -->

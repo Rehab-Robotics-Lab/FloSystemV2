@@ -25,6 +25,6 @@ controller_list:
   #   joints: [l1,l2,l3,l4,r1,r2,r3,r4]
 
 trajectory_execution:
-  allowed_execution_duration_scaling: 1.5
-  allowed_goal_duration_margin: 0.3
-  allowed_start_tolerance: 0.3
+  allowed_execution_duration_scaling: 1.05
+  allowed_goal_duration_margin: 0.05
+  allowed_start_tolerance: 0.5
