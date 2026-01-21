@@ -5,11 +5,25 @@
 right_arm_controller:
   type: "position_controllers/JointTrajectoryController"
   joints: [r1, r2, r3, r4]
-  
+  constraints:
+    goal_time: 0.5
+    stopped_velocity_tolerance: 0.02
+    l1: {goal: 0.001}
+    l2: {goal: 0.001}
+    l3: {goal: 0.001}
+    l4: {goal: 0.001}
+
 #Controller to control end effector joints
 left_arm_controller:
   type: "position_controllers/JointTrajectoryController"
   joints: [l1, l2, l3, l4]
+  constraints:
+    goal_time: 0.5
+    stopped_velocity_tolerance: 0.02
+    l1: {goal: 0.001}
+    l2: {goal: 0.001}
+    l3: {goal: 0.001}
+    l4: {goal: 0.001}
   
 #Controller to continuously publish joint states/positions
 joint_state_controller:

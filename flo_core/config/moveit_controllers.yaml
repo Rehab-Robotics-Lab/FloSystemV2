@@ -27,4 +27,4 @@ controller_list:
 trajectory_execution:
   allowed_execution_duration_scaling: 1.5
   allowed_goal_duration_margin: 0.3
-  allowed_start_tolerance: 0.01
+  allowed_start_tolerance: 0.3

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import rospy
+from sensor_msgs.msg import JointState
 
 class RobotMotionExecutor:
     """
@@ -19,7 +20,25 @@ class RobotMotionExecutor:
         self.end_effector_link_R = end_effector_link_R
         self.end_effector_link_L = end_effector_link_L
         self.end_effector_link_D = end_effector_link_D
+        self._last_joint_state_stamp = None
         
+    def _sync_start_state(self, group, timeout=2.0, retries=3):
+        """
+        Ensure the planning start state matches the latest joint state.
+        """
+        per_attempt_timeout = max(0.05, timeout / max(1, retries))
+        for _ in range(max(1, retries)):
+            try:
+                msg = rospy.wait_for_message('/joint_states', JointState, timeout=per_attempt_timeout)
+                if msg.header.stamp and (self._last_joint_state_stamp is None or msg.header.stamp > self._last_joint_state_stamp):
+                    self._last_joint_state_stamp = msg.header.stamp
+                    break
+                rospy.logwarn("Received stale /joint_states, waiting for a newer update.")
+            except rospy.ROSException:
+                rospy.logwarn("No fresh /joint_states received before planning.")
+                break
+        group.set_start_state_to_current_state()
+
     
     def execute_pose(self, pose):
         """
@@ -108,36 +127,46 @@ class RobotMotionExecutor:
         """Right arm waving motion"""
         for i in range(3):
             self.arm_R.set_named_target('R_wave_start')
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
             self.arm_R.set_named_target('R_wave_end')
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
         self.arm_R.set_named_target('Rhome')
+        self._sync_start_state(self.arm_R)
         self.arm_R.go()
     
     def _execute_right_punch(self):
         """Right arm punching motion"""
         for i in range(3):
             self.arm_R.set_named_target('R_punch')
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
             self.arm_R.set_named_target('Rhome')
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
     
     def _execute_right_raise(self):
         """Right arm raising motion"""
         for i in range(3):
             self.arm_R.set_named_target('R_raise')
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
             self.arm_R.set_named_target('Rhome')
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
     
     def _execute_right_wave_bell(self):
         """Right arm waving with bell interaction"""
         for i in range(3):
             self.arm_R.set_named_target('R_waveb')
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
             self.arm_R.set_named_target('R_d_bell')
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
         self.arm_R.set_named_target('Rhome')
+        self._sync_start_state(self.arm_R)
         self.arm_R.go()
     
     # ==================== Left Arm Motions ====================
@@ -146,36 +175,46 @@ class RobotMotionExecutor:
         """Left arm waving motion"""
         for i in range(3):
             self.arm_L.set_named_target('L_wave_start')
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
             self.arm_L.set_named_target('L_wave_end')
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
         self.arm_L.set_named_target('Lhome')
+        self._sync_start_state(self.arm_L)
         self.arm_L.go()
     
     def _execute_left_punch(self):
         """Left arm punching motion"""
         for i in range(3):
             self.arm_L.set_named_target('L_punch')
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
             self.arm_L.set_named_target('Lhome')
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
     
     def _execute_left_raise(self):
         """Left arm raising motion"""
         for i in range(3):
             self.arm_L.set_named_target('L_raise')
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
             self.arm_L.set_named_target('Lhome')
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
     
     def _execute_left_wave_bell(self):
         """Left arm waving with bell interaction"""
         for i in range(3):
             self.arm_L.set_named_target('L_waveb')
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
             self.arm_L.set_named_target('L_d_bell')
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
         self.arm_L.set_named_target('Lhome')
+        self._sync_start_state(self.arm_L)
         self.arm_L.go()
     
     # ==================== Dual Arm Motions ====================
@@ -183,108 +222,140 @@ class RobotMotionExecutor:
     def _execute_dual_clap(self):
         """Dual arm clapping motion"""
         self.arm_D.set_named_target('clap')
+        self._sync_start_state(self.arm_D)
         self.arm_D.go()
         for i in range(3):
             self.arm_D.set_named_target('clap_close')
+            self._sync_start_state(self.arm_D)
             self.arm_D.go()
             self.arm_D.set_named_target('clap_open')
+            self._sync_start_state(self.arm_D)
             self.arm_D.go()
         self.arm_D.set_named_target('clap')
+        self._sync_start_state(self.arm_D)
         self.arm_D.go()
         self.arm_D.set_named_target('D_home')
+        self._sync_start_state(self.arm_D)
         self.arm_D.go()
     
     def _execute_dual_up_down(self):
         """Dual arm up-down motion"""
-        for i in range(2):
+        for i in range(3):
             self.arm_D.set_named_target('D_up')
+            self._sync_start_state(self.arm_D)
             self.arm_D.go()
             self.arm_D.set_named_target('D_down')
+            self._sync_start_state(self.arm_D)
             self.arm_D.go()
         self.arm_D.set_named_target('D_up')
+        self._sync_start_state(self.arm_D)
         self.arm_D.go()
         self.arm_D.set_named_target('D_home')
+        self._sync_start_state(self.arm_D)
         self.arm_D.go()
     
     def _execute_dual_alternate(self):
         """Dual arm alternate motion"""
         for i in range(3):
             self.arm_D.set_named_target('L_down_R_up')
+            self._sync_start_state(self.arm_D)
             self.arm_D.go()
             self.arm_D.set_named_target('R_down_L_up')
+            self._sync_start_state(self.arm_D)
             self.arm_D.go()
         self.arm_D.set_named_target('D_home')
+        self._sync_start_state(self.arm_D)
         self.arm_D.go()
     
     def _execute_dual_punch(self):
         """Dual arm punch motion"""
         for i in range(3):
             self.arm_D.set_named_target('d_punch1')
+            self._sync_start_state(self.arm_D)
             self.arm_D.go()
             self.arm_D.set_named_target('d_punch2')
+            self._sync_start_state(self.arm_D)
             self.arm_D.go()
         
         self.arm_D.set_named_target('D_home')
+        self._sync_start_state(self.arm_D)
         self.arm_D.go()
     
     def _execute_dual_go_to_home(self):
         """Dual arm go to home motion"""
         self.arm_D.set_named_target('D_home')
+        self._sync_start_state(self.arm_D)
         self.arm_D.go()
         
     # ==================== Swing Motions ====================
     def _execute_right_swing_lateral(self):
         for _ in range(3):
             self.arm_R.set_named_target(f"R_waveb")
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
             # rospy.sleep(2.0)
             self.arm_R.set_named_target(f"R_d_bell")
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
         self.arm_R.set_named_target('Rhome')
+        self._sync_start_state(self.arm_R)
         self.arm_R.go()
     
     def _execute_left_swing_lateral(self):
         for _ in range(3):
             self.arm_L.set_named_target(f"L_waveb")
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
             # rospy.sleep(2.0)
             self.arm_L.set_named_target(f"L_d_bell")
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
         self.arm_L.set_named_target('Lhome')
+        self._sync_start_state(self.arm_L)
         self.arm_L.go()
     
     def _execute_left_swing_forward(self):
         for _ in range(3):
             self.arm_L.set_named_target(f"L_swing_fwd")
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
             self.arm_L.set_named_target(f"L_swing_bwd")
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
         self.arm_L.set_named_target('Lhome')
+        self._sync_start_state(self.arm_L)
         self.arm_L.go()
     
     def _execute_right_swing_forward(self):
         # placeholder: forward/backward swing implementation
         for _ in range(3):
             self.arm_R.set_named_target(f"R_swing_fwd")
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
             self.arm_R.set_named_target(f"R_swing_bwd")
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
         self.arm_R.set_named_target('Rhome')
+        self._sync_start_state(self.arm_R)
         self.arm_R.go()
 
 
     def _execute_left_reach_side(self):
         for _ in range(3):
             self.arm_L.set_named_target('L_reach_side')
+            self._sync_start_state(self.arm_L)
             self.arm_L.go()
             rospy.sleep(2.0)
         self.arm_L.set_named_target('Lhome')
+        self._sync_start_state(self.arm_L)
         self.arm_L.go()
 
     def _execute_right_reach_side(self):
         for _ in range(3):
             self.arm_R.set_named_target('R_reach_side')
+            self._sync_start_state(self.arm_R)
             self.arm_R.go()
             rospy.sleep(2.0)
         self.arm_R.set_named_target('Rhome')
+        self._sync_start_state(self.arm_R)
         self.arm_R.go()
