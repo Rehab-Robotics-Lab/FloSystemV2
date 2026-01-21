@@ -229,17 +229,21 @@ class RobotMotionExecutor:
         for _ in range(3):
             self.arm_R.set_named_target(f"R_waveb")
             self.arm_R.go()
-            rospy.sleep(2.0)
+            # rospy.sleep(2.0)
             self.arm_R.set_named_target(f"R_d_bell")
             self.arm_R.go()
+        self.arm_R.set_named_target('Rhome')
+        self.arm_R.go()
     
     def _execute_left_swing_lateral(self):
         for _ in range(3):
             self.arm_L.set_named_target(f"L_waveb")
             self.arm_L.go()
-            rospy.sleep(2.0)
+            # rospy.sleep(2.0)
             self.arm_L.set_named_target(f"L_d_bell")
             self.arm_L.go()
+        self.arm_L.set_named_target('Lhome')
+        self.arm_L.go()
     
     def _execute_left_swing_forward(self):
         for _ in range(3):
@@ -257,8 +261,8 @@ class RobotMotionExecutor:
             self.arm_R.go()
             self.arm_R.set_named_target(f"R_swing_bwd")
             self.arm_R.go()
-        self.arm_L.set_named_target('Rhome')
-        self.arm_L.go()
+        self.arm_R.set_named_target('Rhome')
+        self.arm_R.go()
 
 
     def _execute_left_reach_side(self):
@@ -270,7 +274,7 @@ class RobotMotionExecutor:
 
     def _execute_right_reach_side(self):
         for _ in range(3):
-            self.arm_L.set_named_target('R_reach_side')
-            self.arm_L.go()
-            self.arm_L.set_named_target('Rhome')
-            self.arm_L.go()
+            self.arm_R.set_named_target('R_reach_side')
+            self.arm_R.go()
+            self.arm_R.set_named_target('Rhome')
+            self.arm_R.go()

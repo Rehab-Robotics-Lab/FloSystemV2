@@ -59,7 +59,7 @@
         <joint name="l1" value="0"/>
         <joint name="l2" value="-1.5"/>
         <joint name="l3" value="0"/>
-        <joint name="l4" value="-1.592"/>
+        <joint name="l4" value="1.592"/>
     </group_state>
 
     <group_state name="L_wave_start" group="L">
@@ -96,7 +96,7 @@
         <joint name="l1" value="-3.1"/>
         <joint name="l2" value="-0.4169"/>
         <joint name="l3" value="-0.033"/>
-        <joint name="l4" value="-1.6131"/>
+        <joint name="l4" value="1.6131"/>
     </group_state>
     <group_state name="R_raise" group="R">
         <joint name="r1" value="3.074"/>
@@ -115,13 +115,13 @@
         <joint name="l1" value="-0.8"/>
         <joint name="l2" value="0"/>
         <joint name="l3" value="-0"/>
-        <joint name="l4" value="-1.6131"/>
+        <joint name="l4" value="1.6131"/>
     </group_state>
     <group_state name="L_swing_bwd" group="L">
         <joint name="l1" value="0.8"/>
         <joint name="l2" value="0"/>
         <joint name="l3" value="0"/>
-        <joint name="l4" value="-1.6131"/>
+        <joint name="l4" value="1.6131"/>
     </group_state>
 
     <group_state name="R_swing_fwd" group="R">
@@ -212,7 +212,7 @@
         <joint name="l1" value="-1.4973"/>
         <joint name="l2" value="-1.3274"/>
         <joint name="l3" value="1.3832"/>
-        <joint name="l4" value="0.1569"/>
+        <joint name="l4" value="-0.1569"/>
     </group_state>
     <group_state name="R_ready_punch" group="R">
         <joint name="r1" value="1.4973"/>
