@@ -91,6 +91,14 @@ class RobotMotionExecutor:
             self._execute_right_reach_side()
         elif pose == 0:
             self._execute_dual_go_to_home()
+        elif pose == 30:
+            self._execute_dual_clap()
+        elif pose == 31:
+            self._execute_dual_up_down()
+        elif pose == 32:
+            self._execute_dual_alternate()
+        elif pose == 33:
+            self._execute_dual_punch() 
         else:
             rospy.logwarn(f"Unknown pose: {pose}")
     
@@ -269,12 +277,14 @@ class RobotMotionExecutor:
         for _ in range(3):
             self.arm_L.set_named_target('L_reach_side')
             self.arm_L.go()
-            self.arm_L.set_named_target('Lhome')
-            self.arm_L.go()
+            rospy.sleep(2.0)
+        self.arm_L.set_named_target('Lhome')
+        self.arm_L.go()
 
     def _execute_right_reach_side(self):
         for _ in range(3):
             self.arm_R.set_named_target('R_reach_side')
             self.arm_R.go()
-            self.arm_R.set_named_target('Rhome')
-            self.arm_R.go()
+            rospy.sleep(2.0)
+        self.arm_R.set_named_target('Rhome')
+        self.arm_R.go()
