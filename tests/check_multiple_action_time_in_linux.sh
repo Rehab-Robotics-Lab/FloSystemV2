@@ -80,7 +80,7 @@ tmux send-keys -t "${SESSION_NAME}:monitor.0" "mosquitto_sub -h localhost -t ros
 tmux split-window -t "${SESSION_NAME}:monitor" -h
 tmux send-keys -t "${SESSION_NAME}:monitor.1" "mosquitto_sub -h localhost -t ros/mqtt/queue_state" C-m
 tmux split-window -t "${SESSION_NAME}:monitor" -h
-tmux send-keys -t "${SESSION_NAME}:monitor.2" 'ACTIONS=(10 11 12 13 14 20 21 22 23 24); REPEAT=5; DELAY=1; for a in ${ACTIONS[@]}; do for ((i=1;i<=REPEAT;i++)); do echo "Sending pose $a (rep $i)"; mosquitto_pub -h localhost -t ros/mqtt/movement -m "$a"; sleep $DELAY; done; done' C-m
+tmux send-keys -t "${SESSION_NAME}:monitor.2" 'ACTIONS=(10 11 12 13 14 20 21 22 23 24); REPEAT=2; DELAY=1; for a in ${ACTIONS[@]}; do for ((i=1;i<=REPEAT;i++)); do echo "Sending pose $a (rep $i)"; mosquitto_pub -h localhost -t ros/mqtt/movement -m "$a"; sleep $DELAY; done; done' C-m
 tmux select-layout -t "${SESSION_NAME}:monitor" even-horizontal
 
 # # Window 6: Interactive shell
