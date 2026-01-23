@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+#mqtt_control_node.py
+"""
+MQTT Control Node for Flo Robot
+This script initializes an MQTT client to receive motion commands and LED control messages,
+and executes the corresponding robot motions using MoveIt.
+"""
 import os
 import sys
 import threading
@@ -33,7 +38,9 @@ class FloRobotController:
         self.client = MQTT_BROKER_CLIENT
         self.broker_host = MQTT_BROKER_HOST
         self.broker_port = MQTT_BROKER_PORT
+        print("Connecting to MQTT broker...")
         self.client.connect(self.broker_host, self.broker_port, 60)
+        print("MQTT connected.")
         
         # ==================== Control Variables ====================
         self._queue_lock = threading.Lock()
@@ -56,9 +63,9 @@ class FloRobotController:
         self._wait_for_move_group_server()
         
         # Initialize MoveIt groups
-        self.arm_R = moveit_commander.MoveGroupCommander('R')
-        self.arm_L = moveit_commander.MoveGroupCommander('L') 
-        self.arm_D = moveit_commander.MoveGroupCommander('dual')
+        self.arm_R = self._create_move_group_commander('R')
+        self.arm_L = self._create_move_group_commander('L')
+        self.arm_D = self._create_move_group_commander('dual')
         
         # Set reference frame
         reference_frame = 'world'
@@ -84,7 +91,7 @@ class FloRobotController:
         
         
         # ==================== Start MQTT Client ====================
-        mqtt_thread = threading.Thread(target=self.start_mqtt_client)
+        mqtt_thread = threading.Thread(target=self.start_mqtt_client, daemon=True)
         mqtt_thread.start()
         
         # ==================== Main Control Loop ====================
@@ -148,8 +155,9 @@ class FloRobotController:
         """Wait for move_group action server to come up to avoid init-time failures."""
         timeout_s = rospy.get_param("~move_group_wait_seconds", 30.0)
         retries = int(rospy.get_param("~move_group_wait_retries", 3))
+        action_name = rospy.get_param("~move_group_action", "/move_group")
         for attempt in range(1, retries + 1):
-            client = actionlib.SimpleActionClient("move_group", moveit_msgs.msg.MoveGroupAction)
+            client = actionlib.SimpleActionClient(action_name, moveit_msgs.msg.MoveGroupAction)
             rospy.loginfo(
                 "Waiting for move_group action server (attempt %d/%d, timeout %.1fs)...",
                 attempt,
@@ -160,6 +168,26 @@ class FloRobotController:
                 return
             rospy.logwarn("move_group action server not available yet.")
         raise rospy.ROSException("move_group action server not available after retries")
+
+    def _create_move_group_commander(self, group_name):
+        """Create MoveGroupCommander with a configurable server wait to avoid 5s init timeouts."""
+        if rospy.has_param("~move_group_commander_wait_seconds"):
+            timeout_s = float(rospy.get_param("~move_group_commander_wait_seconds"))
+        else:
+            timeout_s = float(rospy.get_param("~move_group_init_seconds", 0.0))
+        ns = rospy.get_param("~move_group_ns", "")
+        kwargs = {"wait_for_servers": timeout_s}
+        if ns:
+            kwargs["ns"] = ns
+        try:
+            return moveit_commander.MoveGroupCommander(group_name, **kwargs)
+        except TypeError:
+            if ns:
+                try:
+                    return moveit_commander.MoveGroupCommander(group_name, ns=ns)
+                except TypeError:
+                    pass
+            return moveit_commander.MoveGroupCommander(group_name)
     
     def start_mqtt_client(self):
         """Initialize and start MQTT client for receiving motion commands"""
@@ -202,10 +230,17 @@ class FloRobotController:
         self.client.subscribe([(self.topic_movement, 0), (self.topic_led, 0)])
         
         rospy.loginfo("MQTT client started. Waiting for movement commands...")
-        self.client.loop_forever()
+        self.client.loop_start()
+        while not rospy.is_shutdown():
+            rospy.sleep(0.1)
 
     def _shutdown(self):
         """Cleanup resources on shutdown."""
+        try:
+            self.client.loop_stop()
+            self.client.disconnect()
+        except Exception:
+            pass
         self.led_controller.close()
 
 def main():

@@ -45,7 +45,7 @@ tmux rename-window -t "${SESSION_NAME}:0" "roscore"
 tmux send-keys -t "${SESSION_NAME}:roscore" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roscore" C-m
 
 # Wait for roscore to start
-sleep 3
+sleep 5
 
 # Window 1: MQTT broker (skip if already running)
 if pgrep -x mosquitto >/dev/null 2>&1; then
