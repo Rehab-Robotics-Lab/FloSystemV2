@@ -139,6 +139,24 @@ usbip version
   docker start -ai <your container name>
   ```
 
+## Auto bringup on container start
+
+The container can auto-run the bringup script on `docker start -ai` when the container was created with `AUTO_BRINGUP=true`.
+
+Example (create once, then start anytime):
+
+```
+docker run -it --name flo_v2_aim1 --privileged --device=/dev/ttyUSB0:/dev/ttyUSB0 --device=/dev/ttyACM0:/dev/ttyACM0 -e DISPLAY=host.docker.internal:0 -e QT_X11_NO_MITSHM=1 -e LIBGL_ALWAYS_INDIRECT=1 -e AUTO_BRINGUP=true -p 1883:1883 -p 11311:11311 -p 8080:8080 flo_v2_image_aim1
+```
+
+```
+docker start -ai flo_v2_aim1
+```
+
+Notes:
+- `docker start` does not accept runtime arguments, so the toggle is set via the container environment at create time.
+- If `AUTO_BRINGUP` is unset or `false`, the container starts with an interactive shell only.
+
 **Tips:**
 
 * to change to root user, run `sudo -i`

@@ -29,8 +29,7 @@ class FloRobotController:
         """Initialize the robot controller system"""
         
         # ==================== MQTT Client Initialization ====================
-        # self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-        self.client = mqtt.Client()
+        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
         self.broker_host = MQTT_BROKER_HOST
         self.broker_port = MQTT_BROKER_PORT
         self.client.connect(self.broker_host, self.broker_port, 60)

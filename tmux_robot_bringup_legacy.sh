@@ -80,11 +80,11 @@ tmux split-window -t "${SESSION_NAME}:monitor" -h
 tmux send-keys -t "${SESSION_NAME}:monitor.1" "mosquitto_sub -h localhost -t ros/mqtt/queue_state" C-m
 
 
-# # Window 6: Interactive shell
-# tmux new-window -t "$SESSION_NAME" -n "shell"
-# tmux send-keys -t "${SESSION_NAME}:shell" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\"" C-m
-# tmux send-keys -t "${SESSION_NAME}:shell" "echo 'Interactive shell - you can run ROS/MQTT commands here'" C-m
-# tmux send-keys -t "${SESSION_NAME}:shell" "echo 'Example: mosquitto_pub -h localhost -t ros/mqtt/movement -m \"0\"'" C-m
+# Window 6: Interactive shell
+tmux new-window -t "$SESSION_NAME" -n "shell"
+tmux send-keys -t "${SESSION_NAME}:shell" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\"" C-m
+tmux send-keys -t "${SESSION_NAME}:shell" "echo 'Interactive shell - you can run ROS/MQTT commands here'" C-m
+tmux send-keys -t "${SESSION_NAME}:shell" "echo 'Example: mosquitto_pub -h localhost -t ros/mqtt/movement -m \"0\"'" C-m
 
 # Attach to session
 echo "Attaching to tmux session '$SESSION_NAME'..."

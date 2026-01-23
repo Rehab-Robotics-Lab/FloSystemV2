@@ -70,7 +70,7 @@ RUN git clone --depth 1 --single-branch --branch FloV2_no_grippers \
 
 # Add top-level CMakeLists.txt
 RUN echo "cmake_minimum_required(VERSION 3.0.2)\nproject(flo_v2_workspace)\nfind_package(catkin REQUIRED)\ncatkin_workspace()" > /catkin_ws/src/CMakeLists.txt
-COPY Readme.md        /catkin_ws/src/Readme.md
+# COPY Readme.md        /catkin_ws/src/Readme.md
 # COPY run_a_demo.sh /catkin_ws/run_a_demo.sh
 # COPY run_a_demo_outside.sh /catkin_ws/run_a_demo_outside.sh
 
@@ -110,8 +110,10 @@ RUN chmod +x /catkin_ws/src/*/scripts/*.py || true
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
 RUN echo "source /catkin_ws/devel/setup.bash" >> /root/.bashrc
 
-# Default command
-CMD ["/bin/bash", "-c", "source /opt/ros/noetic/setup.bash && source /catkin_ws/devel/setup.bash && /bin/bash"]
+# Entry point with optional auto-bringup (use cloned repo file)
+RUN cp /catkin_ws/src/FloSystemV2/docker_entrypoint.sh /usr/local/bin/flo_entrypoint.sh \
+    && chmod +x /usr/local/bin/flo_entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/flo_entrypoint.sh"]
 
 # User Defined
 RUN adduser user
