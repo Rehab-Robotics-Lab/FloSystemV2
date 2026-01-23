@@ -7,7 +7,9 @@ import threading
 import time
 from collections import deque
 
+import actionlib
 import moveit_commander
+import moveit_msgs.msg
 import rospy
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -49,6 +51,9 @@ class FloRobotController:
         # ==================== ROS and MoveIt Initialization ====================
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node('flo_robot_controller')
+
+        # Ensure move_group action server is available before MoveGroupCommander init.
+        self._wait_for_move_group_server()
         
         # Initialize MoveIt groups
         self.arm_R = moveit_commander.MoveGroupCommander('R')
@@ -138,6 +143,23 @@ class FloRobotController:
         self.arm_R.set_max_velocity_scaling_factor(1.0)
         self.arm_L.set_max_velocity_scaling_factor(1.0)
         self.arm_D.set_max_velocity_scaling_factor(0.8)
+
+    def _wait_for_move_group_server(self):
+        """Wait for move_group action server to come up to avoid init-time failures."""
+        timeout_s = rospy.get_param("~move_group_wait_seconds", 30.0)
+        retries = int(rospy.get_param("~move_group_wait_retries", 3))
+        for attempt in range(1, retries + 1):
+            client = actionlib.SimpleActionClient("move_group", moveit_msgs.msg.MoveGroupAction)
+            rospy.loginfo(
+                "Waiting for move_group action server (attempt %d/%d, timeout %.1fs)...",
+                attempt,
+                retries,
+                timeout_s,
+            )
+            if client.wait_for_server(rospy.Duration(timeout_s)):
+                return
+            rospy.logwarn("move_group action server not available yet.")
+        raise rospy.ROSException("move_group action server not available after retries")
     
     def start_mqtt_client(self):
         """Initialize and start MQTT client for receiving motion commands"""
