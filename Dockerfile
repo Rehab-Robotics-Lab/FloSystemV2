@@ -105,6 +105,7 @@ RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
 
 # Make Python scripts executable
 RUN chmod +x /catkin_ws/src/*/scripts/*.py || true
+RUN chmod +x /catkin_ws/src/FloSystemV2/*.sh
 
 # Source environments
 RUN echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc
