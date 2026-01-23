@@ -65,13 +65,13 @@ tmux send-keys -t "${SESSION_NAME}:sim" "source /opt/ros/noetic/setup.sh && sour
 tmux new-window -t "$SESSION_NAME" -n "hardware"
 tmux send-keys -t "${SESSION_NAME}:hardware" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_humanoid dual_arm_hardware.launch publish_joint_states:=false" C-m
 
-sleep 10
+sleep 20
 
 # Window 4: MQTT control node
 tmux new-window -t "$SESSION_NAME" -n "control"
 tmux send-keys -t "${SESSION_NAME}:control" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && rosrun flo_core mqtt_control_node.py" C-m
 
-sleep 5
+sleep 10
 
 # Window 5: Monitoring panes (timing, queue, runner)
 tmux new-window -t "$SESSION_NAME" -n "monitor"
