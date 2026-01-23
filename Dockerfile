@@ -58,11 +58,15 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 RUN mkdir -p /catkin_ws/src
 WORKDIR /catkin_ws/src
 
-# Copy your packages
-COPY flo_humanoid     /catkin_ws/src/flo_humanoid
-COPY flov2_robot_description    /catkin_ws/src/flov2_robot_description
-COPY flo_core    /catkin_ws/src/flo_core
-# COPY flo_vision          /catkin_ws/src/flo_vision
+# # Copy your packages
+# COPY flo_humanoid     /catkin_ws/src/flo_humanoid
+# COPY flov2_robot_description    /catkin_ws/src/flov2_robot_description
+# COPY flo_core    /catkin_ws/src/flo_core
+# # COPY flo_vision          /catkin_ws/src/flo_vision
+
+# Clone required repositories
+RUN git clone --depth 1 --single-branch --branch FloV2_no_grippers \
+    https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
 
 # Add top-level CMakeLists.txt
 RUN echo "cmake_minimum_required(VERSION 3.0.2)\nproject(flo_v2_workspace)\nfind_package(catkin REQUIRED)\ncatkin_workspace()" > /catkin_ws/src/CMakeLists.txt
