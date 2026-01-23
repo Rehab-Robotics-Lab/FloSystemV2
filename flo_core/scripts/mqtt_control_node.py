@@ -4,6 +4,8 @@
 import os
 import sys
 import threading
+import time
+from collections import deque
 
 import moveit_commander
 import paho.mqtt.client as mqtt
@@ -14,6 +16,7 @@ SRC_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, "..", "src"))
 if SRC_DIR not in sys.path:
     sys.path.insert(0, SRC_DIR)
 
+from flo_core.mqtt_config import MQTT_BROKER_HOST, MQTT_BROKER_PORT
 from flo_core.led_controller import LedController
 from flo_core.motion_executor import RobotMotionExecutor
 
@@ -28,16 +31,21 @@ class FloRobotController:
         # ==================== MQTT Client Initialization ====================
         # self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
         self.client = mqtt.Client()
-        self.broker_host = os.environ.get("MQTT_BROKER_HOST", "host.docker.internal")
-        self.broker_port = int(os.environ.get("MQTT_BROKER_PORT", "1883"))
+        self.broker_host = MQTT_BROKER_HOST
+        self.broker_port = MQTT_BROKER_PORT
         self.client.connect(self.broker_host, self.broker_port, 60)
         
         # ==================== Control Variables ====================
-        self.mode = "0"  # Current motion command mode
+        self._queue_lock = threading.Lock()
+        self._command_queue = deque()
+        self.mode = "0"  # Current motion command mode (legacy/diagnostic)
         self.topic_movement = "ros/mqtt/movement"
         self.topic_led = "ros/mqtt/led"
         self.topic_feedback = "ros/mqtt/feedback"
         self.topic_action_done = "ros/mqtt/action_done"
+        self.topic_action_time = "ros/mqtt/action_time"
+        self.topic_queue_length = "ros/mqtt/queue_length"
+        self.topic_queue_state = "ros/mqtt/queue_state"
         
         
         # ==================== ROS and MoveIt Initialization ====================
@@ -80,19 +88,34 @@ class FloRobotController:
         rospy.loginfo("FloRobotController initialized. Waiting for commands...")
         
         while not rospy.is_shutdown():
-            if self.mode != "0":
-                rospy.loginfo(f"Executing motion command: {self.mode}")
+            command_entry = None
+            with self._queue_lock:
+                if self._command_queue:
+                    command_entry = self._command_queue.popleft()
+                queue_len = len(self._command_queue)
+                queue_state = ",".join(cmd for cmd, _ in self._command_queue)
+
+            if command_entry:
+                command, start_time = command_entry
+                self.mode = command
+                rospy.loginfo(f"Executing motion command: {command}")
+                self.client.publish(self.topic_queue_length, str(queue_len))
+                self.client.publish(self.topic_queue_state, queue_state)
                 
                 # Execute the motion
                 try:
-                    self.motion_executor.execute_pose(int(self.mode))
-                    rospy.loginfo(f"Motion {self.mode} completed successfully")
+                    start_time = time.monotonic()
+                    self.motion_executor.execute_pose(int(command))
+                    rospy.loginfo(f"Motion {command} completed successfully")
                     self.client.publish(self.topic_feedback, "A")  # Success feedback
-                    self.client.publish(self.topic_action_done, f"done:{self.mode}")
+                    self.client.publish(self.topic_action_done, f"done:{command}")
                 except Exception as e:
                     rospy.logerr(f"Motion execution failed: {e}")
                     self.client.publish(self.topic_feedback, "E")  # Error feedback
-                    self.client.publish(self.topic_action_done, f"error:{self.mode}")
+                    self.client.publish(self.topic_action_done, f"error:{command}")
+                finally:
+                    elapsed = time.monotonic() - start_time
+                    self.client.publish(self.topic_action_time, f"{command},{elapsed:.3f}")
                 
                 self.mode = "0"  # Reset to idle
             
@@ -126,7 +149,12 @@ class FloRobotController:
             command = message.payload.decode().strip()
             if message.topic == self.topic_movement:
                 rospy.loginfo(f"Received motion command: {command}")
-                self.mode = command
+                with self._queue_lock:
+                    self._command_queue.append((command, time.monotonic()))
+                    queue_len = len(self._command_queue)
+                    queue_state = ",".join(cmd for cmd, _ in self._command_queue)
+                self.client.publish(self.topic_queue_length, str(queue_len))
+                self.client.publish(self.topic_queue_state, queue_state)
             elif message.topic == self.topic_led:
                 rospy.loginfo(f"Received LED command: {command}")
                 if not self.led_controller.set_led_state(command):
