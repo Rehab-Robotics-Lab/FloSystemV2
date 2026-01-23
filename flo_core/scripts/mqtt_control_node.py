@@ -8,7 +8,6 @@ import time
 from collections import deque
 
 import moveit_commander
-import paho.mqtt.client as mqtt
 import rospy
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -16,7 +15,7 @@ SRC_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, "..", "src"))
 if SRC_DIR not in sys.path:
     sys.path.insert(0, SRC_DIR)
 
-from flo_core.mqtt_config import MQTT_BROKER_HOST, MQTT_BROKER_PORT
+from flo_core.mqtt_config import MQTT_BROKER_HOST, MQTT_BROKER_PORT, MQTT_BROKER_CLIENT
 from flo_core.led_controller import LedController
 from flo_core.motion_executor import RobotMotionExecutor
 
@@ -29,7 +28,7 @@ class FloRobotController:
         """Initialize the robot controller system"""
         
         # ==================== MQTT Client Initialization ====================
-        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+        self.client = MQTT_BROKER_CLIENT
         self.broker_host = MQTT_BROKER_HOST
         self.broker_port = MQTT_BROKER_PORT
         self.client.connect(self.broker_host, self.broker_port, 60)
