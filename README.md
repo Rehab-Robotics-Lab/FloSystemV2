@@ -24,6 +24,12 @@ This repo contains code to build and run a Docker container on a WSL environment
   wsl --install -d Ubuntu-24.04
   ```
 
+- To enter WSL instance:
+
+  ```powershell
+  wsl -d Ubuntu-24.04
+  ```
+
   Create your UNIX username/password on first launch.
 - (Recommended) Update WSL kernel:
 
