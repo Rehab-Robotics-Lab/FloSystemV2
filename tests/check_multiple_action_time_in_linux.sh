@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # ============================================================
 # Script to run on Linux for hardware test
 # Starts ROS, MQTT broker, sim, hardware bridge, and control node
@@ -21,19 +21,19 @@ if [ ! -f /opt/ros/noetic/setup.sh ]; then
   exit 1
 fi
 
-if [ -f /catkin_ws/devel/setup.sh ]; then
-  WORKSPACE_SETUP="/catkin_ws/devel/setup.zsh"
-elif [ -f "$HOME/catkin_ws_floV2/devel/setup.zsh" ]; then
-  WORKSPACE_SETUP="$HOME/catkin_ws_floV2/devel/setup.zsh"
-elif [ -f "$HOME/catkin_ws/devel/setup.zsh" ]; then
-  WORKSPACE_SETUP="$HOME/catkin_ws/devel/setup.zsh"
+if [ -f /catkin_ws/devel/setup.bash ]; then
+  WORKSPACE_SETUP="/catkin_ws/devel/setup.bash"
+elif [ -f "$HOME/catkin_ws_floV2/devel/setup.bash" ]; then
+  WORKSPACE_SETUP="$HOME/catkin_ws_floV2/devel/setup.bash"
+elif [ -f "$HOME/catkin_ws/devel/setup.bash" ]; then
+  WORKSPACE_SETUP="$HOME/catkin_ws/devel/setup.bash"
 else
-  echo "Could not find a catkin workspace setup.zsh"
+  echo "Could not find a catkin workspace setup.bash"
   exit 1
 fi
 
 # Source ROS environment for this shell
-source /opt/ros/noetic/setup.zsh
+source /opt/ros/noetic/setup.bash
 source "$WORKSPACE_SETUP"
 
 SESSION_NAME="flo_robot_test"
@@ -43,7 +43,7 @@ tmux new-session -d -s "$SESSION_NAME"
 
 # Window 0: ROS Core
 tmux rename-window -t "${SESSION_NAME}:0" "roscore"
-tmux send-keys -t "${SESSION_NAME}:roscore" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roscore" C-m
+tmux send-keys -t "${SESSION_NAME}:roscore" "source /opt/ros/noetic/setup.bash && source \"$WORKSPACE_SETUP\" && roscore" C-m
 
 # Wait for roscore to start
 sleep 5
@@ -60,17 +60,17 @@ fi
 
 # Window 2: Gazebo sim + MoveIt + RViz (GUI off)
 tmux new-window -t "$SESSION_NAME" -n "sim"
-tmux send-keys -t "${SESSION_NAME}:sim" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=false show_rviz_gui:=false" C-m
+tmux send-keys -t "${SESSION_NAME}:sim" "source /opt/ros/noetic/setup.bash && source \"$WORKSPACE_SETUP\" && roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=false use_rviz:=false" C-m
 
 # Window 3: Hardware bridge
 tmux new-window -t "$SESSION_NAME" -n "hardware"
-tmux send-keys -t "${SESSION_NAME}:hardware" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_humanoid dual_arm_hardware.launch publish_joint_states:=false" C-m
+tmux send-keys -t "${SESSION_NAME}:hardware" "source /opt/ros/noetic/setup.bash && source \"$WORKSPACE_SETUP\" && roslaunch flo_humanoid dual_arm_hardware.launch publish_joint_states:=false" C-m
 
 sleep 20
 
 # Window 4: MQTT control node
 tmux new-window -t "$SESSION_NAME" -n "control"
-tmux send-keys -t "${SESSION_NAME}:control" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && rosrun flo_core mqtt_control_node.py" C-m
+tmux send-keys -t "${SESSION_NAME}:control" "source /opt/ros/noetic/setup.bash && source \"$WORKSPACE_SETUP\" && rosrun flo_core mqtt_control_node.py" C-m
 
 sleep 10
 

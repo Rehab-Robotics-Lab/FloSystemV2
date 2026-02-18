@@ -197,6 +197,15 @@ class FloRobotController:
             command = message.payload.decode().strip()
             if message.topic == self.topic_movement:
                 rospy.loginfo(f"Received motion command: {command}")
+                # Stop command: execute immediately, don't queue
+                if command == "-1" or command == "stop":
+                    rospy.loginfo("STOP command received - stopping immediately")
+                    self.motion_executor.stop()
+                    with self._queue_lock:
+                        self._command_queue.clear()  # Clear pending commands
+                    self.client.publish(self.topic_queue_length, "0")
+                    self.client.publish(self.topic_queue_state, "")
+                    return
                 with self._queue_lock:
                     self._command_queue.append((command, time.monotonic()))
                     queue_len = len(self._command_queue)

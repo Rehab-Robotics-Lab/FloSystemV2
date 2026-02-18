@@ -21,7 +21,28 @@ class RobotMotionExecutor:
         self.end_effector_link_L = end_effector_link_L
         self.end_effector_link_D = end_effector_link_D
         self._last_joint_state_stamp = None
-        
+        self._stop_requested = False
+        self._pose_actions = {
+            10: self._execute_left_punch,
+            11: self._execute_left_swing_forward,
+            12: self._execute_left_swing_lateral,
+            13: self._execute_left_raise,
+            14: self._execute_left_wave,
+            15: self._execute_left_reach_side,
+            20: self._execute_right_punch,
+            21: self._execute_right_swing_forward,
+            22: self._execute_right_swing_lateral,
+            23: self._execute_right_raise,
+            24: self._execute_right_wave,
+            25: self._execute_right_reach_side,
+            0:  self._execute_dual_go_to_home,
+            30: self._execute_dual_clap,
+            31: self._execute_dual_up_down,
+            32: self._execute_dual_alternate,
+            33: self._execute_dual_punch,
+            -1: self.stop,
+        }  
+
     def _sync_start_state(self, group, timeout=0.2, retries=2):
         """
         Ensure the planning start state matches the latest joint state.
@@ -39,90 +60,40 @@ class RobotMotionExecutor:
                 break
         group.set_start_state_to_current_state()
 
-    
+    #################################
+    ####### Execute Actions #########
+    #################################
     def execute_pose(self, pose):
-        """
-        Execute specific movements based on the pose parameter.
-        
-        :param pose: Integer defining the type of movement to execute.
-        """
-        rospy.loginfo(f"Executing pose: {pose}")
-        
-        # Return to home position first (except for dual arm poses)
-        # if pose < 25:
-        #     if pose < 20:  # Right arm poses
-        #         self.arm_L.set_named_target('Rhome')
-        #         self.arm_L.go()
-        #     else:  # Left arm poses
-        #         self.arm_R.set_named_target('Lhome')
-        #         self.arm_R.go()
-        
-        # Execute specific pose
-        # if pose == 1:
-        #     self._execute_right_wave()
-        # elif pose == 2:
-        #     self._execute_right_punch()
-        # elif pose == 3:
-        #     self._execute_right_raise()
-        # elif pose == 4:
-        #     self._execute_right_wave_bell()
-        # elif pose == 11:
-        #     self._execute_left_wave()
-        # elif pose == 12:
-        #     self._execute_left_punch()
-        # elif pose == 13:
-        #     self._execute_left_raise()
-        # elif pose == 14:
-        #     self._execute_left_wave_bell()
-        # elif pose == 21:
-        #     self._execute_dual_clap()
-        # elif pose == 22:
-        #     self._execute_dual_up_down()
-        # elif pose == 23:
-        #     self._execute_dual_alternate()
-        # elif pose == 24:
-        #     self._execute_dual_punch()
-        # elif pose == 25:
-        #     self._execute_dual_go_to_home()
-        if pose == 10:
-            self._execute_left_punch()
-        elif pose == 11:
-            self._execute_left_swing_forward()
-        elif pose == 12:
-            self._execute_left_swing_lateral()
-        elif pose == 13:
-            self._execute_left_raise()
-        elif pose == 14:
-            self._execute_left_wave()
-        elif pose == 15:
-            self._execute_left_reach_side()
-        elif pose == 20:
-            self._execute_right_punch()
-        elif pose == 21:
-            self._execute_right_swing_forward()
-        elif pose == 22:
-            self._execute_right_swing_lateral()
-        elif pose == 23:
-            self._execute_right_raise()
-        elif pose == 24:
-            self._execute_right_wave()
-        elif pose == 25:
-            self._execute_right_reach_side()
-        elif pose == 0:
-            self._execute_dual_go_to_home()
-        elif pose == 30:
-            self._execute_dual_clap()
-        elif pose == 31:
-            self._execute_dual_up_down()
-        elif pose == 32:
-            self._execute_dual_alternate()
-        elif pose == 33:
-            self._execute_dual_punch() 
+        if pose in self._pose_actions:
+            self._pose_actions[pose]()
+        elif pose >= 111 and pose <= 115:
+            base_pose = pose - 100
+            self._execute_repeated(self._pose_actions[base_pose], times=10)
         else:
             rospy.logwarn(f"Unknown pose: {pose}")
+
     
+
+    def _execute_repeated(self, action_func, times=10):
+        """Execute repeated action, can be stopped by user"""
+        self._stop_requested = False
+        for i in range(times):
+            if self._stop_requested:
+                rospy.loginfo("Motion stopped by user")
+                break
+            action_func()
+        self._stop_requested = False
     # ==================== Right Arm Motions ====================
-    
+    def stop(self):
+        """Request to stop the current action and halt robot immediately"""
+        self._stop_requested = True
+        # Stop all MoveIt groups immediately
+        self.arm_R.stop()
+        self.arm_L.stop()
+        self.arm_D.stop()
+        rospy.loginfo("Stop requested - all arms halted")
+
+        
     def _execute_right_wave(self):
         """Right arm waving motion"""
         for i in range(3):
