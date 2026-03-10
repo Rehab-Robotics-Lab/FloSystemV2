@@ -14,6 +14,7 @@ LOG = logging.getLogger(__name__)
 MAPPING_TRIAL_EVENTS_TO_LED_COMMANDS = {
     "fixationCross": "1",  # cross
     "stimulusOnset": "2",  # square
+    "displayCDFiveToOne": "5",  # countdown 5->1 animation
     "intertrial_interval": "0",  # off
     "off": "0",
 }
