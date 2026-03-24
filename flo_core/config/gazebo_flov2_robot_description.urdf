@@ -403,9 +403,6 @@
         <plugin name="control" filename="libgazebo_ros_control.so">
             <robotNamespace>/</robotNamespace>
         </plugin>
-        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-            <robotNamespace>/</robotNamespace>
-        </plugin>
     </gazebo>
     <gazebo reference="left_up_joint">
         <selfCollide>true</selfCollide>
