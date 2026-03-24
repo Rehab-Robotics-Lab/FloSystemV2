@@ -10,6 +10,7 @@ import os
 import sys
 import threading
 import time
+import uuid
 from collections import deque
 
 import actionlib
@@ -36,11 +37,17 @@ class FloRobotController:
         
         # ==================== MQTT Client Initialization ====================
         self.client = MQTT_BROKER_CLIENT
+        self.client_id = f"flo-robot-controller-{uuid.uuid4().hex[:8]}"
         self.broker_host = MQTT_BROKER_HOST
         self.broker_port = MQTT_BROKER_PORT
+        try:
+            self.client._client_id = self.client_id.encode("utf-8")
+        except Exception:
+            pass
+        self.client.reconnect_delay_set(min_delay=1, max_delay=30)
         print("Connecting to MQTT broker...")
         self.client.connect(self.broker_host, self.broker_port, 60)
-        print("MQTT connected.")
+        print(f"MQTT connect initiated. client_id={self.client_id}")
         
         # ==================== Control Variables ====================
         self._queue_lock = threading.Lock()
@@ -213,21 +220,40 @@ class FloRobotController:
         def on_connect(client, userdata, flags, reason_code, properties):
             """Handle MQTT connection"""
             if reason_code == 0:
-                rospy.loginfo("Connected to MQTT broker successfully")
+                rospy.loginfo(
+                    "Connected to MQTT broker successfully: host=%s port=%s client_id=%s",
+                    self.broker_host,
+                    self.broker_port,
+                    self.client_id,
+                )
+                client.subscribe([(self.topic_movement, 0), (self.topic_led, 0)])
+                rospy.loginfo(
+                    "Subscribed to MQTT topics: %s, %s",
+                    self.topic_movement,
+                    self.topic_led,
+                )
             else:
                 rospy.logerr(f"Failed to connect to MQTT broker: {reason_code}")
         
         def on_disconnect(client, userdata, *args, **kwargs):
             """Handle MQTT disconnection (compatible with paho-mqtt v1/v2)."""
-            rospy.logwarn("Disconnected from MQTT broker")
+            reason_code = None
+            if args:
+                reason_code = args[0]
+            if reason_code in (0, None):
+                rospy.logwarn("Disconnected from MQTT broker: client_id=%s", self.client_id)
+                return
+
+            rospy.logwarn(
+                "Unexpected MQTT disconnect: client_id=%s reason=%s. Reconnect handled by paho loop.",
+                self.client_id,
+                reason_code,
+            )
         
         # Set up MQTT callbacks
         self.client.on_message = on_message
         self.client.on_connect = on_connect
         self.client.on_disconnect = on_disconnect
-        
-        # Subscribe to movement and LED commands
-        self.client.subscribe([(self.topic_movement, 0), (self.topic_led, 0)])
         
         rospy.loginfo("MQTT client started. Waiting for movement commands...")
         self.client.loop_start()
