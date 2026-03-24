@@ -969,11 +969,11 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "/opt/ros/noetic/share/catkin/cmake/templates/setup.zsh.in"
+			"path" : "/opt/ros/noetic/share/catkin/cmake/templates/setup.sh.in"
 		},
 		{
 			"isExternal" : true,
-			"path" : "/opt/ros/noetic/share/catkin/cmake/templates/local_setup.zsh.in"
+			"path" : "/opt/ros/noetic/share/catkin/cmake/templates/local_setup.sh.in"
 		},
 		{
 			"isExternal" : true,
@@ -1009,11 +1009,11 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "/opt/ros/noetic/share/catkin/cmake/templates/setup.zsh.in"
+			"path" : "/opt/ros/noetic/share/catkin/cmake/templates/setup.sh.in"
 		},
 		{
 			"isExternal" : true,
-			"path" : "/opt/ros/noetic/share/catkin/cmake/templates/local_setup.zsh.in"
+			"path" : "/opt/ros/noetic/share/catkin/cmake/templates/local_setup.sh.in"
 		},
 		{
 			"isExternal" : true,

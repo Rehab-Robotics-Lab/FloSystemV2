@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-# generated from catkin/cmake/templates/setup.zsh.in
+# generated from catkin/cmake/templates/setup.sh.in
 
 CATKIN_SHELL=zsh
 

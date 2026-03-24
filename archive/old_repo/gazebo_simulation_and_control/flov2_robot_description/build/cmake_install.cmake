@@ -103,7 +103,7 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/usr/local/setup.zsh;/usr/local/local_setup.zsh")
+   "/usr/local/setup.sh;/usr/local/local_setup.sh")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
@@ -111,8 +111,8 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
 file(INSTALL DESTINATION "/usr/local" TYPE FILE FILES
-    "/home/shzyh/catkin_ws/src/flov2withhead/build/catkin_generated/installspace/setup.zsh"
-    "/home/shzyh/catkin_ws/src/flov2withhead/build/catkin_generated/installspace/local_setup.zsh"
+    "/home/shzyh/catkin_ws/src/flov2withhead/build/catkin_generated/installspace/setup.sh"
+    "/home/shzyh/catkin_ws/src/flov2withhead/build/catkin_generated/installspace/local_setup.sh"
     )
 endif()
 

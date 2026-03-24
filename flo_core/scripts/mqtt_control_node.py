@@ -217,8 +217,8 @@ class FloRobotController:
             else:
                 rospy.logerr(f"Failed to connect to MQTT broker: {reason_code}")
         
-        def on_disconnect(client, userdata, reason_code, properties):
-            """Handle MQTT disconnection"""
+        def on_disconnect(client, userdata, *args, **kwargs):
+            """Handle MQTT disconnection (compatible with paho-mqtt v1/v2)."""
             rospy.logwarn("Disconnected from MQTT broker")
         
         # Set up MQTT callbacks

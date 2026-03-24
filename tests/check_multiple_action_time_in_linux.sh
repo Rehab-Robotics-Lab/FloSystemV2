@@ -22,18 +22,18 @@ if [ ! -f /opt/ros/noetic/setup.sh ]; then
 fi
 
 if [ -f /catkin_ws/devel/setup.sh ]; then
-  WORKSPACE_SETUP="/catkin_ws/devel/setup.zsh"
-elif [ -f "$HOME/catkin_ws_floV2/devel/setup.zsh" ]; then
-  WORKSPACE_SETUP="$HOME/catkin_ws_floV2/devel/setup.zsh"
-elif [ -f "$HOME/catkin_ws/devel/setup.zsh" ]; then
-  WORKSPACE_SETUP="$HOME/catkin_ws/devel/setup.zsh"
+  WORKSPACE_SETUP="/catkin_ws/devel/setup.sh"
+elif [ -f "$HOME/catkin_ws_floV2/devel/setup.sh" ]; then
+  WORKSPACE_SETUP="$HOME/catkin_ws_floV2/devel/setup.sh"
+elif [ -f "$HOME/catkin_ws/devel/setup.sh" ]; then
+  WORKSPACE_SETUP="$HOME/catkin_ws/devel/setup.sh"
 else
-  echo "Could not find a catkin workspace setup.zsh"
+  echo "Could not find a catkin workspace setup.sh"
   exit 1
 fi
 
 # Source ROS environment for this shell
-source /opt/ros/noetic/setup.zsh
+source /opt/ros/noetic/setup.sh
 source "$WORKSPACE_SETUP"
 
 SESSION_NAME="flo_robot_test"
