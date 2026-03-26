@@ -95,6 +95,7 @@ ros-noetic-image-view \
 v4l-utils \
 ffmpeg \
 ros-noetic-apriltag-ros \
+mesa-utils \
 && rm -rf /var/lib/apt/lists/*
 
 # Install all dependencies
@@ -122,4 +123,4 @@ RUN adduser user sudo
 #remove password
 RUN passwd -d user
 
-USER user
+USER root

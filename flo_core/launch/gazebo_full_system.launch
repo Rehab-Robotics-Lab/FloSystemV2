@@ -1,5 +1,6 @@
 <launch>
 	<arg name="gui" default="false"/>
+	<arg name="paused" default="false"/>
 	<arg name="arg_x" default="0.00" />
 	<arg name="arg_y" default="0.00" />
 	<arg name="arg_z" default="0.00" />
@@ -14,9 +15,11 @@
 	<!-- <param name="camera_description" textfile="$(find camera)/urdf/camera.urdf"/> -->
 	
 	<!--spawn a empty gazebo world-->
-	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+	<include file="$(find gazebo_ros)/launch/empty_world.launch" pass_all_args="true">
 		<arg name="gui" value="$(arg gui)" />
+		<arg name="paused" value="true" />
 	</include>
+	<arg name="unpause" value="$(eval '' if arg('paused') else '-unpause')" />
 	<node name="tf_footprint_base" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 base_link base_footprint 40" />
 	
 	

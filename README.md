@@ -23,7 +23,6 @@ This repo contains code to build and run a Docker container on a WSL environment
   ```powershell
   wsl --install -d Ubuntu-24.04
   ```
-
 - To enter WSL instance:
 
   ```powershell
@@ -127,18 +126,26 @@ usbip version
   cd /mnt/c/Users/<path_to_repo>
   docker build -t flo_v2_image_aim1 . 
   ```
-* Run container with devices and X11 (start VcXsrv on Windows first):
+* Run container with devices and X11 (start VcXsrv on Windows first, and run these commands inside the WSL Ubuntu shell, not Windows PowerShell):
 
   ```
+  # inside WSL / bash
   export DISPLAY=$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0
   export QT_X11_NO_MITSHM=1
   docker run -it --name flo_v2_aim1 --privileged --device=/dev/ttyUSB0:/dev/ttyUSB0 --device=/dev/ttyACM0:/dev/ttyACM0 -e DISPLAY=host.docker.internal:0 -e QT_X11_NO_MITSHM=1 -e LIBGL_ALWAYS_INDIRECT=1 -p 1883:1883 -p 11311:11311 -p 8080:8080 flo_v2_image_aim1
   ```
+  From Windows PowerShell, enter WSL first with:
+
+  ```powershell
+  wsl -d Ubuntu-24.04
+  ```
+
 * To enter exist and running docker container, run:
 
-  ```
+```
   docker exec -it <your container name> bash
-  ```
+```
+
 * To enter exist but not running docker container, run:
 
   ```
@@ -160,6 +167,7 @@ docker start -ai flo_v2_aim1
 ```
 
 Notes:
+
 - `docker start` does not accept runtime arguments, so the toggle is set via the container environment at create time.
 - If `AUTO_BRINGUP` is unset or `false`, the container starts with an interactive shell only.
 
@@ -226,9 +234,9 @@ If you meet error "Name or service not know", run:
 MQTT_BROKER_HOST=localhost rosrun flo_core mqtt_control_node.py
 ```
 
-## Testing 
+## Testing
 
-Use test scripts `tests/check_multiple_action_time_in_linux.sh` and `tests/check_multiple_action_time_in_linux.sh` 
+Use test scripts `tests/check_multiple_action_time_in_linux.sh` and `tests/check_multiple_action_time_in_linux.sh`
 
 ## Bring up robot (main)
 
