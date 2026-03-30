@@ -1,334 +1,356 @@
-# Flo V2 (No grippers) Control Stack for Aim 1 Inperson Robot (IR) AO experiments
+# Flo V2 Control Stack for Aim 1 In-Person Robot AO Experiments
 
-This repo contains code to build and run a Docker container on a WSL environment (Ubuntu-24.04) on Windows machine. The ROS Docker container is used to run the control stack for the robot (no grippers) for the Aim 1 AO trials and control the chest LED. This control stack also communicate with a Python program running on Windows (outside Docker container) through MQTT, receiving commands (LED states and robot actions) to control the robot and the LED. This robot system doesnt have camera or computer vision components.
+This repository contains the ROS Noetic control stack for the Flo V2 Aim 1 robot configuration without grippers. The supported setup is:
+
+- Windows for Docker Desktop, `usbipd-win`, and the X server
+- Ubuntu 24.04 inside WSL2 for Linux device access and all Docker CLI commands
+- A Linux Docker container for the ROS, MQTT, Gazebo, and hardware control stack
+
+The most important workflow change is that Docker Desktop should use the WSL2 backend, and Linux hardware services must be run from the WSL Ubuntu environment rather than directly from Windows PowerShell.
 
 ## Repository Structure
 
-* flo_core
-* flo_humanoid
-* flov2_robot_description
+- `flo_core`: ROS launch files, MQTT bridge, planning config, and simulation entry points
+- `flo_humanoid`: Dynamixel hardware bridge and robot-side messages/services
+- `flov2_robot_description`: robot URDF and meshes
+- `docker-compose.yml`: example Compose service definition
+- `Dockerfile`: image build for the Flo V2 ROS workspace
+- `docker_entrypoint.sh`: container startup logic with optional auto-bringup
 
-## Prerequisites
+## Recommended Host Setup
 
-##### 1. Install WSL2 + Ubuntu 24.04 LTS
+### 1. Install WSL2 and Ubuntu 24.04
 
-- Open PowerShell as Administrator and install WSL2:
+Run these commands in Windows PowerShell as Administrator:
 
-  ```powershell
-  wsl --install
-  wsl --set-default-version 2
-  ```
-- Install Ubuntu 24.04:
-
-  ```powershell
-  wsl --install -d Ubuntu-24.04
-  ```
-- To enter WSL instance:
-
-  ```powershell
-  wsl -d Ubuntu-24.04
-  ```
-
-  Create your UNIX username/password on first launch.
-- (Recommended) Update WSL kernel:
-
-  ```powershell
-  wsl --update
-  ```
-- Verify in Windows:
-
-  ```powershell
-  wsl -l -v     # VERSION should be 2 for Ubuntu
-  ```
-
-  Verify in WSL:
-
-  ```bash
-  uname -r      # should contain "microsoft-standard-WSL2"
-  cat /etc/os-release  # should show Ubuntu 24.04
-  ```
-
-##### 2. Install Docker Desktop
-
-- Download: [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- Reboot after installation
-- Ensure Docker is running (whale icon in the system tray)
-
-  Notes: Please enable **WSL 2 based engine** and **Integration with my default WSL distro** options in the Docker Desktop settings,
-
-  ![1761153290901](image/README_WINDOWS_EN/1761153290901.png)
-
-  ![1761153329192](image/README_WINDOWS_EN/1761153329192.png)
-
-##### 3. Install usbipd-win (PowerShell as Admin)
-
-```
-winget install --interactive --exact dorssel.usbipd-win   
+```powershell
+wsl --install
+wsl --set-default-version 2
+wsl --install -d Ubuntu-24.04
+wsl --update
 ```
 
-In WSL Ubuntu, install USB tools and configure the usbip
+Verify the install:
 
+```powershell
+wsl -l -v
 ```
-sudo apt update && sudo apt upgrade -y
+
+Open the Ubuntu shell:
+
+```powershell
+wsl -d Ubuntu-24.04
+```
+
+Inside WSL, confirm you are running the expected distro:
+
+```bash
+uname -r
+cat /etc/os-release
+```
+
+Expected result:
+
+- `wsl -l -v` shows `VERSION` = `2`
+- `uname -r` includes `microsoft-standard-WSL2`
+- `/etc/os-release` shows Ubuntu 24.04
+
+### 2. Install Docker Desktop on Windows
+
+Install Docker Desktop from:
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+In Docker Desktop settings, enable:
+
+- `Use the WSL 2 based engine`
+- `Integration with my default WSL distro`
+
+After Docker Desktop starts, do Docker build and run commands from the Ubuntu WSL shell, not from Windows PowerShell.
+
+### 3. Install `usbipd-win` for USB pass-through
+
+Run in Windows PowerShell as Administrator:
+
+```powershell
+winget install --interactive --exact dorssel.usbipd-win
+```
+
+Inside WSL Ubuntu, install the USB utilities:
+
+```bash
+sudo apt update
+sudo apt upgrade -y
 sudo apt install -y linux-tools-generic hwdata usbutils
 sudo update-alternatives --install /usr/local/bin/usbip usbip /usr/lib/linux-tools/*-generic/usbip 20
 usbip version
 ```
 
-##### 4. Install VcXsrv (Windows X Server)
+### 4. Install VcXsrv on Windows
 
-- Downloads：https://sourceforge.net/projects/vcxsrv/
-- Launch XLaunch，in configuration：
+Install VcXsrv from:
 
-  - **Multiple windows**
-  - **Start no client**
-  - **Disable access control**
+- <https://sourceforge.net/projects/vcxsrv/>
 
-## USB pass-through (Windows → WSL)
+Suggested XLaunch options:
 
-* First bind the busid of your hardware:
+- `Multiple windows`
+- `Start no client`
+- `Disable access control`
 
-  ```
-   usbipd list
-   usbipd bind --busid <BUSID>   # Example: 1-1（U2D2）、1-2（C920）
-  ```
-* Create a simple attach script (PowerShell as Admin), example attach_device.ps1:
+## USB Pass-through: Windows to WSL
 
-  ```
-  # Auto-attach by hardware-id (more stable than BUSID)
-  usbipd attach --wsl --hardware-id 0403:6014   # U2D2
-  usbipd attach --wsl --hardware-id 046d:08e5   # C920
-  # attach any extra devices by using hardware id
-  Start-Job { usbipd attach --wsl --hardware-id 0403:6014 --auto-attach }
-  Start-Job { usbipd attach --wsl --hardware-id 046d:08e5 --auto-attach }
-  usbipd list
-  ```
-* In WSL, verify devices:
+From Windows PowerShell as Administrator, inspect attached devices:
 
-  ```
-  ls /dev/ttyUSB* /dev/ttyACM*
-  sudo chmod 666 /dev/ttyUSB0 /dev/ttyACM0
-  ```
-
-  Expected binding results:
-
-```
-/dev/ttyACM0 is idVendor==16c0 and idProduct==0483 (Teensyduino / USB Serial device).
-/dev/ttyUSB0 is idVendor==0403 and idProduct==6014 (FTDI / USB Serial Converter).
+```powershell
+usbipd list
 ```
 
-## Build and run Docker (WSL)
+Bind each device you want to share with WSL:
 
-* Clone this repo to `C:\Users\<username>\git`
-* Build image at project root (with top-level Dockerfile) - **Replace the name of image with yours**
-
-  ```
-  cd /mnt/c/Users/<path_to_repo>
-  docker build -t flo_v2_image_aim1 . 
-  ```
-* Docker Compose is also provided through `docker-compose.yml`. The repo includes:
-
-  - `flo_v2_aim1`: default bridge-network service with published ports
-  - `flo_v2_aim1_host`: host-network service for ROS/X11-heavy usage
-
-* Build and start the default Compose service:
-
-  ```bash
-  # inside WSL / bash
-  cd /mnt/c/Users/<path_to_repo>
-  docker compose up --build
-  ```
-
-* Build and start the host-network Compose service:
-
-  ```bash
-  # inside WSL / bash
-  cd /mnt/c/Users/<path_to_repo>
-  docker compose --profile host up --build flo_v2_aim1_host
-  ```
-
-* Start an already-created Compose service:
-
-  ```bash
-  # default service
-  docker compose start flo_v2_aim1
-  docker compose attach flo_v2_aim1
-  ```
-
-  ```bash
-  # host-network service
-  docker compose --profile host start flo_v2_aim1_host
-  docker compose --profile host attach flo_v2_aim1_host
-  ```
-
-* Run container with devices and X11 (start VcXsrv on Windows first, and run these commands inside the WSL Ubuntu shell, not Windows PowerShell):
-
-  ```
-  # inside WSL / bash
-  export DISPLAY=$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0
-  export QT_X11_NO_MITSHM=1
-  docker run -it --name flo_v2_aim1 --privileged --device=/dev/ttyUSB0:/dev/ttyUSB0 --device=/dev/ttyACM0:/dev/ttyACM0 -e DISPLAY=host.docker.internal:0 -e QT_X11_NO_MITSHM=1 -e LIBGL_ALWAYS_INDIRECT=1 -p 1883:1883 -p 11311:11311 -p 8080:8080 flo_v2_image_aim1
-  ```
-  From Windows PowerShell, enter WSL first with:
-
-  ```powershell
-  wsl -d Ubuntu-24.04
-  ```
-
-* To enter exist and running docker container, run:
-
-```
-  docker exec -it <your container name> bash
+```powershell
+usbipd bind --busid <BUSID>
 ```
 
-* To enter exist but not running docker container, run:
+Example auto-attach script:
 
-  ```
-  docker start -ai <your container name>
-  ```
-
-* To stop and remove Compose containers:
-
-  ```bash
-  # default service
-  docker compose down
-  ```
-
-  ```bash
-  # host-network service
-  docker compose --profile host down
-  ```
-
-## Auto bringup on container start
-
-The container can auto-run the bringup script on `docker start -ai` when the container was created with `AUTO_BRINGUP=true`.
-
-Example (create once, then start anytime):
-
-```
-docker run -it --name flo_v2_aim1 --privileged --device=/dev/ttyUSB0:/dev/ttyUSB0 --device=/dev/ttyACM0:/dev/ttyACM0 -e DISPLAY=host.docker.internal:0 -e QT_X11_NO_MITSHM=1 -e LIBGL_ALWAYS_INDIRECT=1 -e AUTO_BRINGUP=true -p 1883:1883 -p 11311:11311 -p 8080:8080 flo_v2_image_aim1
+```powershell
+usbipd attach --wsl --hardware-id 0403:6014
+usbipd attach --wsl --hardware-id 16c0:0483
+Start-Job { usbipd attach --wsl --hardware-id 0403:6014 --auto-attach }
+Start-Job { usbipd attach --wsl --hardware-id 16c0:0483 --auto-attach }
+usbipd list
 ```
 
-```
-docker start -ai flo_v2_aim1
-```
-
-Compose example:
-
-1. Open `docker-compose.yml`
-2. Set `AUTO_BRINGUP: "true"` in the service you want to use:
-   `flo_v2_aim1` or `flo_v2_aim1_host`
-3. Create and start the service:
+Inside WSL, verify the Linux device nodes exist:
 
 ```bash
-# default service
-docker compose up --build
+ls /dev/ttyUSB* /dev/ttyACM*
+sudo chmod 666 /dev/ttyUSB0 /dev/ttyACM0
 ```
 
-```bash
-# host-network service
-docker compose --profile host up --build flo_v2_aim1_host
+Typical hardware mapping:
+
+- `/dev/ttyUSB0`: FTDI / U2D2 (`0403:6014`)
+- `/dev/ttyACM0`: Teensy USB serial (`16c0:0483`)
+
+## Clone the Repository
+
+Clone the repository into a path that is easy to access from WSL. The current examples assume:
+
+```text
+C:\Users\<your-user>\git\FloSystemV2
 ```
 
-4. If the container already exists, restart it later with:
+Inside WSL, that path is:
 
 ```bash
-# default service
-docker compose start flo_v2_aim1
-docker compose attach flo_v2_aim1
+/mnt/c/Users/<your-user>/git/FloSystemV2
 ```
 
+## Build the Docker Image
+
+All Docker commands below should be run inside the Ubuntu WSL shell.
+
 ```bash
-# host-network service
-docker compose --profile host start flo_v2_aim1_host
-docker compose --profile host attach flo_v2_aim1_host
+cd /mnt/c/Users/<your-user>/git/FloSystemV2
+docker build -t flo_v2_image_aim1 .
 ```
 
 Notes:
 
-- `docker start` does not accept runtime arguments, so the toggle is set via the container environment at create time.
-- `docker compose start` also reuses the environment already defined in `docker-compose.yml`.
-- If `AUTO_BRINGUP` is unset or `false`, the container starts with an interactive shell only.
+- The image build clones the FloSystemV2 GitHub repository into `/catkin_ws/src/FloSystemV2` inside the container image.
+- The local repository is still useful for editing, documentation, and `docker compose`.
 
-**Tips:**
+## Run with Docker Compose
 
-* to change to root user, run `sudo -i`
-* to copy files/folders from the host into the container, run `docker cp <host_file_path> <container_name>:<container_path>` or `docker cp ./mylocalfolder mycontainer:/path/within/container/`
+The default service in [`docker-compose.yml`](docker-compose.yml) is `flo_v2_aim1`.
 
-  Example: copy the local repo into the container workspace
+Bring it up:
 
-  ```bash
-  docker cp C:\\Users\\robor\\git\\FloSystemV2 flo_v2_aim1:/catkin_ws/src
-  ```
+```bash
+cd /mnt/c/Users/<your-user>/git/FloSystemV2
+docker compose up --build
+```
 
-  After copying from Windows, convert shell and Python scripts to Unix line endings inside the container:
+Start an already-created container again:
 
-  ```bash
-  find /catkin_ws -type f \( -name "*.sh" -o -name "*.py" \) -exec dos2unix {} \;
-  ```
+```bash
+docker compose start flo_v2_aim1
+docker compose attach flo_v2_aim1
+```
 
-## Test run motors (inside the container)
+Stop and remove it:
+
+```bash
+docker compose down
+```
+
+## Run with `docker run`
+
+If you want to start the container directly instead of using Compose:
+
+```bash
+export DISPLAY=$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0
+export QT_X11_NO_MITSHM=1
+
+docker run -it \
+  --name flo_v2_aim1 \
+  --privileged \
+  --device=/dev/ttyUSB0:/dev/ttyUSB0 \
+  --device=/dev/ttyACM0:/dev/ttyACM0 \
+  -e DISPLAY=host.docker.internal:0 \
+  -e QT_X11_NO_MITSHM=1 \
+  -e LIBGL_ALWAYS_INDIRECT=1 \
+  -p 1883:1883 \
+  -p 11311:11311 \
+  -p 8080:8080 \
+  flo_v2_image_aim1
+```
+
+Re-enter a running container:
+
+```bash
+docker exec -it flo_v2_aim1 bash
+```
+
+Restart an existing stopped container:
+
+```bash
+docker start -ai flo_v2_aim1
+```
+
+## Auto Bringup on Container Start
+
+The entrypoint supports automatic execution of `tmux_robot_bringup_legacy.sh` when `AUTO_BRINGUP=true`.
+
+Example with `docker run`:
+
+```bash
+docker run -it \
+  --name flo_v2_aim1 \
+  --privileged \
+  --device=/dev/ttyUSB0:/dev/ttyUSB0 \
+  --device=/dev/ttyACM0:/dev/ttyACM0 \
+  -e DISPLAY=host.docker.internal:0 \
+  -e QT_X11_NO_MITSHM=1 \
+  -e LIBGL_ALWAYS_INDIRECT=1 \
+  -e AUTO_BRINGUP=true \
+  -p 1883:1883 \
+  -p 11311:11311 \
+  -p 8080:8080 \
+  flo_v2_image_aim1
+```
+
+For Compose, edit [`docker-compose.yml`](docker-compose.yml) and set:
+
+```yaml
+AUTO_BRINGUP: "true"
+```
+
+Then create or restart the service:
+
+```bash
+docker compose up --build
+```
+
+Or later:
+
+```bash
+docker compose start flo_v2_aim1
+docker compose attach flo_v2_aim1
+```
+
+If `AUTO_BRINGUP` is unset or `false`, the container starts with an interactive shell.
+
+## Inside-the-Container Commands
+
+Source the ROS environment first:
 
 ```bash
 source /opt/ros/noetic/setup.bash
 source /catkin_ws/devel/setup.bash
+```
+
+### Test motor communication
+
+```bash
 roslaunch flo_humanoid read_write_arms.launch
 ```
 
-If you see "Failed to open the port!":
+If you see `Failed to open the port!`:
 
-- Ensure `/dev/ttyUSB0` exists in host and is mapped with `--device`.
-- Grant permission: `sudo chmod 666 /dev/ttyUSB0` (host WSL once per session).
-- If the host device is `/dev/ttyUSB1`, map it as `--device=/dev/ttyUSB1:/dev/ttyUSB0`.
+- Confirm `/dev/ttyUSB0` exists in WSL
+- Confirm the container was started with the required `--device` mappings
+- Run `sudo chmod 666 /dev/ttyUSB0` in WSL if needed
+- If the host device name changed, remap it explicitly, for example `--device=/dev/ttyUSB1:/dev/ttyUSB0`
 
-## MQTT
+### Start MQTT broker
 
-* To initiate MQTT broker which runs inside the Docker container: `docker exec -u 0 -it flo_v2_aim1 bash -lc "mosquitto -v -p 1883"`
-* Use scripts in `flo_core\scripts\test` to test MQTT communication between Windows and Docker container
-
-## Commands to test in Linux
-
-- Start ROS master:
-
-  ```
-  roscore
-  ```
-- Start the MQTT broker inside the container (keep this running):
-
-  ```
-  mosquitto -v -p 1883
-  ```
-- Launch the Gazebo sim + MoveIt + RViz:
-
-  ```
-  roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=false show_rviz_gui:=false
-  ```
-- Launch the hardware bridge, but disable joint_state_publisher when Gazebo is running:
-
-  ```
-  roslaunch flo_humanoid dual_arm_hardware.launch publish_joint_states:=false
-  ```
-- Start the MQTT control node (connects to the broker):
-
-  ```
-  rosrun flo_core mqtt_control_node.py
-  ```
-- Send a test movement command:
-
-  ```
-  mosquitto_pub -h localhost -t ros/mqtt/movement -m "0"
-  ```
-
-If you meet error "Name or service not know", run:
-
+```bash
+mosquitto -v -p 1883
 ```
+
+### Start ROS core
+
+```bash
+roscore
+```
+
+### Start simulation
+
+```bash
+roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=false show_rviz_gui:=false
+```
+
+### Start the hardware bridge
+
+```bash
+roslaunch flo_humanoid dual_arm_hardware.launch publish_joint_states:=false
+```
+
+### Start the MQTT control node
+
+```bash
+rosrun flo_core mqtt_control_node.py
+```
+
+If you see `Name or service not known`, retry with:
+
+```bash
 MQTT_BROKER_HOST=localhost rosrun flo_core mqtt_control_node.py
 ```
 
-## Testing
+### Send a test MQTT command
 
-Use test scripts `tests/check_multiple_action_time_in_linux.sh` and `tests/check_multiple_action_time_in_linux.sh`
+```bash
+mosquitto_pub -h localhost -t ros/mqtt/movement -m "0"
+```
 
-## Bring up robot (main)
+## Test Scripts
 
-Run `tmux_robot_bringup_legacy.sh`
+MQTT-related test scripts live under:
+
+- `flo_core/scripts/test`
+
+Timing test scripts live under:
+
+- `tests`
+
+## Useful Tips
+
+- Switch to the root shell in the container with `sudo -i`
+- Copy files into a container with `docker cp <host_path> <container_name>:<container_path>`
+- If you copy scripts from Windows into the container, normalize line endings:
+
+```bash
+find /catkin_ws -type f \( -name "*.sh" -o -name "*.py" \) -exec dos2unix {} \;
+```
+
+## Main Bringup Script
+
+The primary bringup entry point is:
+
+```bash
+/catkin_ws/src/FloSystemV2/tmux_robot_bringup_legacy.sh
+```
