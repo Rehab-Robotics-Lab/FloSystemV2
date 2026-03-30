@@ -126,6 +126,41 @@ usbip version
   cd /mnt/c/Users/<path_to_repo>
   docker build -t flo_v2_image_aim1 . 
   ```
+* Docker Compose is also provided through `docker-compose.yml`. The repo includes:
+
+  - `flo_v2_aim1`: default bridge-network service with published ports
+  - `flo_v2_aim1_host`: host-network service for ROS/X11-heavy usage
+
+* Build and start the default Compose service:
+
+  ```bash
+  # inside WSL / bash
+  cd /mnt/c/Users/<path_to_repo>
+  docker compose up --build
+  ```
+
+* Build and start the host-network Compose service:
+
+  ```bash
+  # inside WSL / bash
+  cd /mnt/c/Users/<path_to_repo>
+  docker compose --profile host up --build flo_v2_aim1_host
+  ```
+
+* Start an already-created Compose service:
+
+  ```bash
+  # default service
+  docker compose start flo_v2_aim1
+  docker compose attach flo_v2_aim1
+  ```
+
+  ```bash
+  # host-network service
+  docker compose --profile host start flo_v2_aim1_host
+  docker compose --profile host attach flo_v2_aim1_host
+  ```
+
 * Run container with devices and X11 (start VcXsrv on Windows first, and run these commands inside the WSL Ubuntu shell, not Windows PowerShell):
 
   ```
@@ -152,6 +187,18 @@ usbip version
   docker start -ai <your container name>
   ```
 
+* To stop and remove Compose containers:
+
+  ```bash
+  # default service
+  docker compose down
+  ```
+
+  ```bash
+  # host-network service
+  docker compose --profile host down
+  ```
+
 ## Auto bringup on container start
 
 The container can auto-run the bringup script on `docker start -ai` when the container was created with `AUTO_BRINGUP=true`.
@@ -166,15 +213,59 @@ docker run -it --name flo_v2_aim1 --privileged --device=/dev/ttyUSB0:/dev/ttyUSB
 docker start -ai flo_v2_aim1
 ```
 
+Compose example:
+
+1. Open `docker-compose.yml`
+2. Set `AUTO_BRINGUP: "true"` in the service you want to use:
+   `flo_v2_aim1` or `flo_v2_aim1_host`
+3. Create and start the service:
+
+```bash
+# default service
+docker compose up --build
+```
+
+```bash
+# host-network service
+docker compose --profile host up --build flo_v2_aim1_host
+```
+
+4. If the container already exists, restart it later with:
+
+```bash
+# default service
+docker compose start flo_v2_aim1
+docker compose attach flo_v2_aim1
+```
+
+```bash
+# host-network service
+docker compose --profile host start flo_v2_aim1_host
+docker compose --profile host attach flo_v2_aim1_host
+```
+
 Notes:
 
 - `docker start` does not accept runtime arguments, so the toggle is set via the container environment at create time.
+- `docker compose start` also reuses the environment already defined in `docker-compose.yml`.
 - If `AUTO_BRINGUP` is unset or `false`, the container starts with an interactive shell only.
 
 **Tips:**
 
 * to change to root user, run `sudo -i`
-* to copy files/folders from local repo (host) to docker container, run `docker cp <host_file_path> <container_name>:<container_path>` or `docker cp ./mylocalfolder mycontainer:/path/within/container/`
+* to copy files/folders from the host into the container, run `docker cp <host_file_path> <container_name>:<container_path>` or `docker cp ./mylocalfolder mycontainer:/path/within/container/`
+
+  Example: copy the local repo into the container workspace
+
+  ```bash
+  docker cp C:\\Users\\robor\\git\\FloSystemV2 flo_v2_aim1:/catkin_ws/src
+  ```
+
+  After copying from Windows, convert shell and Python scripts to Unix line endings inside the container:
+
+  ```bash
+  find /catkin_ws -type f \( -name "*.sh" -o -name "*.py" \) -exec dos2unix {} \;
+  ```
 
 ## Test run motors (inside the container)
 
