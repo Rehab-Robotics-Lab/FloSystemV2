@@ -29,6 +29,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # ROS Controllers (for joint_state_controller, etc.)
     ros-noetic-ros-control \
     ros-noetic-ros-controllers \
+    ros-noetic-joint-trajectory-controller \
+    ros-noetic-position-controllers \
+    ros-noetic-joint-state-controller \
     dos2unix
     # && rm -rf /var/lib/apt/lists/*
 

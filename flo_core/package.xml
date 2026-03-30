@@ -52,7 +52,11 @@
 
   <exec_depend>moveit_ros_warehouse</exec_depend>
   <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_ros_control</exec_depend>
   <exec_depend>controller_manager</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
+  <exec_depend>joint_state_controller</exec_depend>
   <exec_depend>joy</exec_depend>
   <exec_depend>moveit_ros_benchmarks</exec_depend>
   <exec_depend>warehouse_ros_mongo</exec_depend>

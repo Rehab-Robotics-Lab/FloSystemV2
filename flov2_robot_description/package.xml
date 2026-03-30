@@ -28,6 +28,10 @@ for flov2_robot_description robot</p>
   <build_depend>tf</build_depend>
   <build_depend>controller_manager</build_depend>
   <build_depend>gazebo_ros</build_depend>
+  <build_depend>gazebo_ros_control</build_depend>
+  <build_depend>joint_trajectory_controller</build_depend>
+  <build_depend>position_controllers</build_depend>
+  <build_depend>joint_state_controller</build_depend>
   
   <depend>roslaunch</depend>
   <depend>gazebo</depend>
@@ -50,8 +54,12 @@ for flov2_robot_description robot</p>
   <exec_depend>xacro</exec_depend>
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_ros_control</exec_depend>
   <exec_depend>tf</exec_depend>
   <exec_depend>controller_manager</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
+  <exec_depend>joint_state_controller</exec_depend>
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>joint_state_publisher_gui</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
