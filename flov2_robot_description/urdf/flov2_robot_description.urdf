@@ -724,8 +724,6 @@
 	</actuator>
   </transmission>  
   
-
-  
   <gazebo>
 	<plugin name="control" filename="libgazebo_ros_control.so">
 		<robotNamespace>/</robotNamespace>
@@ -733,44 +731,47 @@
   </gazebo>
   
   
+  <!-- Keep self-collision off for the full arm mesh model. These links use
+       detailed STL collision geometry, and blanket self-collision makes
+       Gazebo Classic extremely slow in Docker/WSL. -->
   <gazebo reference="left_up_joint">
-	<selfCollide>true</selfCollide>
+	<selfCollide>false</selfCollide>
   </gazebo>
 
   <gazebo reference="left_up_arm">
-	<selfCollide>true</selfCollide>
+	<selfCollide>false</selfCollide>
   </gazebo>
   
   <gazebo reference="left_low_joint">
-	<selfCollide>true</selfCollide>
+	<selfCollide>false</selfCollide>
   </gazebo>
   
     <gazebo reference="left_low_arm">
-	<selfCollide>true</selfCollide>
+	<selfCollide>false</selfCollide>
   </gazebo>
   
   <gazebo reference="right_up_joint">
-	<selfCollide>true</selfCollide>
+	<selfCollide>false</selfCollide>
   </gazebo>
 
   <gazebo reference="right_up_arm">
-	<selfCollide>true</selfCollide>
+	<selfCollide>false</selfCollide>
   </gazebo>
   
   <gazebo reference="right_low_joint">
-	<selfCollide>true</selfCollide>
+	<selfCollide>false</selfCollide>
   </gazebo>
   
   <gazebo reference="right_low_arm">
-	<selfCollide>true</selfCollide>
+	<selfCollide>false</selfCollide>
   </gazebo>
   
   <gazebo reference="right_gripper">
-	<selfCollide>true</selfCollide>
+	<selfCollide>false</selfCollide>
   </gazebo>
   
     <gazebo reference="left_gripper">
-	<selfCollide>true</selfCollide>
+	<selfCollide>false</selfCollide>
   </gazebo>
   
   
