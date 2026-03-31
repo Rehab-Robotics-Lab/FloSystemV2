@@ -69,7 +69,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies used by the ROS nodes and tooling.
-RUN pip3 install --no-cache-dir \
+RUN pip3 install --upgrade \
         numpy \
         paho-mqtt \
         pyserial \
