@@ -21,6 +21,8 @@ services:
       - "1883:1883"
       - "11311:11311"
       - "8080:8080"
+    volumes:
+      - ./runtime-status:/runtime-status
 
   # flo_v2_aim1_host:
   #   image: flo_v2_image_aim1
