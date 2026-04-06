@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================
-# Starts ROS, MQTT broker, sim, hardware bridge, and control node
+# Starts ROS, MQTT broker, moveit, hardware bridge, and control node
 # ============================================================
 
 STATUS_DIR="${FLO_STATUS_DIR:-/runtime-status}"
@@ -122,8 +122,8 @@ append_event "[launcher] starting - MQTT broker step launched; moving to MoveIt/
 
 # Window 2: Gazebo sim + MoveIt + RViz (GUI off)
 mark_step "moveit" "starting" "Launching full_robot_arm_sim.launch"
-tmux new-window -t "$SESSION_NAME" -n "Sim+Moveit"
-tmux send-keys -t "${SESSION_NAME}:sim" "\"$STEP_RUNNER\" moveit source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=false show_rviz_gui:=false" C-m
+tmux new-window -t "$SESSION_NAME" -n "moveit"
+tmux send-keys -t "${SESSION_NAME}:moveit" "\"$STEP_RUNNER\" moveit source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=false show_rviz_gui:=false" C-m
 sleep 2
 write_overall_status "starting" "hardware" "MoveIt/sim step launched; moving to hardware bridge"
 append_event "[launcher] starting - MoveIt/sim step launched; moving to hardware bridge"
