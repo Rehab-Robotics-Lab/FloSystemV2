@@ -16,7 +16,7 @@ services:
       QT_X11_NO_MITSHM: "1"
       LIBGL_ALWAYS_INDIRECT: "1"
       # Set to "true" to auto-run tmux_robot_bringup_legacy.sh on start.
-      AUTO_BRINGUP: "false"
+      AUTO_BRINGUP: "true"
     ports:
       - "1883:1883"
       - "11311:11311"

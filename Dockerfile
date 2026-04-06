@@ -72,8 +72,7 @@ RUN apt-get update \
 RUN pip3 install --upgrade \
         numpy \
         paho-mqtt \
-        pyserial \
-        serial
+        pyserial 
 
 # Some legacy scripts still expect /usr/bin/python to exist.
 RUN if [ ! -e /usr/bin/python ]; then ln -s /usr/bin/python3 /usr/bin/python; fi
