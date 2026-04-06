@@ -53,8 +53,8 @@ wait "$child_pid"
 exit_code=$?
 
 if [[ $exit_code -eq 0 ]]; then
-  write_step_status "exited" "Command exited cleanly"
-  append_event "exited" "Command exited cleanly"
+  write_step_status "completed" "Command completed cleanly"
+  append_event "completed" "Command completed cleanly"
 else
   write_step_status "failed" "Command exited with code $exit_code"
   append_event "failed" "Command exited with code $exit_code"

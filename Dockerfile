@@ -80,9 +80,6 @@ WORKDIR ${CATKIN_WS}/src
 
 COPY . ${CATKIN_WS}/src/FloSystemV2
 
-# Overlay local launch scripts so Compose builds use the checked-out workspace versions.
-COPY tmux_robot_bringup_legacy.sh docker_status_step.sh docker_entrypoint.sh ${CATKIN_WS}/src/FloSystemV2/
-
 # Add the top-level catkin workspace file expected by catkin_make.
 RUN printf '%s\n' \
     'cmake_minimum_required(VERSION 3.0.2)' \
