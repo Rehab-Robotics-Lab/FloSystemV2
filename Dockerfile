@@ -5,9 +5,6 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
 ENV CATKIN_WS=/catkin_ws
 
-ARG FLO_REPO_URL=https://github.com/Rehab-Robotics-Lab/FloSystemV2.git
-ARG FLO_REPO_BRANCH=FloV2_no_grippers
-
 USER root
 
 # Re-register the ROS apt source and key before installing packages.
@@ -77,11 +74,11 @@ RUN pip3 install --upgrade \
 # Some legacy scripts still expect /usr/bin/python to exist.
 RUN if [ ! -e /usr/bin/python ]; then ln -s /usr/bin/python3 /usr/bin/python; fi
 
-# Create the catkin workspace and clone the project inside the image.
+# Create the catkin workspace and copy the local project into the image.
 RUN mkdir -p ${CATKIN_WS}/src
 WORKDIR ${CATKIN_WS}/src
 
-RUN git clone --depth 1 --single-branch --branch ${FLO_REPO_BRANCH} ${FLO_REPO_URL} FloSystemV2
+COPY . ${CATKIN_WS}/src/FloSystemV2
 
 # Overlay local launch scripts so Compose builds use the checked-out workspace versions.
 COPY tmux_robot_bringup_legacy.sh docker_status_step.sh docker_entrypoint.sh ${CATKIN_WS}/src/FloSystemV2/
@@ -93,7 +90,7 @@ RUN printf '%s\n' \
     'find_package(catkin REQUIRED)' \
     'catkin_workspace()' > ${CATKIN_WS}/src/CMakeLists.txt
 
-# Normalize cloned scripts to Unix line endings before dependency resolution and build.
+# Normalize copied scripts to Unix line endings before dependency resolution and build.
 RUN find ${CATKIN_WS} -type f \( -name "*.sh" -o -name "*.py" \) -exec dos2unix {} \;
 
 WORKDIR ${CATKIN_WS}
