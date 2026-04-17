@@ -1,9 +1,14 @@
 <launch>
+  <arg name="publish_joint_states" default="true"/>
+
   <rosparam file="$(find flo_humanoid)/config/dynamixel_ids.yaml" command="load"/>
   <rosparam file="$(find flo_humanoid)/config/dynamixel_offsets.yaml" command="load"/>
+  <rosparam file="$(find flo_humanoid)/config/dynamixel_joint_signs.yaml" command="load"/>
 
   <node pkg="flo_humanoid"
         type="read_write_arms_node"
         name="read_write_arms_node"
-        output="screen"/>
+        output="screen">
+    <param name="publish_joint_states" value="$(arg publish_joint_states)"/>
+  </node>
 </launch>

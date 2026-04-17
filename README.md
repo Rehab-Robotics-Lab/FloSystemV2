@@ -306,6 +306,14 @@ roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=false show_rviz_gui:=f
 ### Start the hardware bridge
 
 ```bash
+roslaunch flo_humanoid dual_arm_hardware.launch
+```
+
+This launch path is the hardware-owned `/joint_states` publisher. It reads the live Dynamixel positions from `read_write_arms_node`, publishes `/joint_states`, and feeds `robot_state_publisher` for the hardware-side TF tree.
+
+If Gazebo or another controller is already publishing `/joint_states`, disable the hardware publisher instead:
+
+```bash
 roslaunch flo_humanoid dual_arm_hardware.launch publish_joint_states:=false
 ```
 

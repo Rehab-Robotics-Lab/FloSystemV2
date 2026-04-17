@@ -1,5 +1,9 @@
 <launch>
-  <include file="$(find flo_humanoid)/launch/read_write_arms.launch"/>
+  <arg name="publish_joint_states" default="true"/>
+
+  <include file="$(find flo_humanoid)/launch/read_write_arms.launch">
+    <arg name="publish_joint_states" value="$(arg publish_joint_states)"/>
+  </include>
 
   <param name="robot_description" command="cat $(find flov2_robot_description)/urdf/flov2_robot_description.urdf" />
 

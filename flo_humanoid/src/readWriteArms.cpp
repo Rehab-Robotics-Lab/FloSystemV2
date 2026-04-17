@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <array>
 #include <boost/bind.hpp>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <map>
@@ -94,6 +95,7 @@ class DynamixelTrajectoryController {
                      boost::bind(&DynamixelTrajectoryController::executeLeftTrajectory, this, _1), false),
         right_server_(nh_, "right_arm_controller/follow_joint_trajectory",
                       boost::bind(&DynamixelTrajectoryController::executeRightTrajectory, this, _1), false),
+        publish_joint_states_(private_nh_.param("publish_joint_states", true)),
         joint_state_publish_rate_hz_(private_nh_.param("joint_state_publish_rate_hz", 30.0)),
         control_rate_hz_(private_nh_.param("control_rate_hz", 50.0)),
         joint_state_timeout_warn_sec_(private_nh_.param("joint_state_timeout_warn_sec", 0.5)),
@@ -101,7 +103,9 @@ class DynamixelTrajectoryController {
     loadJointConfiguration();
     setupArms();
 
-    joint_state_pub_ = nh_.advertise<sensor_msgs::JointState>("/joint_states", 10);
+    if (publish_joint_states_) {
+      joint_state_pub_ = nh_.advertise<sensor_msgs::JointState>("/joint_states", 10);
+    }
     get_positions_srv_ = nh_.advertiseService("/get_arms_joint_positions",
                                               &DynamixelTrajectoryController::handleGetPositions, this);
     legacy_set_sub_ = nh_.subscribe("/set_arms_joint_positions", 8,
@@ -111,8 +115,13 @@ class DynamixelTrajectoryController {
       throw std::runtime_error("failed to initialize Dynamixel port");
     }
 
-    joint_state_timer_ = nh_.createTimer(ros::Duration(1.0 / joint_state_publish_rate_hz_),
-                                         &DynamixelTrajectoryController::publishJointStatesTimer, this);
+    if (publish_joint_states_) {
+      joint_state_timer_ = nh_.createTimer(ros::Duration(1.0 / joint_state_publish_rate_hz_),
+                                           &DynamixelTrajectoryController::publishJointStatesTimer, this);
+      ROS_INFO("Publishing hardware joint states on /joint_states.");
+    } else {
+      ROS_INFO("Hardware joint-state publishing disabled; another node should own /joint_states.");
+    }
 
     left_server_.start();
     right_server_.start();
@@ -129,24 +138,28 @@ class DynamixelTrajectoryController {
   void loadJointConfiguration() {
     XmlRpc::XmlRpcValue id_map;
     XmlRpc::XmlRpcValue offsets;
+    XmlRpc::XmlRpcValue joint_signs;
     if (!nh_.getParam("joint_id_map", id_map) || id_map.getType() != XmlRpc::XmlRpcValue::TypeStruct) {
       throw std::runtime_error("joint_id_map param missing or invalid");
     }
     if (!nh_.getParam("offsets", offsets) || offsets.getType() != XmlRpc::XmlRpcValue::TypeStruct) {
       throw std::runtime_error("offsets param missing or invalid");
     }
+    if (!nh_.getParam("joint_signs", joint_signs) || joint_signs.getType() != XmlRpc::XmlRpcValue::TypeStruct) {
+      throw std::runtime_error("joint_signs param missing or invalid");
+    }
 
     joint_specs_.clear();
     const std::vector<std::string> ordered_joints = {"l1", "l2", "l3", "l4", "r1", "r2", "r3", "r4"};
     for (const auto& name : ordered_joints) {
-      if (!id_map.hasMember(name) || !offsets.hasMember(name)) {
-        throw std::runtime_error(std::string("joint_id_map/offsets missing joint ") + name);
+      if (!id_map.hasMember(name) || !offsets.hasMember(name) || !joint_signs.hasMember(name)) {
+        throw std::runtime_error(std::string("joint_id_map/offsets/joint_signs missing joint ") + name);
       }
       JointSpec spec;
       spec.name = name;
       spec.id = static_cast<uint8_t>(static_cast<int>(id_map[name]));
       spec.offset_deg = xmlRpcToDouble(offsets[name]);
-      spec.sign = (name == "l4") ? -1.0 : 1.0;
+      spec.sign = xmlRpcToDouble(joint_signs[name]);
       if (name == "l1" || name == "l2" || name == "r1" || name == "r2") {
         spec.p_gain = P_GAIN_XM;
         spec.i_gain = I_GAIN_XM;
@@ -155,6 +168,9 @@ class DynamixelTrajectoryController {
         spec.p_gain = P_GAIN_XL;
         spec.i_gain = I_GAIN_XL;
         spec.d_gain = D_GAIN_XL;
+      }
+      if (spec.sign != 1.0 && spec.sign != -1.0) {
+        throw std::runtime_error(std::string("joint_signs must be +/-1 for joint ") + name);
       }
       joint_specs_.push_back(spec);
       joint_name_to_index_[spec.name] = joint_specs_.size() - 1;
@@ -261,6 +277,22 @@ class DynamixelTrajectoryController {
     return false;
   }
 
+  ros::Time monotonicRosNow() {
+    const ros::Time now = ros::Time::now();
+    std::lock_guard<std::mutex> lock(state_mutex_);
+    if (last_ros_timestamp_.isZero() || now > last_ros_timestamp_) {
+      last_ros_timestamp_ = now;
+      return last_ros_timestamp_;
+    }
+
+    // WSL/Docker wall clock can jump backwards briefly; keep outgoing ROS stamps monotonic.
+    last_ros_timestamp_ += ros::Duration(1e-6);
+    ROS_WARN_THROTTLE(1.0,
+                      "ROS time moved backwards (now=%.9f, last=%.9f); clamping outgoing timestamps.",
+                      now.toSec(), last_ros_timestamp_.toSec());
+    return last_ros_timestamp_;
+  }
+
   void publishJointStatesTimer(const ros::TimerEvent&) {
     std::vector<uint32_t> ticks;
     if (!readJointTicks(ticks)) {
@@ -268,7 +300,7 @@ class DynamixelTrajectoryController {
     }
 
     sensor_msgs::JointState msg;
-    msg.header.stamp = ros::Time::now();
+    msg.header.stamp = monotonicRosNow();
     msg.name.reserve(joint_specs_.size());
     msg.position.reserve(joint_specs_.size());
 
@@ -362,7 +394,7 @@ class DynamixelTrajectoryController {
 
     ROS_INFO("Executing trajectory on %s with %zu points", arm.controller_name.c_str(), ordered.positions.size());
     ros::Rate rate(control_rate_hz_);
-    const ros::Time start_time = ros::Time::now();
+    const auto start_time = std::chrono::steady_clock::now();
     const ros::Duration total_duration = ordered.times_from_start.back();
     control_msgs::FollowJointTrajectoryFeedback feedback;
     feedback.joint_names = arm.joint_names;
@@ -375,7 +407,8 @@ class DynamixelTrajectoryController {
         return;
       }
 
-      const ros::Duration elapsed = ros::Time::now() - start_time;
+      const auto elapsed_wall = std::chrono::steady_clock::now() - start_time;
+      const ros::Duration elapsed(std::chrono::duration<double>(elapsed_wall).count());
       const std::vector<double> target = interpolateTrajectory(ordered, start_positions, elapsed);
       if (!applyArmTarget(arm, target)) {
         result.error_code = control_msgs::FollowJointTrajectoryResult::PATH_TOLERANCE_VIOLATED;
@@ -544,7 +577,7 @@ class DynamixelTrajectoryController {
   void populateFeedback(const ArmSpec& arm,
                         const std::vector<double>& desired_positions,
                         control_msgs::FollowJointTrajectoryFeedback& feedback) {
-    feedback.header.stamp = ros::Time::now();
+    feedback.header.stamp = monotonicRosNow();
     feedback.desired.positions = desired_positions;
     feedback.actual.positions = getMeasuredArmPositions(arm);
     feedback.error.positions.resize(desired_positions.size(), 0.0);
@@ -557,17 +590,18 @@ class DynamixelTrajectoryController {
   std::vector<double> getMeasuredArmPositions(const ArmSpec& arm) {
     std::vector<uint32_t> ticks;
     ros::Time stamp;
+    const ros::Time now = monotonicRosNow();
     {
       std::lock_guard<std::mutex> lock(state_mutex_);
       ticks = last_measured_ticks_;
       stamp = last_joint_state_stamp_;
     }
 
-    if (ticks.size() != joint_specs_.size() || (ros::Time::now() - stamp).toSec() > joint_state_timeout_warn_sec_) {
+    if (ticks.size() != joint_specs_.size() || (now - stamp).toSec() > joint_state_timeout_warn_sec_) {
       if (readJointTicks(ticks)) {
         std::lock_guard<std::mutex> lock(state_mutex_);
         last_measured_ticks_ = ticks;
-        last_joint_state_stamp_ = ros::Time::now();
+        last_joint_state_stamp_ = now;
       }
     }
 
@@ -721,11 +755,13 @@ class DynamixelTrajectoryController {
   double joint_state_publish_rate_hz_;
   double control_rate_hz_;
   double joint_state_timeout_warn_sec_;
+  bool publish_joint_states_;
 
   std::mutex io_mutex_;
   std::mutex state_mutex_;
   std::vector<uint32_t> last_measured_ticks_;
   ros::Time last_joint_state_stamp_;
+  ros::Time last_ros_timestamp_;
   std::vector<uint32_t> desired_ticks_;
   bool desired_ticks_initialized_;
 };

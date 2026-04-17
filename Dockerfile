@@ -100,7 +100,7 @@ RUN if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then rosdep init
     && catkin_make
 
 # Make script entry points executable and prepare the default shell environment.
-RUN chmod +x ${CATKIN_WS}/src/*/scripts/*.py || true \
+RUN find ${CATKIN_WS}/src/FloSystemV2 -path "*/scripts/*.py" -exec chmod +x {} \; \
     && chmod +x ${CATKIN_WS}/src/FloSystemV2/*.sh \
     && echo "source /opt/ros/noetic/setup.bash" >> /root/.bashrc \
     && echo "source ${CATKIN_WS}/devel/setup.bash" >> /root/.bashrc \

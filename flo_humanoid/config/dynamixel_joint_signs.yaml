@@ -1,0 +1,12 @@
+# Joint direction multipliers between Dynamixel motor rotation and ROS joint motion.
+# Use 1 for aligned rotation and -1 for inverted rotation.
+
+joint_signs:
+  l1:  1
+  l2:  1
+  l3:  1
+  l4: -1
+  r1:  1
+  r2:  1
+  r3:  1
+  r4:  1
