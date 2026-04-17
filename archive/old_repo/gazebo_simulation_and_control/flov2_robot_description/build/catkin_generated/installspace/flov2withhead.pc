@@ -1,8 +1,0 @@
-prefix=/usr/local
-
-Name: flov2withhead
-Description: Description of flov2withhead
-Version: 1.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
