@@ -1,32 +1,37 @@
-# Mechanical zero offsets (radians)
+# Software joint-angle offsets in degrees.
 # -------------------------------------------------
-# Positive values rotate CCW when viewed
-# from the motor’s back (Dynamixel convention).
-# Start with zeros; update after dial-in.
+# Keep every joint at 180 degrees by default so the
+# software-side interpreted angle range can span
+# roughly 0 to 360 degrees.
+#
+# Do not calibrate the starting/home pose by changing
+# these values. Instead, calibrate hardware homing
+# offsets in dynamixel_homing_offsets.yaml so the
+# robot's physical starting/home pose lands at
+# 180 degrees for every joint.
 
 offsets:
   # -------------  LEFT ARM  -------------
-  l1:  180        # left_shoulder_flexionextension
-  l2:  180      # left_shoulder_abductionadduction
-  l3:  180       # left_elbow_rotation
-  l4:  180      # left_elbow_flexionextension
-
+  l1: 180        # left_shoulder_flexionextension
+  l2: 180        # left_shoulder_abductionadduction
+  l3: 180        # left_elbow_rotation
+  l4: 180        # left_elbow_flexionextension
 
   # -------------  RIGHT ARM -------------
-  r1:  180        # right_shoulder_flexionextension
-  r2:  180       # right_shoulder_abductionadduction
-  r3:  180       # right_elbow_rotation
-  r4:  180      # right_elbow_flexionextension
+  r1: 180        # right_shoulder_flexionextension
+  r2: 180        # right_shoulder_abductionadduction
+  r3: 180        # right_elbow_rotation
+  r4: 180        # right_elbow_flexionextension
 
 
-# 111        left_shoulder_flexionextension 
-# 112        left_shoulder_abductionadduction  
+# 111        left_shoulder_flexionextension
+# 112        left_shoulder_abductionadduction
 
-# 121        left_elbow_flexionextension   
-# 122        left_elbow_rotation  
+# 121        left_elbow_flexionextension
+# 122        left_elbow_rotation
 
-# 211        right_shoulder_flexionextension  
-# 212        right_shoulder_abductionadduction   
+# 211        right_shoulder_flexionextension
+# 212        right_shoulder_abductionadduction
 
-# 221        right_elbow_flexionextension 
-# 222        right_elbow_rotation 
+# 221        right_elbow_flexionextension
+# 222        right_elbow_rotation
