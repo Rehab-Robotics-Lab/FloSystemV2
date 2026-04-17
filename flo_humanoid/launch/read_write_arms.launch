@@ -4,6 +4,7 @@
   <rosparam file="$(find flo_humanoid)/config/dynamixel_ids.yaml" command="load"/>
   <rosparam file="$(find flo_humanoid)/config/dynamixel_offsets.yaml" command="load"/>
   <rosparam file="$(find flo_humanoid)/config/dynamixel_joint_signs.yaml" command="load"/>
+  <rosparam file="$(find flo_humanoid)/config/dynamixel_homing_offsets.yaml" command="load"/>
 
   <node pkg="flo_humanoid"
         type="read_write_arms_node"

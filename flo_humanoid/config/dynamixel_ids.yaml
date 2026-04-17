@@ -13,8 +13,8 @@ joint_id_map:
   # -------------  RIGHT ARM -------------
   r1: 211          # right_shoulder_flexionextension
   r2: 212          # right_shoulder_abductionadduction
-  r3: 222          # left_elbow_rotation
-  r4: 221          # left_elbow_flexionextension
+  r3: 222          # right_elbow_rotation
+  r4: 221          # right_elbow_flexionextension
 
 # Convenience lists (optional but handy)
 left_arm_ids:  [111, 112, 122, 121]

@@ -28,6 +28,7 @@ namespace {
 constexpr uint16_t ADDR_TORQUE_ENABLE = 64;
 constexpr uint16_t ADDR_PRESENT_LED = 65;
 constexpr uint16_t ADDR_OPER_MODE = 11;
+constexpr uint16_t ADDR_HOMING_OFFSET = 20;
 constexpr uint16_t ADDR_POSITION_D_GAIN = 80;
 constexpr uint16_t ADDR_POSITION_I_GAIN = 82;
 constexpr uint16_t ADDR_POSITION_P_GAIN = 84;
@@ -69,6 +70,7 @@ struct JointSpec {
   uint8_t id;
   double offset_deg;
   double sign;
+  int32_t homing_offset_ticks;
   uint16_t p_gain;
   uint16_t i_gain;
   uint16_t d_gain;
@@ -139,6 +141,7 @@ class DynamixelTrajectoryController {
     XmlRpc::XmlRpcValue id_map;
     XmlRpc::XmlRpcValue offsets;
     XmlRpc::XmlRpcValue joint_signs;
+    XmlRpc::XmlRpcValue homing_offsets;
     if (!nh_.getParam("joint_id_map", id_map) || id_map.getType() != XmlRpc::XmlRpcValue::TypeStruct) {
       throw std::runtime_error("joint_id_map param missing or invalid");
     }
@@ -148,18 +151,22 @@ class DynamixelTrajectoryController {
     if (!nh_.getParam("joint_signs", joint_signs) || joint_signs.getType() != XmlRpc::XmlRpcValue::TypeStruct) {
       throw std::runtime_error("joint_signs param missing or invalid");
     }
+    if (!nh_.getParam("homing_offsets", homing_offsets) || homing_offsets.getType() != XmlRpc::XmlRpcValue::TypeStruct) {
+      throw std::runtime_error("homing_offsets param missing or invalid");
+    }
 
     joint_specs_.clear();
     const std::vector<std::string> ordered_joints = {"l1", "l2", "l3", "l4", "r1", "r2", "r3", "r4"};
     for (const auto& name : ordered_joints) {
-      if (!id_map.hasMember(name) || !offsets.hasMember(name) || !joint_signs.hasMember(name)) {
-        throw std::runtime_error(std::string("joint_id_map/offsets/joint_signs missing joint ") + name);
+      if (!id_map.hasMember(name) || !offsets.hasMember(name) || !joint_signs.hasMember(name) || !homing_offsets.hasMember(name)) {
+        throw std::runtime_error(std::string("joint_id_map/offsets/joint_signs/homing_offsets missing joint ") + name);
       }
       JointSpec spec;
       spec.name = name;
       spec.id = static_cast<uint8_t>(static_cast<int>(id_map[name]));
       spec.offset_deg = xmlRpcToDouble(offsets[name]);
       spec.sign = xmlRpcToDouble(joint_signs[name]);
+      spec.homing_offset_ticks = xmlRpcToInt32(homing_offsets[name]);
       if (name == "l1" || name == "l2" || name == "r1" || name == "r2") {
         spec.p_gain = P_GAIN_XM;
         spec.i_gain = I_GAIN_XM;
@@ -193,6 +200,16 @@ class DynamixelTrajectoryController {
       return static_cast<double>(value);
     }
     throw std::runtime_error("expected numeric XmlRpc value");
+  }
+
+  static int32_t xmlRpcToInt32(const XmlRpc::XmlRpcValue& value) {
+    if (value.getType() == XmlRpc::XmlRpcValue::TypeInt) {
+      return static_cast<int32_t>(static_cast<int>(value));
+    }
+    if (value.getType() == XmlRpc::XmlRpcValue::TypeDouble) {
+      return static_cast<int32_t>(std::lround(static_cast<double>(value)));
+    }
+    throw std::runtime_error("expected integer-compatible XmlRpc value");
   }
 
   bool openAndInitializePort() {
@@ -236,6 +253,16 @@ class DynamixelTrajectoryController {
       return false;
     }
 
+    dxl_comm_result = packet_handler_->write4ByteTxRx(
+        port_handler_,
+        spec.id,
+        ADDR_HOMING_OFFSET,
+        static_cast<uint32_t>(spec.homing_offset_ticks),
+        &dxl_error);
+    if (!isCommunicationOk(dxl_comm_result, dxl_error, "set homing offset", spec.id, true)) {
+      return false;
+    }
+
     dxl_comm_result = packet_handler_->write4ByteTxRx(port_handler_, spec.id, ADDR_PROFILE_ACCELERATION, PROFILE_ACCEL, &dxl_error);
     isCommunicationOk(dxl_comm_result, dxl_error, "set profile acceleration", spec.id, false);
 
@@ -257,6 +284,7 @@ class DynamixelTrajectoryController {
     if (!isCommunicationOk(dxl_comm_result, dxl_error, "enable torque", spec.id, true)) {
       return false;
     }
+    ROS_INFO("Configured %s (ID %u): homing_offset_ticks=%d", spec.name.c_str(), spec.id, spec.homing_offset_ticks);
     return true;
   }
 
