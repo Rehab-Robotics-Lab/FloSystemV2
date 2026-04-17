@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================
-# Starts ROS, MQTT broker, moveit, hardware bridge, and control node
+# Starts ROS, MQTT broker, MoveIt, hardware controller, and control node
 # ============================================================
 
 STATUS_DIR="${FLO_STATUS_DIR:-/runtime-status}"
@@ -59,8 +59,8 @@ echo ""
 echo "This will start:"
 echo "  1. ROS Core"
 echo "  2. MQTT broker (mosquitto)"
-echo "  3. Gazebo sim + MoveIt + RViz (GUI off by default)"
-echo "  4. Hardware bridge"
+echo "  3. Dynamixel hardware controller"
+echo "  4. MoveIt (no Gazebo)"
 echo "  5. MQTT control node"
 echo ""
 echo "Press Ctrl+C in any tmux window to stop"
@@ -82,7 +82,6 @@ else
   exit 1
 fi
 
-# Source ROS environment for this shell
 source /opt/ros/noetic/setup.sh
 source "$WORKSPACE_SETUP"
 
@@ -91,21 +90,17 @@ SESSION_NAME="flo_robot_test"
 write_overall_status "starting" "launcher" "Initializing tmux bringup session"
 append_event "[launcher] starting - Initializing tmux bringup session"
 
-# Create tmux session
 tmux new-session -d -s "$SESSION_NAME"
 tmux set-option -t "$SESSION_NAME" remain-on-exit on
 
-# Window 0: ROS Core
 mark_step "roscore" "starting" "Launching roscore"
 tmux rename-window -t "${SESSION_NAME}:0" "roscore"
 tmux send-keys -t "${SESSION_NAME}:roscore" "\"$STEP_RUNNER\" roscore source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roscore" C-m
 
-# Wait for roscore to start
 sleep 5
 write_overall_status "starting" "mqtt" "roscore started; moving to MQTT broker"
 append_event "[launcher] starting - roscore started; moving to MQTT broker"
 
-# Window 1: MQTT broker (skip if already running)
 if pgrep -x mosquitto >/dev/null 2>&1; then
   echo "mosquitto already running; skipping broker launch"
   mark_step "mqtt" "running" "mosquitto already running; broker launch skipped"
@@ -116,48 +111,43 @@ else
   tmux new-window -t "$SESSION_NAME" -n "mqtt"
   tmux send-keys -t "${SESSION_NAME}:mqtt" "\"$STEP_RUNNER\" mqtt mosquitto -v -p 1883" C-m
 fi
-sleep 2
-write_overall_status "starting" "moveit" "MQTT broker step launched; moving to MoveIt/sim"
-append_event "[launcher] starting - MQTT broker step launched; moving to MoveIt/sim"
 
-# Window 2: Gazebo sim + MoveIt + RViz (GUI off)
-mark_step "moveit" "starting" "Launching full_robot_arm_sim.launch"
-tmux new-window -t "$SESSION_NAME" -n "moveit"
-tmux send-keys -t "${SESSION_NAME}:moveit" "\"$STEP_RUNNER\" moveit source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=false show_rviz_gui:=false" C-m
 sleep 2
-write_overall_status "starting" "hardware" "MoveIt/sim step launched; moving to hardware bridge"
-append_event "[launcher] starting - MoveIt/sim step launched; moving to hardware bridge"
+write_overall_status "starting" "hardware" "MQTT broker step launched; moving to hardware controller"
+append_event "[launcher] starting - MQTT broker step launched; moving to hardware controller"
 
-# Window 3: Hardware bridge
 mark_step "hardware" "starting" "Launching dual_arm_hardware.launch"
 tmux new-window -t "$SESSION_NAME" -n "hardware"
-tmux send-keys -t "${SESSION_NAME}:hardware" "\"$STEP_RUNNER\" hardware source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_humanoid dual_arm_hardware.launch publish_joint_states:=false" C-m
+tmux send-keys -t "${SESSION_NAME}:hardware" "\"$STEP_RUNNER\" hardware source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_humanoid dual_arm_hardware.launch" C-m
 
-sleep 20
-write_overall_status "starting" "controller" "Hardware bridge step launched; moving to controller"
-append_event "[launcher] starting - Hardware bridge step launched; moving to controller"
+sleep 10
+write_overall_status "starting" "moveit" "Hardware controller step launched; moving to MoveIt"
+append_event "[launcher] starting - Hardware controller step launched; moving to MoveIt"
 
-# Window 4: MQTT control node
+mark_step "moveit" "starting" "Launching MoveIt against hardware action servers"
+tmux new-window -t "$SESSION_NAME" -n "moveit"
+tmux send-keys -t "${SESSION_NAME}:moveit" "\"$STEP_RUNNER\" moveit source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_core demo.launch moveit_controller_manager:=simple use_rviz:=false load_robot_description:=false" C-m
+
+sleep 10
+write_overall_status "starting" "controller" "MoveIt step launched; moving to controller"
+append_event "[launcher] starting - MoveIt step launched; moving to controller"
+
 mark_step "controller" "starting" "Launching mqtt_control_node.py"
 tmux new-window -t "$SESSION_NAME" -n "control"
 tmux send-keys -t "${SESSION_NAME}:control" "\"$STEP_RUNNER\" controller source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && rosrun flo_core mqtt_control_node.py" C-m
 
 sleep 10
 
-# Window 5: Monitoring panes (timing, queue, runner)
 tmux new-window -t "$SESSION_NAME" -n "monitor"
 tmux send-keys -t "${SESSION_NAME}:monitor.0" "mosquitto_sub -h localhost -t ros/mqtt/action_time" C-m
 tmux split-window -t "${SESSION_NAME}:monitor" -h
 tmux send-keys -t "${SESSION_NAME}:monitor.1" "mosquitto_sub -h localhost -t ros/mqtt/queue_state" C-m
 
-
-# Window 6: Interactive shell
 tmux new-window -t "$SESSION_NAME" -n "shell"
 tmux send-keys -t "${SESSION_NAME}:shell" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\"" C-m
 tmux send-keys -t "${SESSION_NAME}:shell" "echo 'Interactive shell - you can run ROS/MQTT commands here'" C-m
 tmux send-keys -t "${SESSION_NAME}:shell" "echo 'Example: mosquitto_pub -h localhost -t ros/mqtt/movement -m \"0\"'" C-m
 
-# Attach to session
 write_overall_status "ready" "launcher" "All bringup steps launched; attaching to tmux"
 append_event "[launcher] ready - All bringup steps launched; attaching to tmux"
 echo "Attaching to tmux session '$SESSION_NAME'..."
