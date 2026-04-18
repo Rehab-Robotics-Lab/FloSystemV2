@@ -421,8 +421,9 @@ class DynamixelTrajectoryController {
     }
 
     ROS_INFO("Executing trajectory on %s with %zu points", arm.controller_name.c_str(), ordered.positions.size());
-    ros::Rate rate(control_rate_hz_);
+    ros::WallRate rate(control_rate_hz_);
     const auto start_time = std::chrono::steady_clock::now();
+    auto last_loop_time = start_time;
     const ros::Duration total_duration = ordered.times_from_start.back();
     control_msgs::FollowJointTrajectoryFeedback feedback;
     feedback.joint_names = arm.joint_names;
@@ -435,8 +436,21 @@ class DynamixelTrajectoryController {
         return;
       }
 
-      const auto elapsed_wall = std::chrono::steady_clock::now() - start_time;
+      const auto loop_now = std::chrono::steady_clock::now();
+      const auto elapsed_wall = loop_now - start_time;
+      const auto loop_gap = loop_now - last_loop_time;
+      last_loop_time = loop_now;
       const ros::Duration elapsed(std::chrono::duration<double>(elapsed_wall).count());
+      const double loop_now_sec = std::chrono::duration<double>(loop_now.time_since_epoch()).count();
+      const double loop_gap_sec = std::chrono::duration<double>(loop_gap).count();
+      if (loop_gap_sec > 0.1) {
+        ROS_WARN("Trajectory loop gap on %s: steady_now=%.6f gap=%.6f elapsed=%.6f total=%.6f",
+                 arm.controller_name.c_str(),
+                 loop_now_sec,
+                 loop_gap_sec,
+                 elapsed.toSec(),
+                 total_duration.toSec());
+      }
       const std::vector<double> target = interpolateTrajectory(ordered, start_positions, elapsed);
       if (!applyArmTarget(arm, target)) {
         result.error_code = control_msgs::FollowJointTrajectoryResult::PATH_TOLERANCE_VIOLATED;
