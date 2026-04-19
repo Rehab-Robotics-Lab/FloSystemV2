@@ -8,6 +8,10 @@
   <!-- Allow user to specify database location -->
   <arg name="db_path" default="$(find flo_core)/default_warehouse_mongo_db" />
 
+  <!-- Bring up the main MoveIt stack for FLO V2. This launch file is the
+       supported entry point for fake, hardware-backed, and Gazebo-backed
+       MoveIt sessions. -->
+
   <!-- By default, we are not in debug mode -->
   <arg name="debug" default="false" />
 

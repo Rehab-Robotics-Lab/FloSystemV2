@@ -124,9 +124,9 @@ sleep 10
 write_overall_status "starting" "moveit" "Hardware controller step launched; moving to MoveIt"
 append_event "[launcher] starting - Hardware controller step launched; moving to MoveIt"
 
-mark_step "moveit" "starting" "Launching MoveIt against hardware action servers"
+mark_step "moveit" "starting" "Launching moveit_bringup.launch against hardware action servers"
 tmux new-window -t "$SESSION_NAME" -n "moveit"
-tmux send-keys -t "${SESSION_NAME}:moveit" "\"$STEP_RUNNER\" moveit source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_core demo.launch moveit_controller_manager:=simple use_rviz:=false load_robot_description:=false" C-m
+tmux send-keys -t "${SESSION_NAME}:moveit" "\"$STEP_RUNNER\" moveit source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_core moveit_bringup.launch moveit_controller_manager:=simple use_rviz:=false load_robot_description:=false" C-m
 
 sleep 10
 write_overall_status "starting" "controller" "MoveIt step launched; moving to controller"

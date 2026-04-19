@@ -315,19 +315,29 @@ mosquitto -v -p 1883
 roscore
 ```
 
+### Start MoveIt for hardware bringup
+
+Start the hardware-owned ROS side first:
+
+```bash
+roslaunch flo_humanoid dual_arm_hardware.launch
+```
+
+Then start the supported MoveIt bringup against the live hardware action servers:
+
+```bash
+roslaunch flo_core moveit_bringup.launch moveit_controller_manager:=simple use_rviz:=false load_robot_description:=false
+```
+
+This is the same non-Gazebo MoveIt path used by [`tmux_robot_bringup_legacy.sh`](/c:/Users/robor/git/FloSystemV2/tmux_robot_bringup_legacy.sh). `dual_arm_hardware.launch` already owns `robot_description`, `/joint_states`, and the hardware action servers, so the MoveIt launch reuses those instead of loading a separate simulated robot.
+
 ### Start simulation
 
 ```bash
 roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=false show_rviz_gui:=false
 ```
 
-### Start the hardware bridge
-
-```bash
-roslaunch flo_humanoid dual_arm_hardware.launch
-```
-
-This launch path is the hardware-owned `/joint_states` publisher. It reads the live Dynamixel positions from `read_write_arms_node`, publishes `/joint_states`, and feeds `robot_state_publisher` for the hardware-side TF tree.
+Use simulation when you specifically want Gazebo-backed controllers instead of the live Dynamixel hardware path above.
 
 If Gazebo or another controller is already publishing `/joint_states`, disable the hardware publisher instead:
 
