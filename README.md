@@ -122,17 +122,27 @@ Start-Job { usbipd attach --wsl --hardware-id 16c0:0483 --auto-attach }
 usbipd list
 ```
 
-Inside WSL, verify the Linux device nodes exist:
+Inside WSL, create stable `udev` aliases so Docker does not depend on `ttyUSB0` or `ttyACM0` numbering:
 
 ```bash
-ls /dev/ttyUSB* /dev/ttyACM*
-sudo chmod 666 /dev/ttyUSB0 /dev/ttyACM0
+sudo cp config/99-flo-usb-devices.rules /etc/udev/rules.d/99-flo-usb-devices.rules
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+ls -l /dev/flo_motors /dev/flo_led
 ```
 
 Typical hardware mapping:
 
-- `/dev/ttyUSB0`: FTDI / U2D2 (`0403:6014`)
-- `/dev/ttyACM0`: Teensy USB serial (`16c0:0483`)
+- `/dev/flo_motors` -> FTDI / U2D2 (`0403:6014`)
+- `/dev/flo_led` -> Teensy USB serial (`16c0:0483`)
+
+If you need to confirm the raw kernel-assigned devices too:
+
+```bash
+ls /dev/ttyUSB* /dev/ttyACM*
+udevadm info --name=/dev/ttyACM0 --attribute-walk | grep -E "idVendor|idProduct"
+udevadm info --name=/dev/ttyUSB0 --attribute-walk | grep -E "idVendor|idProduct"
+```
 
 ## Clone the Repository
 
@@ -170,6 +180,7 @@ Bring it up:
 
 ```bash
 cd /mnt/c/Users/<your-user>/git/FloSystemV2
+source ./resolve_flo_devices.sh
 docker compose up --build
 ```
 
@@ -193,15 +204,18 @@ If you want to start the container directly instead of using Compose:
 ```bash
 export DISPLAY=$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0
 export QT_X11_NO_MITSHM=1
+source ./resolve_flo_devices.sh
 
 docker run -it \
   --name flo_v2_aim1 \
   --privileged \
-  --device=/dev/ttyUSB0:/dev/ttyUSB0 \
-  --device=/dev/ttyACM0:/dev/ttyACM0 \
+  --device="$FLO_MOTORS_HOST_DEVICE":/dev/flo_motors \
+  --device="$FLO_LED_HOST_DEVICE":/dev/flo_led \
   -e DISPLAY=host.docker.internal:0 \
   -e QT_X11_NO_MITSHM=1 \
   -e LIBGL_ALWAYS_INDIRECT=1 \
+  -e FLO_MOTORS_SERIAL_PORT=/dev/flo_motors \
+  -e LED_SERIAL_PORT=/dev/flo_led \
   -p 1883:1883 \
   -p 11311:11311 \
   -p 8080:8080 \
@@ -227,14 +241,17 @@ The entrypoint supports automatic execution of `tmux_robot_bringup_legacy.sh` wh
 Example with `docker run`:
 
 ```bash
+source ./resolve_flo_devices.sh
 docker run -it \
   --name flo_v2_aim1 \
   --privileged \
-  --device=/dev/ttyUSB0:/dev/ttyUSB0 \
-  --device=/dev/ttyACM0:/dev/ttyACM0 \
+  --device="$FLO_MOTORS_HOST_DEVICE":/dev/flo_motors \
+  --device="$FLO_LED_HOST_DEVICE":/dev/flo_led \
   -e DISPLAY=host.docker.internal:0 \
   -e QT_X11_NO_MITSHM=1 \
   -e LIBGL_ALWAYS_INDIRECT=1 \
+  -e FLO_MOTORS_SERIAL_PORT=/dev/flo_motors \
+  -e LED_SERIAL_PORT=/dev/flo_led \
   -e AUTO_BRINGUP=true \
   -p 1883:1883 \
   -p 11311:11311 \
@@ -280,10 +297,11 @@ roslaunch flo_humanoid read_write_arms.launch
 
 If you see `Failed to open the port!`:
 
-- Confirm `/dev/ttyUSB0` exists in WSL
+- Confirm `/dev/flo_motors` exists in WSL
+- Resolve the raw host device with `source ./resolve_flo_devices.sh && echo "$FLO_MOTORS_HOST_DEVICE"`
 - Confirm the container was started with the required `--device` mappings
-- Run `sudo chmod 666 /dev/ttyUSB0` in WSL if needed
-- If the host device name changed, remap it explicitly, for example `--device=/dev/ttyUSB1:/dev/ttyUSB0`
+- Reload `udev` rules with `sudo udevadm control --reload-rules && sudo udevadm trigger`
+- Confirm the symlink points to the expected raw device with `ls -l /dev/flo_motors`
 
 ### Start MQTT broker
 

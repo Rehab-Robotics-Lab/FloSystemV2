@@ -16,6 +16,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 #include <map>
 #include <mutex>
 #include <stdexcept>
@@ -38,7 +39,7 @@ constexpr uint16_t ADDR_GOAL_POSITION = 116;
 constexpr uint16_t ADDR_PRESENT_POSITION = 132;
 
 constexpr float PROTOCOL_VERSION = 2.0f;
-constexpr char DEVICE_NAME[] = "/dev/ttyUSB0";
+constexpr char DEFAULT_DEVICE_NAME[] = "/dev/flo_motors";
 constexpr int BAUDRATE = 3000000;
 
 constexpr uint32_t PROFILE_ACCEL = 200;
@@ -91,7 +92,8 @@ class DynamixelTrajectoryController {
   DynamixelTrajectoryController()
       : nh_(),
         private_nh_("~"),
-        port_handler_(PortHandler::getPortHandler(DEVICE_NAME)),
+        device_name_(resolveDeviceName()),
+        port_handler_(nullptr),
         packet_handler_(PacketHandler::getPacketHandler(PROTOCOL_VERSION)),
         left_server_(nh_, "left_arm_controller/follow_joint_trajectory",
                      boost::bind(&DynamixelTrajectoryController::executeLeftTrajectory, this, _1), false),
@@ -104,6 +106,9 @@ class DynamixelTrajectoryController {
         goal_position_tolerance_rad_(private_nh_.param("goal_position_tolerance_rad", 0.08)),
         goal_settle_timeout_sec_(private_nh_.param("goal_settle_timeout_sec", 1.0)),
         desired_ticks_initialized_(false) {
+    device_name_ = private_nh_.param<std::string>("device_name", device_name_);
+    port_handler_ = PortHandler::getPortHandler(device_name_.c_str());
+
     loadJointConfiguration();
     setupArms();
 
@@ -129,7 +134,7 @@ class DynamixelTrajectoryController {
 
     left_server_.start();
     right_server_.start();
-    ROS_INFO("Dynamixel hardware trajectory controller ready.");
+    ROS_INFO("Dynamixel hardware trajectory controller ready on %s.", device_name_.c_str());
   }
 
   ~DynamixelTrajectoryController() {
@@ -139,6 +144,14 @@ class DynamixelTrajectoryController {
   }
 
  private:
+  static std::string resolveDeviceName() {
+    const char* env_value = std::getenv("FLO_MOTORS_SERIAL_PORT");
+    if (env_value != nullptr && env_value[0] != '\0') {
+      return env_value;
+    }
+    return DEFAULT_DEVICE_NAME;
+  }
+
   void loadJointConfiguration() {
     XmlRpc::XmlRpcValue id_map;
     XmlRpc::XmlRpcValue offsets;
@@ -216,7 +229,7 @@ class DynamixelTrajectoryController {
 
   bool openAndInitializePort() {
     if (!port_handler_->openPort()) {
-      ROS_ERROR("Failed to open Dynamixel port %s", DEVICE_NAME);
+      ROS_ERROR("Failed to open Dynamixel port %s", device_name_.c_str());
       return false;
     }
     if (!port_handler_->setBaudRate(BAUDRATE)) {
@@ -801,6 +814,7 @@ class DynamixelTrajectoryController {
 
   ros::NodeHandle nh_;
   ros::NodeHandle private_nh_;
+  std::string device_name_;
   PortHandler* port_handler_;
   PacketHandler* packet_handler_;
 

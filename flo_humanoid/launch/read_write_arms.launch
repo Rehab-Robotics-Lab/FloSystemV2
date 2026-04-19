@@ -1,5 +1,6 @@
 <launch>
   <arg name="publish_joint_states" default="true"/>
+  <arg name="motor_device" default="/dev/flo_motors"/>
 
   <rosparam file="$(find flo_humanoid)/config/dynamixel_ids.yaml" command="load"/>
   <rosparam file="$(find flo_humanoid)/config/dynamixel_offsets.yaml" command="load"/>
@@ -11,5 +12,6 @@
         name="read_write_arms_node"
         output="screen">
     <param name="publish_joint_states" value="$(arg publish_joint_states)"/>
+    <param name="device_name" value="$(arg motor_device)"/>
   </node>
 </launch>
