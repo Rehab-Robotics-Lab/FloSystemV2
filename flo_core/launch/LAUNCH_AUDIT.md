@@ -9,12 +9,12 @@ This note records which `flo_core/launch` files are currently part of the suppor
 - `moveit_bringup.launch`
   - Official MoveIt bringup entry point for hardware-backed and fake-controller sessions.
   - Referenced by the root `README.md` and `tmux_robot_bringup_legacy.sh`.
-- `full_robot_arm_sim.launch`
-  - Legacy Gazebo + MoveIt simulation entry point.
-  - Still referenced by the root `README.md` and Linux test scripts.
 - `moveit_gazebo_bringup.launch`
-  - Newer Gazebo + MoveIt bringup path built from `gazebo.launch` plus `moveit_bringup.launch`.
-  - Kept in-place as the likely future canonical Gazebo bringup, even though in-repo callers have not migrated yet.
+  - Canonical Gazebo + MoveIt bringup path built from `gazebo.launch` plus `moveit_bringup.launch`.
+  - Supports the legacy `show_gz_gui` and `show_rviz_gui` flags so older callers can migrate cleanly.
+- `full_robot_arm_sim.launch`
+  - Legacy compatibility wrapper around `moveit_gazebo_bringup.launch`.
+  - Kept temporarily so older external callers do not break.
 
 ## Core Include-Only Launch Files
 
@@ -64,7 +64,5 @@ These files were moved to `launch/archive/` because they had no in-repo callers,
 
 ## Follow-Up Cleanup Worth Considering
 
-- Pick one canonical Gazebo+MoveIt entry point:
-  - either migrate callers from `full_robot_arm_sim.launch` to `moveit_gazebo_bringup.launch`
-  - or remove `moveit_gazebo_bringup.launch` if the legacy sim path remains the long-term standard
+- Once downstream users have migrated, archive `full_robot_arm_sim.launch` and keep `moveit_gazebo_bringup.launch` as the only Gazebo+MoveIt entry point.
 - Repair or remove the `debug:=true` path in `move_group.launch`, which references a missing `gdb_settings.gdb` file.

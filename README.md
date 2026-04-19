@@ -334,7 +334,7 @@ This is the same non-Gazebo MoveIt path used by [`tmux_robot_bringup_legacy.sh`]
 ### Start simulation
 
 ```bash
-roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=false show_rviz_gui:=false
+roslaunch flo_core moveit_gazebo_bringup.launch show_gz_gui:=false show_rviz_gui:=false
 ```
 
 Use simulation when you specifically want Gazebo-backed controllers instead of the live Dynamixel hardware path above.

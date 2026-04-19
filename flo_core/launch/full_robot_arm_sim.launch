@@ -1,17 +1,14 @@
 <launch>
-	<!-- Launch Your robot arms launch file which loads the robot in Gazebo and spawns the controllers -->
-	<arg name="show_gz_gui" default="true"/>
-	<param name="use_gazebo" value="true"/>
-  	<include file="$(find flo_core)/launch/gazebo_full_system.launch" > 
-	    <arg name="gui" value="$(arg show_gz_gui)"/>
-	</include>
-  	
-  	<!-- Launch Moveit Move Group Node -->
-    <include file="$(find flo_core)/launch/move_group.launch" />
-  	
-  	<!-- Run Rviz and load the default configuration to see the state of the move_group node -->
-  	<arg name="show_rviz_gui" default="true" />
-  	<include file="$(find flo_core)/launch/moveit_rviz.launch" if="$(arg show_rviz_gui)">
- 	 	<arg name="rviz_config" value="$(find flo_core)/launch/moveit.rviz"/>
- 	</include>
+  <!-- Legacy compatibility wrapper. Prefer moveit_gazebo_bringup.launch for new callers. -->
+  <arg name="show_gz_gui" default="true"/>
+  <arg name="show_rviz_gui" default="true" />
+  <arg name="pipeline" default="ompl" />
+  <arg name="paused" default="false" />
+  <arg name="world_name" default="worlds/empty.world" />
+  <arg name="world_pose" default="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" />
+
+  <include file="$(find flo_core)/launch/moveit_gazebo_bringup.launch" pass_all_args="true">
+    <arg name="show_gz_gui" value="$(arg show_gz_gui)"/>
+    <arg name="show_rviz_gui" value="$(arg show_rviz_gui)"/>
+  </include>
 </launch>

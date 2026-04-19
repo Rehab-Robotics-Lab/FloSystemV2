@@ -60,7 +60,7 @@ fi
 
 # Window 2: Gazebo sim + MoveIt + RViz (GUI off)
 tmux new-window -t "$SESSION_NAME" -n "sim"
-tmux send-keys -t "${SESSION_NAME}:sim" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_core full_robot_arm_sim.launch show_gz_gui:=false show_rviz_gui:=false" C-m
+tmux send-keys -t "${SESSION_NAME}:sim" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_core moveit_gazebo_bringup.launch show_gz_gui:=false show_rviz_gui:=false" C-m
 
 # Window 3: Hardware bridge
 tmux new-window -t "$SESSION_NAME" -n "hardware"
