@@ -1,0 +1,5 @@
+# Stable Flo USB serial names on the WSL host.
+# Install to /etc/udev/rules.d/99-flo-usb-devices.rules and reload udev.
+
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", SYMLINK+="flo_motors", MODE="0666"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="0483", SYMLINK+="flo_led", MODE="0666"

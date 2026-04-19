@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # ============================================================
-# Script to run inside Docker container for demo
-# This runs the fake controller demo (visualization only, no hardware)
+# Script to run inside Docker container for MoveIt visualization bringup
+# This runs the fake-controller MoveIt stack (visualization only, no hardware)
 # ============================================================
 
-echo "=== FLO v2 Demo Launcher ==="
+echo "=== FLO v2 MoveIt Visualization Launcher ==="
 echo ""
 echo "This will start:"
 echo "  1. ROS Core"
-echo "  2. MoveIt demo.launch (fake controller)"
+echo "  2. MoveIt bringup (fake controller)"
 echo "  3. RViz visualization"
 echo ""
 echo "Press Ctrl+C in any tmux window to stop"
@@ -28,9 +28,9 @@ tmux send-keys -t "flo_demo:roscore" "source /catkin_ws/devel/setup.bash && rosc
 # Wait for roscore to start
 sleep 3
 
-# Window 1: MoveIt demo
+# Window 1: MoveIt bringup
 tmux new-window -t "flo_demo" -n "moveit"
-tmux send-keys -t "flo_demo:moveit" "source /catkin_ws/devel/setup.bash && roslaunch flo_core demo.launch use_rviz:=true moveit_controller_manager:=fake" C-m
+tmux send-keys -t "flo_demo:moveit" "source /catkin_ws/devel/setup.bash && roslaunch flo_core moveit_bringup.launch use_rviz:=true moveit_controller_manager:=fake" C-m
 
 # Window 2: Main controller (optional, comment out if not needed)
 # tmux new-window -t "flo_demo" -n "controller"

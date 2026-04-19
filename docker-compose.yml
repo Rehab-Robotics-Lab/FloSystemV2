@@ -9,12 +9,14 @@ services:
     tty: true
     shm_size: 2gb
     devices:
-      - /dev/ttyUSB0:/dev/ttyUSB0
-      - /dev/ttyACM0:/dev/ttyACM0
+      - ${FLO_MOTORS_HOST_DEVICE:-/dev/flo_motors}:/dev/flo_motors
+      - ${FLO_LED_HOST_DEVICE:-/dev/flo_led}:/dev/flo_led
     environment:
       DISPLAY: host.docker.internal:0
       QT_X11_NO_MITSHM: "1"
       LIBGL_ALWAYS_INDIRECT: "1"
+      FLO_MOTORS_SERIAL_PORT: /dev/flo_motors
+      LED_SERIAL_PORT: /dev/flo_led
       # Set to "true" to auto-run tmux_robot_bringup_legacy.sh on start.
       AUTO_BRINGUP: "true"
     ports:
@@ -39,12 +41,14 @@ services:
   #   pid: host
   #   shm_size: 2gb
   #   devices:
-  #     - /dev/ttyUSB0:/dev/ttyUSB0
-  #     - /dev/ttyACM0:/dev/ttyACM0
+  #     - ${FLO_MOTORS_HOST_DEVICE:-/dev/flo_motors}:/dev/flo_motors
+  #     - ${FLO_LED_HOST_DEVICE:-/dev/flo_led}:/dev/flo_led
   #   environment:
   #     DISPLAY: host.docker.internal:0
   #     QT_X11_NO_MITSHM: "1"
   #     LIBGL_ALWAYS_SOFTWARE: "1"
   #     ROS_IP: "127.0.0.1"
+  #     FLO_MOTORS_SERIAL_PORT: /dev/flo_motors
+  #     LED_SERIAL_PORT: /dev/flo_led
   #     # Set to "true" to auto-run tmux_robot_bringup_legacy.sh on start.
   #     AUTO_BRINGUP: "false"

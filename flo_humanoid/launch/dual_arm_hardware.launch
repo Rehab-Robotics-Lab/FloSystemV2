@@ -1,15 +1,16 @@
-<!-- File: flo_humanoid/launch/dual_arm_hardware.launch -->
 <launch>
-  <arg name="use_gazebo" default="false"/>
-  <arg name="publish_joint_states" default="$(eval not arg('use_gazebo'))"/>
+  <arg name="publish_joint_states" default="true"/>
+  <arg name="motor_device" default="/dev/flo_motors"/>
+
   <include file="$(find flo_humanoid)/launch/read_write_arms.launch">
     <arg name="publish_joint_states" value="$(arg publish_joint_states)"/>
+    <arg name="motor_device" value="$(arg motor_device)"/>
   </include>
-  <node pkg="flo_humanoid" type="joint_state_to_dual_arm_motors.py" name="joint_state_bridge"/>
-  <!-- Start MoveIt -->
-  <param name="robot_description" command="cat $(find flov2_robot_description)/urdf/flov2_robot_description.urdf" />
-  <!-- <include file="$(find flo_core)/launch/move_group.launch"/> -->
 
-    <!-- Finally, action server -->
-    <!-- <node pkg="flo_core" name="moveit_controller" type="moveit_controller.py"/> -->
+  <param name="robot_description" command="cat $(find flov2_robot_description)/urdf/flov2_robot_description.urdf" />
+
+  <node pkg="robot_state_publisher"
+        type="robot_state_publisher"
+        name="robot_state_publisher"
+        output="screen"/>
 </launch>

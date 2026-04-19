@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import rospy
-from std_msgs.msg import Int32
 from flo_humanoid.msg import SetArmsJointPositions
 from sensor_msgs.msg import JointState
 import math
@@ -12,9 +11,10 @@ TOPIC_SET_POSITIONS = '/set_arms_joint_positions'
 class JointStateToDxlBridge:
     def __init__(self):
         rospy.init_node(NODE_NAME)
-        # Load joint ID map and mechanical offsets (in degrees) from ROS params
+        # Load joint ID map, mechanical offsets (degrees), and joint direction multipliers from ROS params.
         self.joint_id_map = rospy.get_param('joint_id_map')
         self.offsets = rospy.get_param('offsets')
+        self.joint_signs = rospy.get_param('joint_signs')
 
         # Publisher
         self.set_arms_joint_positions_pub = rospy.Publisher(TOPIC_SET_POSITIONS, SetArmsJointPositions, queue_size=1)
@@ -35,18 +35,18 @@ class JointStateToDxlBridge:
         js = dict(zip(msg.name, msg.position))
 
         try:
-            l1_position = math.degrees(js['l1']) + self.offsets['l1']
-            l2_position = math.degrees(js['l2']) + self.offsets['l2']
-            l3_position = math.degrees(js['l3']) + self.offsets['l3']
-            l4_position = - math.degrees(js['l4']) + self.offsets['l4'] # 180 - l4_position ?
+            l1_position = self.joint_signs['l1'] * math.degrees(js['l1']) + self.offsets['l1']
+            l2_position = self.joint_signs['l2'] * math.degrees(js['l2']) + self.offsets['l2']
+            l3_position = self.joint_signs['l3'] * math.degrees(js['l3']) + self.offsets['l3']
+            l4_position = self.joint_signs['l4'] * math.degrees(js['l4']) + self.offsets['l4']
 
-            r1_position = math.degrees(js['r1']) + self.offsets['r1']
-            r2_position = math.degrees(js['r2']) + self.offsets['r2']
-            r3_position = math.degrees(js['r3']) + self.offsets['r3']
-            r4_position = math.degrees(js['r4']) + self.offsets['r4']
+            r1_position = self.joint_signs['r1'] * math.degrees(js['r1']) + self.offsets['r1']
+            r2_position = self.joint_signs['r2'] * math.degrees(js['r2']) + self.offsets['r2']
+            r3_position = self.joint_signs['r3'] * math.degrees(js['r3']) + self.offsets['r3']
+            r4_position = self.joint_signs['r4'] * math.degrees(js['r4']) + self.offsets['r4']
 
         except KeyError as e:
-            rospy.logwarn(f"Joint '{e.args[0]}' not found in /joint_states, skipping.")
+            rospy.logwarn(f"Joint or config entry '{e.args[0]}' not found, skipping.")
             return
 
         self.set_arms_joint_positions_pub.publish(SetArmsJointPositions(

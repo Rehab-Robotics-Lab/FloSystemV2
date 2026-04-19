@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="980" viewBox="0 0 1500 980">
+  <defs>
+    <style>
+      .title { font: 700 24px Arial, sans-serif; fill: #ffffff; }
+      .h1 { font: 700 18px Arial, sans-serif; fill: #111827; }
+      .body { font: 14px Arial, sans-serif; fill: #111827; }
+      .body-white { font: 14px Arial, sans-serif; fill: #ffffff; }
+      .note { font: 700 16px Arial, sans-serif; fill: #9a3412; }
+      .small { font: 13px Arial, sans-serif; fill: #334155; }
+      .label { font: 13px Arial, sans-serif; fill: #0f172a; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,3 L0,6 z" fill="#475569"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,3 L0,6 z" fill="#0284c7"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,3 L0,6 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1500" height="980" fill="#f8fafc"/>
+  <rect x="250" y="24" width="1000" height="70" fill="#1f2937" stroke="#111827" stroke-width="2"/>
+  <text x="750" y="52" text-anchor="middle" class="title">Current FLO V2 Working Stack</text>
+  <text x="750" y="80" text-anchor="middle" class="body-white">Hardware-owned /joint_states and hardware trajectory execution</text>
+
+  <rect x="40" y="130" width="280" height="160" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="180" y="160" text-anchor="middle" class="h1">Windows Host</text>
+  <text x="60" y="195" class="body">- Docker Desktop</text>
+  <text x="60" y="220" class="body">- usbipd-win</text>
+  <text x="60" y="245" class="body">- X server / desktop tools</text>
+
+  <rect x="380" y="130" width="300" height="160" rx="16" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="530" y="160" text-anchor="middle" class="h1">WSL2 Ubuntu</text>
+  <text x="400" y="195" class="body">- Linux kernel and USB access</text>
+  <text x="400" y="220" class="body">- /dev/ttyUSB0 attached here</text>
+  <text x="400" y="245" class="body">- Docker CLI</text>
+
+  <rect x="740" y="130" width="360" height="170" rx="16" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="920" y="160" text-anchor="middle" class="h1">ROS Docker Container</text>
+  <text x="760" y="195" class="body">- roscore</text>
+  <text x="760" y="220" class="body">- move_group</text>
+  <text x="760" y="245" class="body">- mqtt_control_node.py</text>
+  <text x="760" y="270" class="body">- mosquitto</text>
+  <text x="760" y="295" class="body">- no Gazebo in working bringup</text>
+
+  <rect x="90" y="380" width="330" height="120" rx="16" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+  <text x="255" y="410" text-anchor="middle" class="h1">MQTT Client Flow</text>
+  <text x="115" y="445" class="body">ros/mqtt/movement -&gt; mqtt_control_node.py</text>
+  <text x="115" y="470" class="body">RobotMotionExecutor chooses named poses</text>
+
+  <rect x="520" y="380" width="350" height="120" rx="16" fill="#fde68a" stroke="#ca8a04" stroke-width="2"/>
+  <text x="695" y="410" text-anchor="middle" class="h1">MoveIt / move_group</text>
+  <text x="545" y="445" class="body">moveit_simple_controller_manager</text>
+  <text x="545" y="470" class="body">plans and sends FollowJointTrajectory goals</text>
+
+  <rect x="950" y="360" width="360" height="150" rx="16" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/>
+  <text x="1130" y="392" text-anchor="middle" class="h1">read_write_arms_node</text>
+  <text x="970" y="425" class="body">- FollowJointTrajectory action servers</text>
+  <text x="970" y="450" class="body">- writes Dynamixel goal positions</text>
+  <text x="970" y="475" class="body">- publishes hardware /joint_states</text>
+
+  <rect x="980" y="600" width="300" height="100" rx="16" fill="#cffafe" stroke="#0891b2" stroke-width="2"/>
+  <text x="1130" y="630" text-anchor="middle" class="h1">robot_state_publisher</text>
+  <text x="1000" y="665" class="body">Consumes /joint_states and publishes TF</text>
+
+  <rect x="520" y="600" width="330" height="100" rx="16" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="685" y="630" text-anchor="middle" class="h1">Feedback for Planning</text>
+  <text x="545" y="665" class="body">TF + /joint_states available to MoveIt</text>
+
+  <rect x="1030" y="790" width="200" height="90" rx="16" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+  <text x="1130" y="822" text-anchor="middle" class="h1">Dynamixel bus</text>
+  <text x="1130" y="850" text-anchor="middle" class="body">8 motors over /dev/ttyUSB0</text>
+
+  <path d="M320 210 L380 210" stroke="#475569" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <text x="350" y="195" text-anchor="middle" class="label">usbipd USB pass-through</text>
+
+  <path d="M680 210 L740 210" stroke="#475569" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <text x="710" y="195" text-anchor="middle" class="label">Docker launches container</text>
+
+  <path d="M920 300 L300 380" stroke="#475569" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <text x="575" y="322" text-anchor="middle" class="label">MQTT command queue</text>
+
+  <path d="M420 440 L520 440" stroke="#475569" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <text x="470" y="425" text-anchor="middle" class="label">named poses / planning requests</text>
+
+  <path d="M870 440 L950 440" stroke="#475569" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <text x="910" y="425" text-anchor="middle" class="label">FollowJointTrajectory</text>
+
+  <path d="M1130 510 L1130 600" stroke="#0284c7" stroke-width="3" fill="none" marker-end="url(#arrow-blue)"/>
+  <text x="1150" y="555" class="label">/joint_states</text>
+
+  <path d="M980 650 L850 650" stroke="#16a34a" stroke-width="3" fill="none" marker-end="url(#arrow-green)"/>
+  <text x="900" y="635" text-anchor="middle" class="label">TF and current state</text>
+
+  <path d="M1130 510 L1130 790" stroke="#475569" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  <text x="1150" y="740" class="label">serial goal writes / present position reads</text>
+
+  <rect x="80" y="790" width="760" height="140" rx="18" fill="#fff7ed" stroke="#ea580c" stroke-width="3"/>
+  <text x="110" y="825" class="note">Current controller path</text>
+  <text x="110" y="860" class="body">MoveIt executes through hardware FollowJointTrajectory action servers in</text>
+  <text x="110" y="885" class="body">read_write_arms_node.</text>
+  <text x="110" y="915" class="body">Hardware owns /joint_states, and robot_state_publisher derives TF from</text>
+  <text x="110" y="940" class="body">live motor feedback. The old sim /joint_states -&gt; bridge -&gt; hardware path</text>
+  <text x="110" y="965" class="body">is no longer the working stack.</text>
+</svg>
