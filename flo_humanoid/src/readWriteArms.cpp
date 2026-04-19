@@ -105,7 +105,8 @@ class DynamixelTrajectoryController {
         joint_state_timeout_warn_sec_(private_nh_.param("joint_state_timeout_warn_sec", 0.5)),
         goal_position_tolerance_rad_(private_nh_.param("goal_position_tolerance_rad", 0.08)),
         goal_settle_timeout_sec_(private_nh_.param("goal_settle_timeout_sec", 1.0)),
-        desired_ticks_initialized_(false) {
+        desired_ticks_initialized_(false),
+        last_joint_state_read_time_(std::chrono::steady_clock::time_point::min()) {
     device_name_ = private_nh_.param<std::string>("device_name", device_name_);
     port_handler_ = PortHandler::getPortHandler(device_name_.c_str());
 
@@ -245,10 +246,13 @@ class DynamixelTrajectoryController {
 
     std::vector<uint32_t> measured_ticks;
     if (readJointTicks(measured_ticks)) {
+      const ros::Time stamp = monotonicRosNow();
+      const auto read_time = std::chrono::steady_clock::now();
       std::lock_guard<std::mutex> lock(state_mutex_);
       desired_ticks_ = measured_ticks;
       last_measured_ticks_ = measured_ticks;
-      last_joint_state_stamp_ = ros::Time::now();
+      last_joint_state_stamp_ = stamp;
+      last_joint_state_read_time_ = read_time;
       desired_ticks_initialized_ = true;
     }
     return true;
@@ -348,9 +352,11 @@ class DynamixelTrajectoryController {
     msg.position.reserve(joint_specs_.size());
 
     {
+      const auto read_time = std::chrono::steady_clock::now();
       std::lock_guard<std::mutex> lock(state_mutex_);
       last_measured_ticks_ = ticks;
       last_joint_state_stamp_ = msg.header.stamp;
+      last_joint_state_read_time_ = read_time;
     }
 
     for (size_t i = 0; i < joint_specs_.size(); ++i) {
@@ -361,7 +367,9 @@ class DynamixelTrajectoryController {
   }
 
   bool readJointTicks(std::vector<uint32_t>& ticks) {
+    const auto read_start = std::chrono::steady_clock::now();
     std::lock_guard<std::mutex> lock(io_mutex_);
+    const auto read_after_lock = std::chrono::steady_clock::now();
     GroupBulkRead bulk_read(port_handler_, packet_handler_);
     for (const auto& spec : joint_specs_) {
       if (!bulk_read.addParam(spec.id, ADDR_PRESENT_POSITION, 4)) {
@@ -383,11 +391,24 @@ class DynamixelTrajectoryController {
       ticks[i] = bulk_read.getData(joint_specs_[i].id, ADDR_PRESENT_POSITION, 4);
     }
     bulk_read.clearParam();
+    const auto read_end = std::chrono::steady_clock::now();
+    const double read_wait_sec = std::chrono::duration<double>(read_after_lock - read_start).count();
+    const double read_bus_sec = std::chrono::duration<double>(read_end - read_after_lock).count();
+    const double read_duration_sec = std::chrono::duration<double>(read_end - read_start).count();
+    if (read_duration_sec > 0.02 || read_wait_sec > 0.01 || read_bus_sec > 0.02) {
+      ROS_WARN("readJointTicks slow: total=%.6f wait=%.6f bus=%.6f joints=%zu",
+               read_duration_sec,
+               read_wait_sec,
+               read_bus_sec,
+               joint_specs_.size());
+    }
     return true;
   }
 
   bool writeJointTicks(const std::vector<uint32_t>& ticks) {
+    const auto write_start = std::chrono::steady_clock::now();
     std::lock_guard<std::mutex> lock(io_mutex_);
+    const auto write_after_lock = std::chrono::steady_clock::now();
     GroupSyncWrite sync_write(port_handler_, packet_handler_, ADDR_GOAL_POSITION, 4);
     std::array<std::array<uint8_t, 4>, 8> params{};
 
@@ -409,6 +430,17 @@ class DynamixelTrajectoryController {
     if (result != COMM_SUCCESS) {
       ROS_ERROR_THROTTLE(1.0, "Failed to write joint goals: %s", packet_handler_->getTxRxResult(result));
       return false;
+    }
+    const auto write_end = std::chrono::steady_clock::now();
+    const double write_wait_sec = std::chrono::duration<double>(write_after_lock - write_start).count();
+    const double write_bus_sec = std::chrono::duration<double>(write_end - write_after_lock).count();
+    const double write_duration_sec = std::chrono::duration<double>(write_end - write_start).count();
+    if (write_duration_sec > 0.02 || write_wait_sec > 0.01 || write_bus_sec > 0.02) {
+      ROS_WARN("writeJointTicks slow: total=%.6f wait=%.6f bus=%.6f joints=%zu",
+               write_duration_sec,
+               write_wait_sec,
+               write_bus_sec,
+               ticks.size());
     }
     return true;
   }
@@ -479,7 +511,7 @@ class DynamixelTrajectoryController {
       server->publishFeedback(feedback);
 
       if (elapsed >= total_duration) {
-        const std::vector<double> actual_positions = feedback.actual.positions;
+        const std::vector<double> actual_positions = getMeasuredArmPositions(arm, true);
         double max_error = 0.0;
         for (size_t i = 0; i < target.size(); ++i) {
           const double actual = (i < actual_positions.size()) ? actual_positions[i] : 0.0;
@@ -500,7 +532,7 @@ class DynamixelTrajectoryController {
       rate.sleep();
     }
 
-    const std::vector<double> final_actual_positions = getMeasuredArmPositions(arm);
+    const std::vector<double> final_actual_positions = getMeasuredArmPositions(arm, true);
     const std::vector<double>& final_desired_positions = ordered.positions.back();
     for (size_t i = 0; i < arm.joint_names.size(); ++i) {
       const double desired = (i < final_desired_positions.size()) ? final_desired_positions[i] : 0.0;
@@ -667,21 +699,27 @@ class DynamixelTrajectoryController {
     }
   }
 
-  std::vector<double> getMeasuredArmPositions(const ArmSpec& arm) {
+  std::vector<double> getMeasuredArmPositions(const ArmSpec& arm, bool force_fresh_read = false) {
     std::vector<uint32_t> ticks;
-    ros::Time stamp;
-    const ros::Time now = monotonicRosNow();
+    std::chrono::steady_clock::time_point last_read_time;
+    const auto now = std::chrono::steady_clock::now();
     {
       std::lock_guard<std::mutex> lock(state_mutex_);
       ticks = last_measured_ticks_;
-      stamp = last_joint_state_stamp_;
+      last_read_time = last_joint_state_read_time_;
     }
 
-    if (ticks.size() != joint_specs_.size() || (now - stamp).toSec() > joint_state_timeout_warn_sec_) {
+    const bool joint_state_stale =
+        force_fresh_read ||
+        last_read_time == std::chrono::steady_clock::time_point::min() ||
+        std::chrono::duration<double>(now - last_read_time).count() > joint_state_timeout_warn_sec_;
+    if (ticks.size() != joint_specs_.size() || joint_state_stale) {
       if (readJointTicks(ticks)) {
+        const ros::Time stamp = monotonicRosNow();
         std::lock_guard<std::mutex> lock(state_mutex_);
         last_measured_ticks_ = ticks;
-        last_joint_state_stamp_ = now;
+        last_joint_state_stamp_ = stamp;
+        last_joint_state_read_time_ = now;
       }
     }
 
@@ -845,6 +883,7 @@ class DynamixelTrajectoryController {
   std::vector<uint32_t> last_measured_ticks_;
   ros::Time last_joint_state_stamp_;
   ros::Time last_ros_timestamp_;
+  std::chrono::steady_clock::time_point last_joint_state_read_time_;
   std::vector<uint32_t> desired_ticks_;
   bool desired_ticks_initialized_;
 };
