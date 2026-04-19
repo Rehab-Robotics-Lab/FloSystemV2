@@ -101,6 +101,8 @@ class DynamixelTrajectoryController {
         joint_state_publish_rate_hz_(private_nh_.param("joint_state_publish_rate_hz", 30.0)),
         control_rate_hz_(private_nh_.param("control_rate_hz", 50.0)),
         joint_state_timeout_warn_sec_(private_nh_.param("joint_state_timeout_warn_sec", 0.5)),
+        goal_position_tolerance_rad_(private_nh_.param("goal_position_tolerance_rad", 0.08)),
+        goal_settle_timeout_sec_(private_nh_.param("goal_settle_timeout_sec", 1.0)),
         desired_ticks_initialized_(false) {
     loadJointConfiguration();
     setupArms();
@@ -425,6 +427,7 @@ class DynamixelTrajectoryController {
     const auto start_time = std::chrono::steady_clock::now();
     auto last_loop_time = start_time;
     const ros::Duration total_duration = ordered.times_from_start.back();
+    const auto settle_deadline = start_time + std::chrono::duration<double>(total_duration.toSec() + goal_settle_timeout_sec_);
     control_msgs::FollowJointTrajectoryFeedback feedback;
     feedback.joint_names = arm.joint_names;
 
@@ -463,16 +466,38 @@ class DynamixelTrajectoryController {
       server->publishFeedback(feedback);
 
       if (elapsed >= total_duration) {
-        break;
+        const std::vector<double> actual_positions = feedback.actual.positions;
+        double max_error = 0.0;
+        for (size_t i = 0; i < target.size(); ++i) {
+          const double actual = (i < actual_positions.size()) ? actual_positions[i] : 0.0;
+          max_error = std::max(max_error, std::abs(target[i] - actual));
+        }
+
+        if (max_error <= goal_position_tolerance_rad_) {
+          break;
+        }
+
+        if (loop_now >= settle_deadline) {
+          result.error_code = control_msgs::FollowJointTrajectoryResult::GOAL_TOLERANCE_VIOLATED;
+          result.error_string = "arm did not reach final joint target within settle timeout";
+          server->setAborted(result, result.error_string);
+          return;
+        }
       }
       rate.sleep();
     }
 
-    if (!applyArmTarget(arm, ordered.positions.back())) {
-      result.error_code = control_msgs::FollowJointTrajectoryResult::PATH_TOLERANCE_VIOLATED;
-      result.error_string = "failed to write final joint positions to Dynamixels";
-      server->setAborted(result, result.error_string);
-      return;
+    const std::vector<double> final_actual_positions = getMeasuredArmPositions(arm);
+    const std::vector<double>& final_desired_positions = ordered.positions.back();
+    for (size_t i = 0; i < arm.joint_names.size(); ++i) {
+      const double desired = (i < final_desired_positions.size()) ? final_desired_positions[i] : 0.0;
+      const double actual = (i < final_actual_positions.size()) ? final_actual_positions[i] : 0.0;
+      ROS_WARN("Final trajectory state on %s joint %s: desired=%.6f actual=%.6f error=%.6f",
+               arm.controller_name.c_str(),
+               arm.joint_names[i].c_str(),
+               desired,
+               actual,
+               desired - actual);
     }
 
     result.error_code = control_msgs::FollowJointTrajectoryResult::SUCCESSFUL;
@@ -797,6 +822,8 @@ class DynamixelTrajectoryController {
   double joint_state_publish_rate_hz_;
   double control_rate_hz_;
   double joint_state_timeout_warn_sec_;
+  double goal_position_tolerance_rad_;
+  double goal_settle_timeout_sec_;
   bool publish_joint_states_;
 
   std::mutex io_mutex_;
