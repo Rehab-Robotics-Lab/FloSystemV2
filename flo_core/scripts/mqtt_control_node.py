@@ -58,6 +58,7 @@ class FloRobotController:
         self.topic_feedback = "ros/mqtt/feedback"
         self.topic_action_done = "ros/mqtt/action_done"
         self.topic_action_time = "ros/mqtt/action_time"
+        self.topic_action_result = "ros/mqtt/action_result"
         self.topic_queue_length = "ros/mqtt/queue_length"
         self.topic_queue_state = "ros/mqtt/queue_state"
         
@@ -120,19 +121,25 @@ class FloRobotController:
                 self.client.publish(self.topic_queue_state, queue_state)
                 
                 # Execute the motion
+                status = "error"
                 try:
                     start_time = time.monotonic()
                     self.motion_executor.execute_pose(int(command))
+                    status = "done"
                     rospy.loginfo(f"Motion {command} completed successfully")
                     self.client.publish(self.topic_feedback, "A")  # Success feedback
-                    self.client.publish(self.topic_action_done, f"done:{command}")
+                    self.client.publish(self.topic_action_done, f"{status}:{command}")
                 except Exception as e:
                     rospy.logerr(f"Motion execution failed: {e}")
                     self.client.publish(self.topic_feedback, "E")  # Error feedback
-                    self.client.publish(self.topic_action_done, f"error:{command}")
+                    self.client.publish(self.topic_action_done, f"{status}:{command}")
                 finally:
                     elapsed = time.monotonic() - start_time
                     self.client.publish(self.topic_action_time, f"{command},{elapsed:.3f}")
+                    self.client.publish(
+                        self.topic_action_result,
+                        f"{command},{status},{elapsed:.3f}",
+                    )
                 
                 self.mode = "0"  # Reset to idle
             

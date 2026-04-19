@@ -139,7 +139,7 @@ tmux send-keys -t "${SESSION_NAME}:control" "\"$STEP_RUNNER\" controller source 
 sleep 10
 
 tmux new-window -t "$SESSION_NAME" -n "monitor"
-tmux send-keys -t "${SESSION_NAME}:monitor.0" "mosquitto_sub -h localhost -t ros/mqtt/action_time" C-m
+tmux send-keys -t "${SESSION_NAME}:monitor.0" "mosquitto_sub -h localhost -t ros/mqtt/action_result" C-m
 tmux split-window -t "${SESSION_NAME}:monitor" -h
 tmux send-keys -t "${SESSION_NAME}:monitor.1" "mosquitto_sub -h localhost -t ros/mqtt/queue_state" C-m
 
