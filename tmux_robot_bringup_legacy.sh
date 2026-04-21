@@ -173,6 +173,9 @@ tmux send-keys -t "${SESSION_NAME}:shell" "timeout 3 rostopic echo -n1 /clock ||
 tmux send-keys -t "${SESSION_NAME}:shell" "echo 'Interactive shell - you can run ROS/MQTT commands here'" C-m
 tmux send-keys -t "${SESSION_NAME}:shell" "echo 'Example: mosquitto_pub -h localhost -t ros/mqtt/movement -m \"0\"'" C-m
 
+# Keep the session from shrinking to the attaching client size at the end of bringup.
+tmux set-option -t "$SESSION_NAME" -g window-size largest
+
 write_overall_status "ready" "launcher" "All bringup steps launched; attaching to tmux"
 append_event "[launcher] ready - All bringup steps launched; attaching to tmux"
 echo "Attaching to tmux session '$SESSION_NAME'..."
