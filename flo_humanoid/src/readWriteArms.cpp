@@ -103,6 +103,12 @@ class DynamixelTrajectoryController {
         joint_state_publish_rate_hz_(private_nh_.param("joint_state_publish_rate_hz", 30.0)),
         control_rate_hz_(private_nh_.param("control_rate_hz", 50.0)),
         joint_state_timeout_warn_sec_(private_nh_.param("joint_state_timeout_warn_sec", 0.5)),
+        slow_read_total_warn_sec_(private_nh_.param("slow_read_total_warn_sec", 0.05)),
+        slow_read_wait_warn_sec_(private_nh_.param("slow_read_wait_warn_sec", 0.02)),
+        slow_read_bus_warn_sec_(private_nh_.param("slow_read_bus_warn_sec", 0.05)),
+        slow_write_total_warn_sec_(private_nh_.param("slow_write_total_warn_sec", 0.05)),
+        slow_write_wait_warn_sec_(private_nh_.param("slow_write_wait_warn_sec", 0.02)),
+        slow_write_bus_warn_sec_(private_nh_.param("slow_write_bus_warn_sec", 0.05)),
         goal_position_tolerance_rad_(private_nh_.param("goal_position_tolerance_rad", 0.08)),
         goal_settle_timeout_sec_(private_nh_.param("goal_settle_timeout_sec", 1.0)),
         desired_ticks_initialized_(false),
@@ -395,7 +401,9 @@ class DynamixelTrajectoryController {
     const double read_wait_sec = std::chrono::duration<double>(read_after_lock - read_start).count();
     const double read_bus_sec = std::chrono::duration<double>(read_end - read_after_lock).count();
     const double read_duration_sec = std::chrono::duration<double>(read_end - read_start).count();
-    if (read_duration_sec > 0.02 || read_wait_sec > 0.01 || read_bus_sec > 0.02) {
+    if (read_duration_sec > slow_read_total_warn_sec_ ||
+        read_wait_sec > slow_read_wait_warn_sec_ ||
+        read_bus_sec > slow_read_bus_warn_sec_) {
       ROS_WARN("readJointTicks slow: total=%.6f wait=%.6f bus=%.6f joints=%zu",
                read_duration_sec,
                read_wait_sec,
@@ -435,7 +443,9 @@ class DynamixelTrajectoryController {
     const double write_wait_sec = std::chrono::duration<double>(write_after_lock - write_start).count();
     const double write_bus_sec = std::chrono::duration<double>(write_end - write_after_lock).count();
     const double write_duration_sec = std::chrono::duration<double>(write_end - write_start).count();
-    if (write_duration_sec > 0.02 || write_wait_sec > 0.01 || write_bus_sec > 0.02) {
+    if (write_duration_sec > slow_write_total_warn_sec_ ||
+        write_wait_sec > slow_write_wait_warn_sec_ ||
+        write_bus_sec > slow_write_bus_warn_sec_) {
       ROS_WARN("writeJointTicks slow: total=%.6f wait=%.6f bus=%.6f joints=%zu",
                write_duration_sec,
                write_wait_sec,
@@ -874,6 +884,12 @@ class DynamixelTrajectoryController {
   double joint_state_publish_rate_hz_;
   double control_rate_hz_;
   double joint_state_timeout_warn_sec_;
+  double slow_read_total_warn_sec_;
+  double slow_read_wait_warn_sec_;
+  double slow_read_bus_warn_sec_;
+  double slow_write_total_warn_sec_;
+  double slow_write_wait_warn_sec_;
+  double slow_write_bus_warn_sec_;
   double goal_position_tolerance_rad_;
   double goal_settle_timeout_sec_;
   bool publish_joint_states_;

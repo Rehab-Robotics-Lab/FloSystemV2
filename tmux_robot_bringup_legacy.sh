@@ -89,10 +89,15 @@ source "$WORKSPACE_SETUP"
 SESSION_NAME="flo_robot_test"
 USE_MONOTONIC_CLOCK="${FLO_USE_MONOTONIC_CLOCK:-false}"
 USE_SIM_TIME="false"
+CLOCK_MODE_MESSAGE="Clock mode: wall time"
 
 if [ "$USE_MONOTONIC_CLOCK" = "true" ]; then
   USE_SIM_TIME="true"
+  CLOCK_MODE_MESSAGE="Clock mode: monotonic /clock with use_sim_time=true"
 fi
+
+echo "$CLOCK_MODE_MESSAGE"
+append_event "[launcher] info - $CLOCK_MODE_MESSAGE"
 
 write_overall_status "starting" "launcher" "Initializing tmux bringup session"
 append_event "[launcher] starting - Initializing tmux bringup session"
@@ -111,7 +116,7 @@ if [ "$USE_MONOTONIC_CLOCK" = "true" ]; then
   tmux send-keys -t "${SESSION_NAME}:clock" "\"$STEP_RUNNER\" clock source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && rosparam set /use_sim_time true && roslaunch flo_humanoid monotonic_clock.launch" C-m
   sleep 3
 else
-  echo "Monotonic ROS clock disabled; using default ROS wall time"
+  echo "$CLOCK_MODE_MESSAGE"
 fi
 
 write_overall_status "starting" "mqtt" "ROS time configuration complete; moving to MQTT broker"
@@ -161,6 +166,10 @@ tmux send-keys -t "${SESSION_NAME}:monitor.1" "mosquitto_sub -h localhost -t ros
 
 tmux new-window -t "$SESSION_NAME" -n "shell"
 tmux send-keys -t "${SESSION_NAME}:shell" "source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\"" C-m
+tmux send-keys -t "${SESSION_NAME}:shell" "echo '$CLOCK_MODE_MESSAGE'" C-m
+tmux send-keys -t "${SESSION_NAME}:shell" "echo 'ROS time health check:'" C-m
+tmux send-keys -t "${SESSION_NAME}:shell" "rosparam get /use_sim_time || true" C-m
+tmux send-keys -t "${SESSION_NAME}:shell" "timeout 3 rostopic echo -n1 /clock || echo '/clock not published'" C-m
 tmux send-keys -t "${SESSION_NAME}:shell" "echo 'Interactive shell - you can run ROS/MQTT commands here'" C-m
 tmux send-keys -t "${SESSION_NAME}:shell" "echo 'Example: mosquitto_pub -h localhost -t ros/mqtt/movement -m \"0\"'" C-m
 
