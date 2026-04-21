@@ -1,6 +1,9 @@
 <launch>
   <arg name="publish_joint_states" default="true"/>
   <arg name="motor_device" default="/dev/flo_motors"/>
+  <arg name="use_sim_time" default="false"/>
+
+  <param name="use_sim_time" value="$(arg use_sim_time)"/>
 
   <rosparam file="$(find flo_humanoid)/config/dynamixel_ids.yaml" command="load"/>
   <rosparam file="$(find flo_humanoid)/config/dynamixel_offsets.yaml" command="load"/>

@@ -1,10 +1,14 @@
 <launch>
   <arg name="publish_joint_states" default="true"/>
   <arg name="motor_device" default="/dev/flo_motors"/>
+  <arg name="use_sim_time" default="false"/>
+
+  <param name="use_sim_time" value="$(arg use_sim_time)"/>
 
   <include file="$(find flo_humanoid)/launch/read_write_arms.launch">
     <arg name="publish_joint_states" value="$(arg publish_joint_states)"/>
     <arg name="motor_device" value="$(arg motor_device)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
   </include>
 
   <param name="robot_description" command="cat $(find flov2_robot_description)/urdf/flov2_robot_description.urdf" />

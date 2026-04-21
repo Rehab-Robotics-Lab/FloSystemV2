@@ -1,0 +1,12 @@
+<launch>
+  <arg name="publish_rate_hz" default="100.0"/>
+  <arg name="start_epoch_sec" default="0.0"/>
+
+  <node pkg="flo_humanoid"
+        type="monotonic_clock.py"
+        name="monotonic_clock"
+        output="screen">
+    <param name="publish_rate_hz" value="$(arg publish_rate_hz)"/>
+    <param name="start_epoch_sec" value="$(arg start_epoch_sec)"/>
+  </node>
+</launch>

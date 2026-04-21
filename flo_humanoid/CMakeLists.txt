@@ -94,5 +94,6 @@ install(DIRECTORY
 
 install(PROGRAMS
   scripts/joint_state_to_dual_arm_motors.py
+  scripts/monotonic_clock.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

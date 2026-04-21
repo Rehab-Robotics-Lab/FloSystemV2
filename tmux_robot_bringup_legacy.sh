@@ -58,10 +58,11 @@ echo "=== FLO v2 Robot Test Launcher ==="
 echo ""
 echo "This will start:"
 echo "  1. ROS Core"
-echo "  2. MQTT broker (mosquitto)"
-echo "  3. Dynamixel hardware controller"
-echo "  4. MoveIt (no Gazebo)"
-echo "  5. MQTT control node"
+echo "  2. Monotonic ROS clock publisher (optional sim time)"
+echo "  3. MQTT broker (mosquitto)"
+echo "  4. Dynamixel hardware controller"
+echo "  5. MoveIt (no Gazebo)"
+echo "  6. MQTT control node"
 echo ""
 echo "Press Ctrl+C in any tmux window to stop"
 echo ""
@@ -86,6 +87,12 @@ source /opt/ros/noetic/setup.sh
 source "$WORKSPACE_SETUP"
 
 SESSION_NAME="flo_robot_test"
+USE_MONOTONIC_CLOCK="${FLO_USE_MONOTONIC_CLOCK:-false}"
+USE_SIM_TIME="false"
+
+if [ "$USE_MONOTONIC_CLOCK" = "true" ]; then
+  USE_SIM_TIME="true"
+fi
 
 write_overall_status "starting" "launcher" "Initializing tmux bringup session"
 append_event "[launcher] starting - Initializing tmux bringup session"
@@ -98,8 +105,17 @@ tmux rename-window -t "${SESSION_NAME}:0" "roscore"
 tmux send-keys -t "${SESSION_NAME}:roscore" "\"$STEP_RUNNER\" roscore source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roscore" C-m
 
 sleep 5
-write_overall_status "starting" "mqtt" "roscore started; moving to MQTT broker"
-append_event "[launcher] starting - roscore started; moving to MQTT broker"
+if [ "$USE_MONOTONIC_CLOCK" = "true" ]; then
+  mark_step "clock" "starting" "Enabling /use_sim_time and launching monotonic /clock publisher"
+  tmux new-window -t "$SESSION_NAME" -n "clock"
+  tmux send-keys -t "${SESSION_NAME}:clock" "\"$STEP_RUNNER\" clock source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && rosparam set /use_sim_time true && roslaunch flo_humanoid monotonic_clock.launch" C-m
+  sleep 3
+else
+  echo "Monotonic ROS clock disabled; using default ROS wall time"
+fi
+
+write_overall_status "starting" "mqtt" "ROS time configuration complete; moving to MQTT broker"
+append_event "[launcher] starting - ROS time configuration complete; moving to MQTT broker"
 
 if pgrep -x mosquitto >/dev/null 2>&1; then
   echo "mosquitto already running; skipping broker launch"
@@ -118,7 +134,7 @@ append_event "[launcher] starting - MQTT broker step launched; moving to hardwar
 
 mark_step "hardware" "starting" "Launching dual_arm_hardware.launch"
 tmux new-window -t "$SESSION_NAME" -n "hardware"
-tmux send-keys -t "${SESSION_NAME}:hardware" "\"$STEP_RUNNER\" hardware source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_humanoid dual_arm_hardware.launch" C-m
+tmux send-keys -t "${SESSION_NAME}:hardware" "\"$STEP_RUNNER\" hardware source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_humanoid dual_arm_hardware.launch use_sim_time:=$USE_SIM_TIME" C-m
 
 sleep 10
 write_overall_status "starting" "moveit" "Hardware controller step launched; moving to MoveIt"
@@ -126,7 +142,7 @@ append_event "[launcher] starting - Hardware controller step launched; moving to
 
 mark_step "moveit" "starting" "Launching moveit_bringup.launch against hardware action servers"
 tmux new-window -t "$SESSION_NAME" -n "moveit"
-tmux send-keys -t "${SESSION_NAME}:moveit" "\"$STEP_RUNNER\" moveit source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_core moveit_bringup.launch moveit_controller_manager:=simple use_rviz:=false load_robot_description:=false" C-m
+tmux send-keys -t "${SESSION_NAME}:moveit" "\"$STEP_RUNNER\" moveit source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_core moveit_bringup.launch moveit_controller_manager:=simple use_rviz:=false load_robot_description:=false use_sim_time:=$USE_SIM_TIME" C-m
 
 sleep 10
 write_overall_status "starting" "controller" "MoveIt step launched; moving to controller"
