@@ -184,6 +184,8 @@ source ./resolve_flo_devices.sh
 docker compose up --build
 ```
 
+`resolve_flo_devices.sh` waits briefly for newly attached USB devices to settle in WSL before failing. If `usbipd` is especially slow on a given boot, you can increase the wait window with `FLO_DEVICE_RESOLVE_RETRIES` and `FLO_DEVICE_RESOLVE_INTERVAL_SEC`.
+
 Start an already-created container again:
 
 ```bash
@@ -302,6 +304,7 @@ If you see `Failed to open the port!`:
 - Confirm the container was started with the required `--device` mappings
 - Reload `udev` rules with `sudo udevadm control --reload-rules && sudo udevadm trigger`
 - Confirm the symlink points to the expected raw device with `ls -l /dev/flo_motors`
+- If the aliases appear a moment after `usbipd attach`, retry once or temporarily raise `FLO_DEVICE_RESOLVE_RETRIES=20`
 
 ### Start MQTT broker
 
