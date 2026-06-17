@@ -17,6 +17,7 @@ services:
       LIBGL_ALWAYS_INDIRECT: "1"
       FLO_MOTORS_SERIAL_PORT: /dev/flo_motors
       LED_SERIAL_PORT: /dev/flo_led
+      ROS_LOG_DIR: /runtime-status/ros-log
       # Set to "true" to auto-run tmux_robot_bringup_legacy.sh on start.
       AUTO_BRINGUP: "true"
       FLO_USE_MONOTONIC_CLOCK: "true"

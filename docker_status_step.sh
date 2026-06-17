@@ -5,8 +5,10 @@ STEP_NAME="${1:-unknown}"
 shift || true
 
 STATUS_DIR="${FLO_STATUS_DIR:-/runtime-status}"
+LOG_DIR="$STATUS_DIR/logs"
+CONSOLE_LOG="$LOG_DIR/${STEP_NAME}.console.log"
 
-mkdir -p "$STATUS_DIR/steps"
+mkdir -p "$STATUS_DIR/steps" "$LOG_DIR"
 
 json_escape() {
   printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
@@ -43,14 +45,11 @@ fi
 write_step_status "starting" "Starting command: $*"
 append_event "starting" "Starting command: $*"
 
-bash -lc "$*" &
-child_pid=$!
-
 write_step_status "running" "Command is running"
 append_event "running" "Command is running"
 
-wait "$child_pid"
-exit_code=$?
+bash -lc "$*" 2>&1 | tee "$CONSOLE_LOG"
+exit_code=${PIPESTATUS[0]}
 
 if [[ $exit_code -eq 0 ]]; then
   write_step_status "completed" "Command completed cleanly"

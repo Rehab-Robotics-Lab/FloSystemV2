@@ -5,8 +5,9 @@
 
 STATUS_DIR="${FLO_STATUS_DIR:-/runtime-status}"
 STEP_RUNNER="${FLO_STEP_RUNNER:-/catkin_ws/src/FloSystemV2/docker_status_step.sh}"
+export ROS_LOG_DIR="${ROS_LOG_DIR:-$STATUS_DIR/ros-log}"
 
-mkdir -p "$STATUS_DIR/steps"
+mkdir -p "$STATUS_DIR/steps" "$STATUS_DIR/logs" "$ROS_LOG_DIR"
 
 json_escape() {
   printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
@@ -50,6 +51,17 @@ mark_step() {
   write_step_status "$step" "$state" "$message"
   write_overall_status "$state" "$step" "$message"
   append_event "[$step] $state - $message"
+}
+
+shell_quote() {
+  printf '%q' "$1"
+}
+
+send_step_command() {
+  target="$1"
+  step="$2"
+  command="$3"
+  tmux send-keys -t "$target" "$(shell_quote "$STEP_RUNNER") $(shell_quote "$step") $(shell_quote "$command")" C-m
 }
 
 trap 'write_overall_status "stopped" "launcher" "tmux_robot_bringup_legacy.sh exited"; append_event "[launcher] stopped - tmux_robot_bringup_legacy.sh exited"' EXIT
@@ -105,15 +117,17 @@ append_event "[launcher] starting - Initializing tmux bringup session"
 tmux new-session -d -s "$SESSION_NAME"
 tmux set-option -t "$SESSION_NAME" remain-on-exit on
 
+WORKSPACE_SETUP_QUOTED="$(shell_quote "$WORKSPACE_SETUP")"
+
 mark_step "roscore" "starting" "Launching roscore"
 tmux rename-window -t "${SESSION_NAME}:0" "roscore"
-tmux send-keys -t "${SESSION_NAME}:roscore" "\"$STEP_RUNNER\" roscore source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roscore" C-m
+send_step_command "${SESSION_NAME}:roscore" "roscore" "source /opt/ros/noetic/setup.sh && source $WORKSPACE_SETUP_QUOTED && roscore"
 
 sleep 5
 if [ "$USE_MONOTONIC_CLOCK" = "true" ]; then
   mark_step "clock" "starting" "Enabling /use_sim_time and launching monotonic /clock publisher"
   tmux new-window -t "$SESSION_NAME" -n "clock"
-  tmux send-keys -t "${SESSION_NAME}:clock" "\"$STEP_RUNNER\" clock source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && rosparam set /use_sim_time true && roslaunch flo_humanoid monotonic_clock.launch" C-m
+  send_step_command "${SESSION_NAME}:clock" "clock" "source /opt/ros/noetic/setup.sh && source $WORKSPACE_SETUP_QUOTED && rosparam set /use_sim_time true && roslaunch flo_humanoid monotonic_clock.launch"
   sleep 3
 else
   echo "$CLOCK_MODE_MESSAGE"
@@ -130,7 +144,7 @@ if pgrep -x mosquitto >/dev/null 2>&1; then
 else
   mark_step "mqtt" "starting" "Launching mosquitto broker"
   tmux new-window -t "$SESSION_NAME" -n "mqtt"
-  tmux send-keys -t "${SESSION_NAME}:mqtt" "\"$STEP_RUNNER\" mqtt mosquitto -v -p 1883" C-m
+  send_step_command "${SESSION_NAME}:mqtt" "mqtt" "mosquitto -v -p 1883"
 fi
 
 sleep 2
@@ -139,7 +153,7 @@ append_event "[launcher] starting - MQTT broker step launched; moving to hardwar
 
 mark_step "hardware" "starting" "Launching dual_arm_hardware.launch"
 tmux new-window -t "$SESSION_NAME" -n "hardware"
-tmux send-keys -t "${SESSION_NAME}:hardware" "\"$STEP_RUNNER\" hardware source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_humanoid dual_arm_hardware.launch use_sim_time:=$USE_SIM_TIME" C-m
+send_step_command "${SESSION_NAME}:hardware" "hardware" "source /opt/ros/noetic/setup.sh && source $WORKSPACE_SETUP_QUOTED && roslaunch flo_humanoid dual_arm_hardware.launch use_sim_time:=$USE_SIM_TIME"
 
 sleep 10
 write_overall_status "starting" "moveit" "Hardware controller step launched; moving to MoveIt"
@@ -147,7 +161,7 @@ append_event "[launcher] starting - Hardware controller step launched; moving to
 
 mark_step "moveit" "starting" "Launching moveit_bringup.launch against hardware action servers"
 tmux new-window -t "$SESSION_NAME" -n "moveit"
-tmux send-keys -t "${SESSION_NAME}:moveit" "\"$STEP_RUNNER\" moveit source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && roslaunch flo_core moveit_bringup.launch moveit_controller_manager:=simple use_rviz:=false load_robot_description:=false use_sim_time:=$USE_SIM_TIME" C-m
+send_step_command "${SESSION_NAME}:moveit" "moveit" "source /opt/ros/noetic/setup.sh && source $WORKSPACE_SETUP_QUOTED && roslaunch flo_core moveit_bringup.launch moveit_controller_manager:=simple use_rviz:=false load_robot_description:=false use_sim_time:=$USE_SIM_TIME"
 
 sleep 10
 write_overall_status "starting" "controller" "MoveIt step launched; moving to controller"
@@ -155,7 +169,7 @@ append_event "[launcher] starting - MoveIt step launched; moving to controller"
 
 mark_step "controller" "starting" "Launching mqtt_control_node.py"
 tmux new-window -t "$SESSION_NAME" -n "control"
-tmux send-keys -t "${SESSION_NAME}:control" "\"$STEP_RUNNER\" controller source /opt/ros/noetic/setup.sh && source \"$WORKSPACE_SETUP\" && rosrun flo_core mqtt_control_node.py" C-m
+send_step_command "${SESSION_NAME}:control" "controller" "source /opt/ros/noetic/setup.sh && source $WORKSPACE_SETUP_QUOTED && rosrun flo_core mqtt_control_node.py"
 
 sleep 10
 
